@@ -1,11 +1,11 @@
 {
-  "name": "SIHF Referee Supervision Suite",
-  "short_name": "SIHF Supervision",
+  "name": "Referee Supervision Suite",
+  "short_name": "Referee Supervision",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0B2545",
   "theme_color": "#0B2545",
-  "description": "Offizielles Coaching-, Evaluations- & Supervisionstool für Schweizer Eishockey-Schiedsrichter",
+  "description": "Coaching-, Evaluations- & Supervisionstool für Eishockey-Schiedsrichter",
   "icons": [
     {
       "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%230B2545'/><path d='M25 50 Q 50 20 75 50 Q 50 80 25 50' fill='none' stroke='%23FFF' stroke-width='6'/><circle cx='50' cy='50' r='12' fill='%232563EB'/></svg>",
