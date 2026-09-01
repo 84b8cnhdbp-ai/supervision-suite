@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIHF Referee Supervision Hub & Coaching Suite</title>
+<meta name="theme-color" content="#0B2545">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<style>
+  :root {
+    --navy: #0B2545;
+    --navy-light: #134074;
+    --ice-bg: #F4F7FA;
+    --ice-card: #FFFFFF;
+    --border: #CBD5E1;
+    --text: #0F172A;
+    --text-muted: #64748B;
+    --accent: #2563EB;
+    --green: #16A34A;
+    --yellow: #D97706;
+    --orange: #EA580C;
+    --red: #DC2626;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--ice-bg);
+    color: var(--text);
+    margin: 0;
+    padding: 24px 16px;
+  }
+  .app-container {
+    max-width: 1060px;
+    margin: 0 auto;
+    background: var(--ice-card);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: #FFF;
+    padding: 24px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .header-titles h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 0.5px; }
+  .header-titles p { margin: 4px 0 0 0; font-size: 13px; color: #94A3B8; }
+  .header-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .badge-pwa { background: rgba(255,255,255,0.15); color: #FFF; }
+  .badge-status { background: #DCFCE7; color: #166534; }
+  .badge-status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #16A34A; }
+
+  /* Tab Navigation System */
+  .system-tabs-wrapper {
+    background: #E2E8F0;
+    padding: 10px 30px 0 30px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .referee-tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    padding: 10px 20px;
+    background: #CBD5E1;
+    border: none;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tab-btn:hover { background: #E2E8F0; }
+  .tab-btn.active {
+    background: #FFFFFF;
+    color: var(--navy);
+    border-top: 3px solid var(--accent);
+  }
+  .tab-badge {
+    background: rgba(0,0,0,0.1);
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 10px;
+  }
+
+  .content { padding: 30px; }
+  
+  .section-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 28px 0 14px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 2px solid #E2E8F0;
+    padding-bottom: 6px;
+  }
+  .section-title span.num {
+    background: var(--navy);
+    color: #FFF;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+  
+  label { font-size: 12px; font-weight: 700; color: var(--navy-light); display: block; margin-bottom: 5px; }
+  input, select, textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    background-color: #FFF;
+    color: var(--text);
+    transition: all 0.2s ease;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+  }
+  textarea { resize: vertical; min-height: 60px; font-family: inherit; }
+  optgroup { font-weight: bold; color: var(--navy); }
+  
+  /* Live Analytics Bar */
+  .analytics-card {
+    background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%);
+    border: 1px solid #BFDBFE;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 20px;
+    align-items: center;
+  }
+  .score-display {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .score-circle {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: #FFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+    box-shadow: 0 4px 8px rgba(11,37,69,0.2);
+  }
+  .score-circle small { font-size: 9px; font-weight: 400; color: #94A3B8; text-transform: uppercase; }
+  .radar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Table styling */
+  table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+  th, td { padding: 10px 12px; text-align: left; font-size: 13px; vertical-align: top; border-bottom: 1px solid var(--border); }
+  th { background-color: var(--navy); color: #FFF; font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) { background-color: #F8FAFC; }
+
+  .radio-row { display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0; }
+  .radio-row input { width: auto; margin: 0; cursor: pointer; }
+
+  .stamp-btn {
+    padding: 4px 8px;
+    background: #E2E8F0;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    margin-bottom: 4px;
+    display: inline-block;
+  }
+  .stamp-btn:hover { background: #CBD5E1; }
+
+  /* Toolbar buttons */
+  .toolbar {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-top: 2px solid #E2E8F0;
+    padding-top: 20px;
+  }
+  .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+  button.btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+  }
+  .btn-primary { background-color: var(--navy); color: #FFF; }
+  .btn-primary:hover { background-color: #081B33; }
+  .btn-secondary { background-color: var(--navy-light); color: #FFF; }
+  .btn-secondary:hover { background-color: #0E3056; }
+  .btn-outline { background-color: #FFF; color: #475569; border: 1px solid var(--border); }
+  .btn-outline:hover { background-color: #F1F5F9; }
+  .btn-danger { background-color: #FEE2E2; color: #991B1B; }
+  .btn-danger:hover { background-color: #FCA5A5; }
+
+  @media (max-width: 860px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .analytics-card { grid-template-columns: 1fr; }
+    .content { padding: 16px; }
+  }
+
+  @media print {
+    body { background: #FFF; padding: 0; }
+    .app-container { box-shadow: none; border-radius: 0; }
+    .toolbar, .no-print, .stamp-btn, .system-tabs-wrapper { display: none !important; }
+    header { background: var(--navy) !important; color: #FFF !important; -webkit-print-color-adjust: exact; }
+    table { page-break-inside: avoid; }
+    tr { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <header>
+    <div class="header-titles">
+      <h1>SIHF Referee Supervision Hub</h1>
+      <p>Digitales Coaching-, Evaluations- & Analyse-Tool für Schiedsrichter-Supervisoren</p>
+    </div>
+    <div class="header-badges no-print">
+      <span class="badge badge-pwa" id="pwaBadge">Offline PWA Ready</span>
+      <span class="badge badge-status" id="saveStatus">Auto-Saved</span>
+    </div>
+  </header>
+
+  <!-- 1. METADATEN (GLOBAL FÜR DAS GESAMTE SPIEL) -->
+  <div style="background: #F8FAFC; border-bottom: 1px solid var(--border); padding: 20px 30px;">
+    <div class="grid-4" style="margin-bottom: 12px;">
+      <div>
+        <label for="system_typ">Schiedsrichter-System</label>
+        <select id="system_typ" onchange="switchSystem(this.value)" style="font-weight: bold; border-color: var(--accent);">
+          <option value="4-Man">4-Mann-System (2 Heads / 2 Lines)</option>
+          <option value="3-Man">3-Mann-System (1 Head / 2 Lines)</option>
+          <option value="2-Man">2-Mann-System (2 Referees)</option>
+          <option value="1-Man">1-Mann-System (1 Solo-Ref)</option>
+        </select>
+      </div>
+      <div>
+        <label for="spiel_liga">Liga / Stufe (SIHF)</label>
+        <select id="spiel_liga" onchange="saveGlobalState()">
+          <optgroup label="Profisport">
+            <option value="National League">National League (NL)</option>
+            <option value="Swiss League">Swiss League (SL)</option>
+          </optgroup>
+          <optgroup label="Amateursport Herren (Regio League)">
+            <option value="MyHockey League">MyHockey League (MHL)</option>
+            <option value="1. Liga">1. Liga</option>
+            <option value="2. Liga">2. Liga</option>
+            <option value="3. Liga">3. Liga</option>
+            <option value="4. Liga">4. Liga</option>
+          </optgroup>
+          <optgroup label="Fraueneishockey (Women's Leagues)">
+            <option value="PostFinance Women's League">PostFinance Women's League (PFWL)</option>
+            <option value="SWHL B">SWHL B</option>
+            <option value="SWHL C">SWHL C</option>
+            <option value="SWHL D">SWHL D</option>
+          </optgroup>
+          <optgroup label="Nachwuchs Leistungssport">
+            <option value="U20-Elit">U20-Elit</option>
+            <option value="U20-Top">U20-Top</option>
+            <option value="U20-A">U20-A</option>
+            <option value="U17-Elit">U17-Elit</option>
+            <option value="U17-Top">U17-Top</option>
+            <option value="U17-A">U17-A</option>
+          </optgroup>
+          <optgroup label="Nachwuchs Breitensport & Erfassung">
+            <option value="U15-Elit">U15-Elit</option>
+            <option value="U15-Top">U15-Top</option>
+            <option value="U15-A">U15-A</option>
+            <option value="U13-Elit">U13-Elit</option>
+            <option value="U13-Top">U13-Top</option>
+            <option value="U13-A">U13-A</option>
+            <option value="U11">U11 (Erfassungsstufe)</option>
+            <option value="U9">U9 (Erfassungsstufe)</option>
+          </optgroup>
+          <optgroup label="Cup- & Sonderwettbewerbe">
+            <option value="National Cup Herren">National Cup (Herren)</option>
+            <option value="National Cup Frauen">National Cup (Frauen)</option>
+            <option value="Kantonal- / Regionalcup">Kantonal- / Regionalcup</option>
+            <option value="Vorbereitungsspiel / Testspiel">Vorbereitungsspiel / Testspiel</option>
+            <option value="Senioren / Veteranen">Senioren / Veteranen</option>
+          </optgroup>
+        </select>
+      </div>
+      <div>
+        <label for="spiel_paarung">Begegnung (Heim vs. Gast)</label>
+        <input type="text" id="spiel_paarung" placeholder="z. B. EV Zug vs. ZSC Lions" oninput="saveGlobalState()">
+      </div>
+      <div>
+        <label for="spiel_id">Spiel-Nr. / ID</label>
+        <input type="text" id="spiel_id" placeholder="z. B. 10452" oninput="saveGlobalState()">
+      </div>
+    </div>
+    <div class="grid-3">
+      <div>
+        <label for="spiel_datum">Datum & Zeit</label>
+        <input type="datetime-local" id="spiel_datum" oninput="saveGlobalState()">
+      </div>
+      <div>
+        <label for="spiel_ort">Spielort / Arena</label>
+        <input type="text" id="spiel_ort" placeholder="z. B. Bossard Arena" oninput="saveGlobalState()">
+      </div>
+      <div>
+        <label for="supervisor_name">Supervisor / Coach</label>
+        <input type="text" id="supervisor_name" placeholder="Name Supervisor" oninput="saveGlobalState()">
+      </div>
+    </div>
+  </div>
+
+  <!-- DYNAMISCHE REITER FÜR SCHIEDSRICHTER -->
+  <div class="system-tabs-wrapper no-print">
+    <div class="referee-tabs" id="tabsContainer">
+      <!-- Tabs werden dynamisch per JavaScript anhand des ausgewählten Systems generiert -->
+    </div>
+    <div style="font-size: 11px; color: #64748B; font-weight: 600;" id="currentSystemInfo">
+      Aktiv: 4-Mann-System (4 Einzelbewertungen)
+    </div>
+  </div>
+
+  <!-- AKTIVER BEWERTUNGSBOGEN -->
+  <div class="content">
+
+    <!-- LIVE ANALYTICS & RADAR OVERVIEW -->
+    <div class="analytics-card no-print">
+      <div>
+        <div class="score-display">
+          <div class="score-circle">
+            <span id="scoreVal">80%</span>
+            <small>Score</small>
+          </div>
+          <div>
+            <strong style="font-size: 15px; color: var(--navy);" id="scoreStatusText">Leistung: Gut / Erfüllt</strong>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 6px;">
+              <span>Gewichteter Score (<span id="activeRefLabel">Head Referee 1</span>)</span>
+              <span id="ampelDot" style="display: inline-block; width: 11px; height: 11px; border-radius: 50%; background-color: #16A34A; box-shadow: 0 0 0 2px rgba(22,163,74,0.2);"></span>
+            </div>
+          </div>
+        </div>
+        <!-- Sub-Metrics Pills -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 14px; font-size: 11px;">
+          <div style="background: #FFF; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); text-align: center;">
+            <div style="color: var(--text-muted); font-weight: 600;">Teil 2: Gesamt (30%)</div>
+            <strong id="subScorePart2" style="font-size: 13px; color: var(--navy);">80%</strong>
+          </div>
+          <div style="background: #FFF; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); text-align: center;">
+            <div style="color: var(--text-muted); font-weight: 600;">Teil 3: Matrix (50%)</div>
+            <strong id="subScorePart3" style="font-size: 13px; color: var(--navy);">80%</strong>
+          </div>
+          <div style="background: #FFF; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); text-align: center;">
+            <div style="color: var(--text-muted); font-weight: 600;">Teil 4: Coach (20%)</div>
+            <strong id="subScorePart4" style="font-size: 13px; color: var(--navy);">80%</strong>
+          </div>
+        </div>
+      </div>
+      <div class="radar-container">
+        <canvas id="radarChart" width="220" height="150" style="max-width: 100%;"></canvas>
+      </div>
+    </div>
+
+    <!-- 1. SCHIEDSRICHTER-ANGABEN DES REITERS -->
+    <div class="section-title"><span class="num">1</span> Angaben zur Person & Funktion</div>
+    <div class="grid-2" style="margin-bottom: 12px;">
+      <div>
+        <label for="current_schiri_name">Name des Schiedsrichters</label>
+        <input type="text" id="current_schiri_name" placeholder="Vorname Nachname" oninput="saveCurrentRefData()">
+      </div>
+      <div>
+        <label for="current_schiri_partner">Gespann-Partner</label>
+        <input type="text" id="current_schiri_partner" placeholder="Partner-Name(n)" oninput="saveCurrentRefData()">
+      </div>
+    </div>
+
+    <!-- 2. GESAMTEINSCHÄTZUNG -->
+    <div class="section-title"><span class="num">2</span> Gesamteinschätzung (Offizieller SIHF Standard)</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 8%; text-align: center;">Wahl</th>
+          <th style="width: 25%;">Stufe</th>
+          <th>Definition & Kriterien</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="text-align: center;"><input type="radio" name="overall_grade" value="100" id="grade_sg" onchange="calcScores()"></td>
+          <td><label for="grade_sg" class="radio-row" style="color: var(--green); font-weight: bold;">Sehr Gut</label></td>
+          <td>Mutige, korrekte Schlüsselentscheide unter hohem Druck (z. B. doppelte Unterzahl, Torannullierung). Kein Phantom-Pfiff, perfekte Ruhe, erstklassige Spielkontrolle.</td>
+        </tr>
+        <tr>
+          <td style="text-align: center;"><input type="radio" name="overall_grade" value="80" id="grade_gut" checked onchange="calcScores()"></td>
+          <td><label for="grade_gut" class="radio-row" style="color: var(--navy-light); font-weight: bold;">Gut / Zufriedenstellend</label></td>
+          <td>Ordentlich geleitetes Spiel, Frustrationsniveau tief gehalten, gutes Gespür für Spielfluss. Hält sich bei Bedarf im Hintergrund und ist vor dem Spielzug an der Torlinie.</td>
+        </tr>
+        <tr>
+          <td style="text-align: center;"><input type="radio" name="overall_grade" value="50" id="grade_vb" onchange="calcScores()"></td>
+          <td><label for="grade_vb" class="radio-row" style="color: var(--orange); font-weight: bold;">Verbesserungsbedürftig</label></td>
+          <td>Wenig Zugriff aufs Spiel, Über- oder Unterinterpretation von Regeln, macht Routine-Situationen unnötig hektisch oder unkonsequent.</td>
+        </tr>
+        <tr>
+          <td style="text-align: center;"><input type="radio" name="overall_grade" value="20" id="grade_ug" onchange="calcScores()"></td>
+          <td><label for="grade_ug" class="radio-row" style="color: var(--red); font-weight: bold;">Ungenügend</label></td>
+          <td>Kontrollverlust, gravierende Regelfehlentscheide, erhebliche Sicherheits- oder Eislaufdefizite.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- 3. PERFORMANCE MATRIX (ROLLEN-SPEZIFISCH ANGEPASST) -->
+    <div class="section-title"><span class="num">3</span> Leistungs-Checkliste & Rollen-Kriterien</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 34%;">Bereich & Leitfragen</th>
+          <th style="width: 22%;">Bewertung</th>
+          <th>Szenen, Timestamps & Notizen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="lbl_perf_1"><strong>1. Eislaufen & Physis</strong><br><small style="color:var(--text-muted);">Agilität, Mobilität, Rückwärtslaufen, Fitness</small></td>
+          <td>
+            <select class="perf-select" id="perf_1" onchange="calcScores()">
+              <option value="100">++ (Überdurchschnittlich)</option>
+              <option value="80" selected>+ (Erfüllt / Gut)</option>
+              <option value="50">- (Mängel erkennbar)</option>
+              <option value="20">-- (Ungenügend)</option>
+              <option value="NA">N/A (Nicht bewertbar)</option>
+            </select>
+          </td>
+          <td>
+            <button type="button" class="stamp-btn" onclick="addTimestamp('note_1')">+ Drittel/Timestamp</button>
+            <textarea id="note_1" oninput="saveCurrentRefData()" placeholder="Laufstil, Antritt, Ermüdung..."></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td id="lbl_perf_2"><strong>2. Positionsspiel & Sichtachsen</strong><br><small style="color:var(--text-muted);">Torlinie vor Spielzug, Blaue Linie, Blickfeld</small></td>
+          <td>
+            <select class="perf-select" id="perf_2" onchange="calcScores()">
+              <option value="100">++ (Überdurchschnittlich)</option>
+              <option value="80" selected>+ (Erfüllt / Gut)</option>
+              <option value="50">- (Mängel erkennbar)</option>
+              <option value="20">-- (Ungenügend)</option>
+              <option value="NA">N/A (Nicht bewertbar)</option>
+            </select>
+          </td>
+          <td>
+            <button type="button" class="stamp-btn" onclick="addTimestamp('note_2')">+ Drittel/Timestamp</button>
+            <textarea id="note_2" oninput="saveCurrentRefData()" placeholder="Positionierung, Einblick..."></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td id="lbl_perf_3"><strong>3. Pfiff, Zeichengebung & Präsenz</strong><br><small style="color:var(--text-muted);">Signalgebung, Prägnanz, Körpersprache</small></td>
+          <td>
+            <select class="perf-select" id="perf_3" onchange="calcScores()">
+              <option value="100">++ (Überdurchschnittlich)</option>
+              <option value="80" selected>+ (Erfüllt / Gut)</option>
+              <option value="50">- (Mängel erkennbar)</option>
+              <option value="20">-- (Ungenügend)</option>
+              <option value="NA">N/A (Nicht bewertbar)</option>
+            </select>
+          </td>
+          <td>
+            <button type="button" class="stamp-btn" onclick="addTimestamp('note_3')">+ Drittel/Timestamp</button>
+            <textarea id="note_3" oninput="saveCurrentRefData()" placeholder="Präsenz, Signalgebung..."></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td id="lbl_perf_4"><strong>4. Antizipation & Spielaufmerksamkeit</strong><br><small style="color:var(--text-muted);">Spielzüge lesen, Off-Puck Play, Gefahren</small></td>
+          <td>
+            <select class="perf-select" id="perf_4" onchange="calcScores()">
+              <option value="100">++ (Überdurchschnittlich)</option>
+              <option value="80" selected>+ (Erfüllt / Gut)</option>
+              <option value="50">- (Mängel erkennbar)</option>
+              <option value="20">-- (Ungenügend)</option>
+              <option value="NA">N/A (Nicht bewertbar)</option>
+            </select>
+          </td>
+          <td>
+            <button type="button" class="stamp-btn" onclick="addTimestamp('note_4')">+ Drittel/Timestamp</button>
+            <textarea id="note_4" oninput="saveCurrentRefData()" placeholder="Spielzüge antizipieren..."></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td id="lbl_perf_5"><strong>5. Deeskalation & Post-Whistle</strong><br><small style="color:var(--text-muted);">Torraumabsicherung, Rudelbildungen unterbinden</small></td>
+          <td>
+            <select class="perf-select" id="perf_5" onchange="calcScores()">
+              <option value="100">++ (Überdurchschnittlich)</option>
+              <option value="80" selected>+ (Erfüllt / Gut)</option>
+              <option value="50">- (Mängel erkennbar)</option>
+              <option value="20">-- (Ungenügend)</option>
+              <option value="NA">N/A (Nicht bewertbar)</option>
+            </select>
+          </td>
+          <td>
+            <button type="button" class="stamp-btn" onclick="addTimestamp('note_5')">+ Drittel/Timestamp</button>
+            <textarea id="note_5" oninput="saveCurrentRefData()" placeholder="Präsenz nach dem Pfiff..."></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td id="lbl_perf_6"><strong>6. Teamwork & Kommunikation</strong><br><small style="color:var(--text-muted);">Gespann-Abstimmung, Dialog mit Captains/Coaches</small></td>
+          <td>
+            <select class="perf-select" id="perf_6" onchange="calcScores()">
+              <option value="100">++ (Überdurchschnittlich)</option>
+              <option value="80" selected>+ (Erfüllt / Gut)</option>
+              <option value="50">- (Mängel erkennbar)</option>
+              <option value="20">-- (Ungenügend)</option>
+              <option value="NA">N/A (Nicht bewertbar)</option>
+            </select>
+          </td>
+          <td>
+            <button type="button" class="stamp-btn" onclick="addTimestamp('note_6')">+ Drittel/Timestamp</button>
+            <textarea id="note_6" oninput="saveCurrentRefData()" placeholder="Absprachen, Dialogton..."></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td id="lbl_perf_7"><strong>7. Regelanwendung & Linientreue</strong><br><small style="color:var(--text-muted);">Strafmassstab (Head) bzw. Icing/Offside-Präzision (Lines)</small></td>
+          <td>
+            <select class="perf-select" id="perf_7" onchange="calcScores()">
+              <option value="100">++ (Überdurchschnittlich)</option>
+              <option value="80" selected>+ (Erfüllt / Gut)</option>
+              <option value="50">- (Mängel erkennbar)</option>
+              <option value="20">-- (Ungenügend)</option>
+              <option value="NA">N/A (Nicht bewertbar)</option>
+            </select>
+          </td>
+          <td>
+            <button type="button" class="stamp-btn" onclick="addTimestamp('note_7')">+ Drittel/Timestamp</button>
+            <textarea id="note_7" oninput="saveCurrentRefData()" placeholder="Linientreue, SIHF-Regeln..."></textarea>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- 4. COACHING & ENTWICKLUNG -->
+    <div class="section-title"><span class="num">4</span> Coaching, Trend & Mindset</div>
+    <div class="grid-3">
+      <div>
+        <label for="coach_trend">Leistungsentwicklung / Trend (6.7%)</label>
+        <select id="coach_trend" onchange="calcScores()">
+          <option value="Konstant stabil" selected>Konstant stabil (Gut / 80%)</option>
+          <option value="Fortschritt erkennbar">Fortschritt erkennbar (Top / 100%)</option>
+          <option value="Erstbeobachtung">Erstbeobachtung (Neutral / 80%)</option>
+          <option value="Rückschritt / Instabil">Rückschritt / Instabil (40%)</option>
+        </select>
+      </div>
+      <div>
+        <label for="coach_attitude">Einstellung On-/Off-Ice (6.7%)</label>
+        <select id="coach_attitude" onchange="calcScores()">
+          <option value="Gut / Angemessen" selected>Gut / Angemessen (80%)</option>
+          <option value="Vorbildlich / Professionell">Vorbildlich / Professionell (100%)</option>
+          <option value="Ausbaufähig">Ausbaufähig (45%)</option>
+        </select>
+      </div>
+      <div>
+        <label for="coach_feedback">Feedback-Bereitschaft (6.6%)</label>
+        <select id="coach_feedback" onchange="calcScores()">
+          <option value="Konstruktiv" selected>Konstruktiv (80%)</option>
+          <option value="Sehr offen & reflektiert">Sehr offen & reflektiert (100%)</option>
+          <option value="Defensiv / Rechtfertigend">Defensiv / Rechtfertigend (40%)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 5. ABSCHLUSS & FEEDBACK -->
+    <div class="section-title"><span class="num">5</span> Abschluss-Rapport & Action Plan</div>
+    <div class="grid-2" style="margin-bottom: 12px;">
+      <div>
+        <label for="top_strengths">Top 2–3 Stärken (Keep Doing)</label>
+        <textarea id="top_strengths" oninput="saveCurrentRefData()" style="min-height: 85px;" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
+      </div>
+      <div>
+        <label for="top_workon">Top 2–3 Entwicklungsschwerpunkte (Work On)</label>
+        <textarea id="top_workon" oninput="saveCurrentRefData()" style="min-height: 85px;" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 14px;">
+      <label for="general_report">Ausführlicher Rapport / Besondere Vorkommnisse</label>
+      <textarea id="general_report" oninput="saveCurrentRefData()" style="min-height: 110px;" placeholder="Szenenanalysen, Coaching-Notizen..."></textarea>
+    </div>
+
+    <div class="grid-2" style="margin-top: 15px;">
+      <div>
+        <label for="visum_ort_datum">Ort, Datum</label>
+        <input type="text" id="visum_ort_datum" oninput="saveCurrentRefData()" placeholder="z. B. Zug, 01.09.2026">
+      </div>
+      <div>
+        <label for="visum_name">Visum Supervisor</label>
+        <input type="text" id="visum_name" oninput="saveCurrentRefData()" placeholder="Vorname Nachname">
+      </div>
+    </div>
+
+    <!-- ACTIONS TOOLBAR -->
+    <div class="toolbar">
+      <div>
+        <button type="button" class="btn btn-danger" onclick="resetAll()">Gesamtes Spiel zurücksetzen</button>
+      </div>
+      <div class="btn-group">
+        <button type="button" class="btn btn-outline" onclick="exportCSV()">CSV-Export (Alle Schiedsrichter)</button>
+        <button type="button" class="btn btn-secondary" onclick="exportJSON()">Ganzes Spiel sichern (.json)</button>
+        <button type="button" class="btn btn-primary" onclick="window.print()">Drucken / PDF-Export</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Definition der Systeme & Reiter-Konfigurationen
+  const SYSTEM_CONFIGS = {
+    "4-Man": [
+      { id: "h1", role: "Head Referee 1", type: "head", badge: "Head 1" },
+      { id: "h2", role: "Head Referee 2", type: "head", badge: "Head 2" },
+      { id: "l1", role: "Linesperson 1", type: "lines", badge: "Lines 1" },
+      { id: "l2", role: "Linesperson 2", type: "lines", badge: "Lines 2" }
+    ],
+    "3-Man": [
+      { id: "h1", role: "Head Referee 1", type: "head", badge: "Head" },
+      { id: "l1", role: "Linesperson 1", type: "lines", badge: "Lines 1" },
+      { id: "l2", role: "Linesperson 2", type: "lines", badge: "Lines 2" }
+    ],
+    "2-Man": [
+      { id: "r1", role: "Referee 1", type: "dual", badge: "Ref 1" },
+      { id: "r2", role: "Referee 2", type: "dual", badge: "Ref 2" }
+    ],
+    "1-Man": [
+      { id: "r1", role: "Einzel-Schiedsrichter", type: "solo", badge: "Solo Ref" }
+    ]
+  };
+
+  let currentSystem = "4-Man";
+  let activeRefIndex = 0;
+  let gameData = {
+    global: {},
+    referees: {}
+  };
+
+  // Initialisierung
+  function initApp() {
+    loadFullState();
+    renderTabs();
+    loadRefereeForm(activeRefIndex);
+  }
+
+  // System umschalten (2-Mann, 3-Mann, 4-Mann, 1-Mann)
+  function switchSystem(newSys) {
+    currentSystem = newSys;
+    activeRefIndex = 0;
+    saveGlobalState();
+    renderTabs();
+    loadRefereeForm(activeRefIndex);
+  }
+
+  // Dynamische Tabs anhand des aktiven Systems zeichnen
+  function renderTabs() {
+    const tabsContainer = document.getElementById('tabsContainer');
+    tabsContainer.innerHTML = "";
+    const refs = SYSTEM_CONFIGS[currentSystem];
+
+    refs.forEach((ref, index) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'tab-btn' + (index === activeRefIndex ? ' active' : '');
+      btn.innerHTML = `<span>${ref.role}</span> <span class="tab-badge">${ref.badge}</span>`;
+      btn.onclick = () => selectTab(index);
+      tabsContainer.appendChild(btn);
+    });
+
+    document.getElementById('currentSystemInfo').innerText = `Aktiv: ${currentSystem} (${refs.length} ${refs.length === 1 ? 'Reiter' : 'Reiter'})`;
+  }
+
+  function selectTab(index) {
+    saveCurrentRefData();
+    activeRefIndex = index;
+    renderTabs();
+    loadRefereeForm(activeRefIndex);
+  }
+
+  // Rollenspezifische Kriterienbezeichnungen anpassen
+  function adjustLabelsForRole(refConfig) {
+    const isLines = refConfig.type === 'lines';
+    const isHead = refConfig.type === 'head';
+
+    if (isLines) {
+      document.getElementById('lbl_perf_2').innerHTML = `<strong>2. Positionsspiel & Linienkontrolle</strong><br><small style="color:var(--text-muted);">Blaue Linie bei knappen Offsides, Icing-Beurteilung</small>`;
+      document.getElementById('lbl_perf_3').innerHTML = `<strong>3. Pfiff, Bully-Präsenz & Signale</strong><br><small style="color:var(--text-muted);">Korrektes Anspiel, Bully-Conduct, Zeichen Icing/Abseits</small>`;
+      document.getElementById('lbl_perf_5').innerHTML = `<strong>5. Deeskalation & Scrum-Intervention</strong><br><small style="color:var(--text-muted);">Schnelles Trennen von Spielern, Torraumabsicherung</small>`;
+      document.getElementById('lbl_perf_7').innerHTML = `<strong>7. Regelanwendung (Abseits / Icing / Handpass)</strong><br><small style="color:var(--text-muted);">Präzision bei Linienentscheiden & Puckkontakt</small>`;
+    } else {
+      document.getElementById('lbl_perf_2').innerHTML = `<strong>2. Positionsspiel & Sichtachsen</strong><br><small style="color:var(--text-muted);">Torlinie vor Spielzug, Net-Front-Position, Blickfeld</small>`;
+      document.getElementById('lbl_perf_3').innerHTML = `<strong>3. Pfiff, Zeichengebung & Präsenz</strong><br><small style="color:var(--text-muted);">Prägnanz, klare Signale, aufrechte Körpersprache</small>`;
+      document.getElementById('lbl_perf_5').innerHTML = `<strong>5. Deeskalation & Post-Whistle Management</strong><br><small style="color:var(--text-muted);">Torraumabsicherung, Rudelbildungen unterbinden</small>`;
+      document.getElementById('lbl_perf_7').innerHTML = `<strong>7. Strafmassstab & Regelanwendung</strong><br><small style="color:var(--text-muted);">Konstanz über 60 Min., SIHF-Regelbuch & Weisungen</small>`;
+    }
+  }
+
+  // Daten für den aktuellen Reiter laden
+  function loadRefereeForm(index) {
+    const refConfig = SYSTEM_CONFIGS[currentSystem][index];
+    document.getElementById('activeRefLabel').innerText = refConfig.role;
+    adjustLabelsForRole(refConfig);
+
+    const refKey = `${currentSystem}_${refConfig.id}`;
+    const data = gameData.referees[refKey] || getDefaultRefData();
+
+    document.getElementById('current_schiri_name').value = data.name || "";
+    document.getElementById('current_schiri_partner').value = data.partner || "";
+
+    // Grade
+    const radios = document.querySelectorAll('input[name="overall_grade"]');
+    radios.forEach(r => {
+      r.checked = (r.value === (data.overall_grade || "80"));
+    });
+
+    // Performance Selects & Notes
+    for (let i = 1; i <= 7; i++) {
+      document.getElementById(`perf_${i}`).value = data[`perf_${i}`] || "80";
+      document.getElementById(`note_${i}`).value = data[`note_${i}`] || "";
+    }
+
+    // Coaching Dropdowns
+    document.getElementById('coach_trend').value = data.coach_trend || "Konstant stabil (Gut / 80%)";
+    document.getElementById('coach_attitude').value = data.coach_attitude || "Gut / Angemessen (80%)";
+    document.getElementById('coach_feedback').value = data.coach_feedback || "Konstruktiv (80%)";
+
+    // Textbereiche
+    document.getElementById('top_strengths').value = data.top_strengths || "";
+    document.getElementById('top_workon').value = data.top_workon || "";
+    document.getElementById('general_report').value = data.general_report || "";
+    document.getElementById('visum_ort_datum').value = data.visum_ort_datum || gameData.global.visum_ort_datum || "";
+    document.getElementById('visum_name').value = data.visum_name || gameData.global.supervisor_name || "";
+
+    calcScores(false);
+  }
+
+  // Daten des aktuellen Reiters im Zustand sichern
+  function saveCurrentRefData() {
+    const refConfig = SYSTEM_CONFIGS[currentSystem][activeRefIndex];
+    const refKey = `${currentSystem}_${refConfig.id}`;
+
+    const selectedGrade = document.querySelector('input[name="overall_grade"]:checked');
+
+    const data = {
+      role: refConfig.role,
+      name: document.getElementById('current_schiri_name').value,
+      partner: document.getElementById('current_schiri_partner').value,
+      overall_grade: selectedGrade ? selectedGrade.value : "80",
+      coach_trend: document.getElementById('coach_trend').value,
+      coach_attitude: document.getElementById('coach_attitude').value,
+      coach_feedback: document.getElementById('coach_feedback').value,
+      top_strengths: document.getElementById('top_strengths').value,
+      top_workon: document.getElementById('top_workon').value,
+      general_report: document.getElementById('general_report').value,
+      visum_ort_datum: document.getElementById('visum_ort_datum').value,
+      visum_name: document.getElementById('visum_name').value
+    };
+
+    for (let i = 1; i <= 7; i++) {
+      data[`perf_${i}`] = document.getElementById(`perf_${i}`).value;
+      data[`note_${i}`] = document.getElementById(`note_${i}`).value;
+    }
+
+    gameData.referees[refKey] = data;
+    saveToStorage();
+  }
+
+  function getDefaultRefData() {
+    return {
+      overall_grade: "80",
+      perf_1: "80", perf_2: "80", perf_3: "80", perf_4: "80", perf_5: "80", perf_6: "80", perf_7: "80",
+      coach_trend: "Konstant stabil (Gut / 80%)",
+      coach_attitude: "Gut / Angemessen (80%)",
+      coach_feedback: "Konstruktiv (80%)"
+    };
+  }
+
+  function saveGlobalState() {
+    gameData.global = {
+      system_typ: document.getElementById('system_typ').value,
+      spiel_liga: document.getElementById('spiel_liga').value,
+      spiel_paarung: document.getElementById('spiel_paarung').value,
+      spiel_id: document.getElementById('spiel_id').value,
+      spiel_datum: document.getElementById('spiel_datum').value,
+      spiel_ort: document.getElementById('spiel_ort').value,
+      supervisor_name: document.getElementById('supervisor_name').value
+    };
+    saveToStorage();
+  }
+
+  function saveToStorage() {
+    localStorage.setItem('sihf_multi_ref_suite_data', JSON.stringify(gameData));
+    const status = document.getElementById('saveStatus');
+    if (status) {
+      status.innerText = "Auto-Saved (" + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'}) + ")";
+    }
+  }
+
+  function loadFullState() {
+    const raw = localStorage.getItem('sihf_multi_ref_suite_data');
+    if (raw) {
+      try {
+        gameData = JSON.parse(raw);
+        if (gameData.global) {
+          if (gameData.global.system_typ) {
+            currentSystem = gameData.global.system_typ;
+            document.getElementById('system_typ').value = currentSystem;
+          }
+          document.getElementById('spiel_liga').value = gameData.global.spiel_liga || "National League";
+          document.getElementById('spiel_paarung').value = gameData.global.spiel_paarung || "";
+          document.getElementById('spiel_id').value = gameData.global.spiel_id || "";
+          document.getElementById('spiel_datum').value = gameData.global.spiel_datum || "";
+          document.getElementById('spiel_ort').value = gameData.global.spiel_ort || "";
+          document.getElementById('supervisor_name').value = gameData.global.supervisor_name || "";
+        }
+      } catch(e) {
+        console.error(e);
+      }
+    }
+  }
+
+  // Notiz-Zeitstempel
+  function addTimestamp(targetId) {
+    const field = document.getElementById(targetId);
+    const stamp = prompt("Drittel & Spielminute eingeben (z. B. 'P2 08:34'):", "P1 00:00");
+    if (stamp) {
+      field.value += (field.value.trim() ? "\n" : "") + "[" + stamp + "] ";
+      field.focus();
+      saveCurrentRefData();
+    }
+  }
+
+  // Berechnung & Radar-Zeichnung
+  function calcScores(shouldSave = true) {
+    const selectedGrade = document.querySelector('input[name="overall_grade"]:checked');
+    const part2Score = selectedGrade ? parseInt(selectedGrade.value, 10) : 80;
+
+    const selects = [
+      document.getElementById('perf_1'),
+      document.getElementById('perf_2'),
+      document.getElementById('perf_3'),
+      document.getElementById('perf_4'),
+      document.getElementById('perf_5'),
+      document.getElementById('perf_6'),
+      document.getElementById('perf_7')
+    ];
+
+    let matrixTotal = 0;
+    let validCount = 0;
+    const radarScores = [];
+
+    selects.forEach(sel => {
+      const val = sel.value;
+      if (val !== 'NA') {
+        const num = parseInt(val, 10);
+        matrixTotal += num;
+        validCount += 1;
+        radarScores.push(num / 33.33);
+      } else {
+        radarScores.push(2.0);
+      }
+    });
+    const part3Score = validCount > 0 ? Math.round(matrixTotal / validCount) : 80;
+
+    const trendVal = document.getElementById('coach_trend').value;
+    const attitudeVal = document.getElementById('coach_attitude').value;
+    const feedbackVal = document.getElementById('coach_feedback').value;
+
+    let scoreTrend = trendVal.includes('Fortschritt') ? 100 : (trendVal.includes('Rückschritt') ? 40 : 80);
+    let scoreAttitude = attitudeVal.includes('Vorbildlich') ? 100 : (attitudeVal.includes('Ausbaufähig') ? 45 : 80);
+    let scoreFeedback = feedbackVal.includes('Sehr offen') ? 100 : (feedbackVal.includes('Defensiv') ? 40 : 80);
+
+    const part4Score = Math.round((scoreTrend + scoreAttitude + scoreFeedback) / 3);
+    const totalScore = Math.round((part2Score * 0.30) + (part3Score * 0.50) + (part4Score * 0.20));
+
+    document.getElementById('scoreVal').innerText = totalScore + "%";
+    document.getElementById('subScorePart2').innerText = part2Score + "%";
+    document.getElementById('subScorePart3').innerText = part3Score + "%";
+    document.getElementById('subScorePart4').innerText = part4Score + "%";
+
+    const statusText = document.getElementById('scoreStatusText');
+    const ampelDot = document.getElementById('ampelDot');
+
+    if (totalScore > 80) {
+      statusText.innerText = "Leistung: Überdurchschnittlich / Sehr Gut";
+      ampelDot.style.backgroundColor = "var(--green)";
+      ampelDot.style.boxShadow = "0 0 0 3px rgba(22, 163, 74, 0.25)";
+    } else if (totalScore >= 75) {
+      statusText.innerText = "Leistung: Gut / Erfüllt";
+      ampelDot.style.backgroundColor = "#16A34A";
+      ampelDot.style.boxShadow = "0 0 0 3px rgba(22, 163, 74, 0.25)";
+    } else if (totalScore >= 60) {
+      statusText.innerText = "Leistung: Zufriedenstellend / Solide";
+      ampelDot.style.backgroundColor = "#84CC16";
+      ampelDot.style.boxShadow = "0 0 0 3px rgba(132, 204, 22, 0.25)";
+    } else if (totalScore >= 45) {
+      statusText.innerText = "Leistung: Verbesserungsbedürftig";
+      ampelDot.style.backgroundColor = "var(--orange)";
+      ampelDot.style.boxShadow = "0 0 0 3px rgba(234, 88, 12, 0.25)";
+    } else {
+      statusText.innerText = "Leistung: Ungenügend";
+      ampelDot.style.backgroundColor = "var(--red)";
+      ampelDot.style.boxShadow = "0 0 0 3px rgba(220, 38, 38, 0.25)";
+    }
+
+    drawRadar(radarScores);
+    if (shouldSave) saveCurrentRefData();
+  }
+
+  function drawRadar(scores) {
+    const canvas = document.getElementById('radarChart');
+    if (!canvas || !canvas.getContext) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+    const cx = w / 2;
+    const cy = h / 2;
+    const radius = Math.min(cx, cy) - 16;
+    const labels = ["Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln"];
+    const total = labels.length;
+
+    ctx.clearRect(0, 0, w, h);
+
+    for (let level = 1; level <= 3; level++) {
+      ctx.beginPath();
+      ctx.strokeStyle = "#CBD5E1";
+      ctx.lineWidth = 1;
+      const r = (radius / 3) * level;
+      for (let i = 0; i < total; i++) {
+        const angle = (Math.PI * 2 / total) * i - Math.PI / 2;
+        const x = cx + Math.cos(angle) * r;
+        const y = cy + Math.sin(angle) * r;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+
+    for (let i = 0; i < total; i++) {
+      const angle = (Math.PI * 2 / total) * i - Math.PI / 2;
+      ctx.beginPath();
+      ctx.strokeStyle = "#E2E8F0";
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius);
+      ctx.stroke();
+    }
+
+    ctx.beginPath();
+    ctx.fillStyle = "rgba(37, 99, 235, 0.25)";
+    ctx.strokeStyle = "#2563EB";
+    ctx.lineWidth = 2;
+
+    for (let i = 0; i < total; i++) {
+      const val = scores[i] !== undefined ? scores[i] : 2;
+      const r = (radius / 3) * Math.max(0.3, val);
+      const angle = (Math.PI * 2 / total) * i - Math.PI / 2;
+      const x = cx + Math.cos(angle) * r;
+      const y = cy + Math.sin(angle) * r;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    for (let i = 0; i < total; i++) {
+      const val = scores[i] !== undefined ? scores[i] : 2;
+      const r = (radius / 3) * Math.max(0.3, val);
+      const angle = (Math.PI * 2 / total) * i - Math.PI / 2;
+      const x = cx + Math.cos(angle) * r;
+      const y = cy + Math.sin(angle) * r;
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = "#0B2545";
+      ctx.fill();
+    }
+  }
+
+  function resetAll() {
+    if (confirm("Möchten Sie das gesamte Spiel und alle Schiedsrichter-Reiter zurücksetzen?")) {
+      localStorage.removeItem('sihf_multi_ref_suite_data');
+      location.reload();
+    }
+  }
+
+  function exportJSON() {
+    saveCurrentRefData();
+    const filename = `Supervision_${document.getElementById('spiel_paarung').value.replace(/\s+/g, '_') || 'Spiel'}_${document.getElementById('spiel_id').value || 'ID'}.json`;
+    const blob = new Blob([JSON.stringify(gameData, null, 2)], { type: "application/json" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+  }
+
+  function exportCSV() {
+    saveCurrentRefData();
+    const rows = [
+      ["Spiel-ID", gameData.global.spiel_id || ""],
+      ["Liga", gameData.global.spiel_liga || ""],
+      ["Begegnung", gameData.global.spiel_paarung || ""],
+      ["Datum", gameData.global.spiel_datum || ""],
+      ["Ort", gameData.global.spiel_ort || ""],
+      ["Supervisor", gameData.global.supervisor_name || ""],
+      ["System", currentSystem],
+      [],
+      ["Rolle", "Name", "Gesamtnote", "Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln", "Trend", "Einstellung", "Feedback", "Top Stärken", "Entwicklung", "Rapport"]
+    ];
+
+    const refs = SYSTEM_CONFIGS[currentSystem];
+    refs.forEach(ref => {
+      const d = gameData.referees[`${currentSystem}_${ref.id}`] || {};
+      rows.push([
+        ref.role,
+        d.name || "",
+        d.overall_grade || "80",
+        d.perf_1 || "80",
+        d.perf_2 || "80",
+        d.perf_3 || "80",
+        d.perf_4 || "80",
+        d.perf_5 || "80",
+        d.perf_6 || "80",
+        d.perf_7 || "80",
+        d.coach_trend || "",
+        d.coach_attitude || "",
+        d.coach_feedback || "",
+        (d.top_strengths || "").replace(/\n/g, ' '),
+        (d.top_workon || "").replace(/\n/g, ' '),
+        (d.general_report || "").replace(/\n/g, ' ')
+      ]);
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.map(cell => '"' + (cell || "").toString().replace(/"/g, '""') + '"').join(";")).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Supervision_${(gameData.global.spiel_paarung || 'Spiel').replace(/\s+/g, '_')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // PWA Service Worker Registration
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => {
+          const badge = document.getElementById('pwaBadge');
+          if (badge) badge.innerText = "● PWA Offline Ready";
+        })
+        .catch(err => {
+          console.log('SW registration skipped or error:', err);
+        });
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', initApp);
+</script>
+</body>
+</html>
