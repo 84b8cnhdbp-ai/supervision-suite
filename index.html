@@ -436,42 +436,44 @@
       <div>
         <label for="spiel_liga" data-i18n="lbl_league">Liga / Stufe</label>
         <select id="spiel_liga" onchange="saveGlobalState()">
-          <optgroup label="Profisport">
+          <optgroup label="Profisport" data-i18n-group="group_pro">
             <option value="National League">National League (NL)</option>
             <option value="Swiss League">Swiss League (SL)</option>
           </optgroup>
-          <optgroup label="Amateursport Herren (Regio League)">
+          <optgroup label="Amateursport Herren (Regio League)" data-i18n-group="group_men">
             <option value="MyHockey League">MyHockey League (MHL)</option>
             <option value="1. Liga">1. Liga</option>
             <option value="2. Liga">2. Liga</option>
             <option value="3. Liga">3. Liga</option>
             <option value="4. Liga">4. Liga</option>
           </optgroup>
-          <optgroup label="Fraueneishockey (Women's Leagues)">
+          <optgroup label="Fraueneishockey (Women's Leagues)" data-i18n-group="group_women">
             <option value="PostFinance Women's League">PostFinance Women's League (PFWL)</option>
             <option value="SWHL B">SWHL B</option>
             <option value="SWHL C">SWHL C</option>
             <option value="SWHL D">SWHL D</option>
           </optgroup>
-          <optgroup label="Nachwuchs Leistungssport">
-            <option value="U20-Elit">U20-Elit</option>
-            <option value="U20-Top">U20-Top</option>
-            <option value="U20-A">U20-A</option>
-            <option value="U17-Elit">U17-Elit</option>
-            <option value="U17-Top">U17-Top</option>
-            <option value="U17-A">U17-A</option>
+          <optgroup label="Nachwuchs Leistungssport (U21 / U18)" data-i18n-group="group_junior_pro">
+            <option value="U21-Elit">U21-Elit</option>
+            <option value="U21-Top">U21-Top</option>
+            <option value="U21-A">U21-A</option>
+            <option value="U18-Elit">U18-Elit</option>
+            <option value="U18-Top">U18-Top</option>
+            <option value="U18-A">U18-A</option>
           </optgroup>
-          <optgroup label="Nachwuchs Breitensport & Erfassung">
-            <option value="U15-Elit">U15-Elit</option>
-            <option value="U15-Top">U15-Top</option>
-            <option value="U15-A">U15-A</option>
-            <option value="U13-Elit">U13-Elit</option>
-            <option value="U13-Top">U13-Top</option>
-            <option value="U13-A">U13-A</option>
-            <option value="U11">U11 (Erfassungsstufe)</option>
-            <option value="U9">U9 (Erfassungsstufe)</option>
+          <optgroup label="Nachwuchs Breitensport (U16 / U14)" data-i18n-group="group_junior_ambition">
+            <option value="U16-Elit">U16-Elit</option>
+            <option value="U16-Top">U16-Top</option>
+            <option value="U16-A">U16-A</option>
+            <option value="U14-Elit">U14-Elit</option>
+            <option value="U14-Top">U14-Top</option>
+            <option value="U14-A">U14-A</option>
           </optgroup>
-          <optgroup label="Cup- & Sonderwettbewerbe">
+          <optgroup label="Nachwuchs Erfassungsstufen (U12 / U9)" data-i18n-group="group_junior_grass">
+            <option value="U12">U12 (Piccolo)</option>
+            <option value="U9">U9 (Bambini)</option>
+          </optgroup>
+          <optgroup label="Cup- & Sonderwettbewerbe" data-i18n-group="group_cup">
             <option value="National Cup Herren">National Cup (Herren)</option>
             <option value="National Cup Frauen">National Cup (Frauen)</option>
             <option value="Kantonal- / Regionalcup">Kantonal- / Regionalcup</option>
@@ -1533,7 +1535,7 @@
 
   function exportJSON() {
     if (activeTabType === "ref") saveCurrentRefData();
-    const filename = `Supervision_${document.getElementById('spiel_paarung').value.replace(/\\s+/g, '_') || 'Game'}_${document.getElementById('spiel_id').value || 'ID'}.json`;
+    const filename = `Supervision_${document.getElementById('spiel_paarung').value.replace(/\s+/g, '_') || 'Game'}_${document.getElementById('spiel_id').value || 'ID'}.json`;
     const blob = new Blob([JSON.stringify(gameData, null, 2)], { type: "application/json" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -1552,7 +1554,7 @@
       [isEn ? "Arena" : "Ort", gameData.global.spiel_ort || ""],
       [isEn ? "Supervisor" : "Supervisor", gameData.global.supervisor_name || ""],
       [isEn ? "System" : "System", currentSystem],
-      [isEn ? "Crew Notes" : "Gespann-Notizen", (gameData.global.crew_notes || "").replace(/\\n/g, ' ')],
+      [isEn ? "Crew Notes" : "Gespann-Notizen", (gameData.global.crew_notes || "").replace(/\n/g, ' ')],
       [],
       isEn
         ? ["Role", "Name", "Overall Grade", "Skating", "Positioning", "Presence", "Anticipation", "De-escalation", "Teamwork", "Rules", "Trend", "Attitude", "Feedback", "Top Strengths", "Work On", "Rapport"]
@@ -1577,17 +1579,17 @@
         d.coach_trend || "",
         d.coach_attitude || "",
         d.coach_feedback || "",
-        (d.top_strengths || "").replace(/\\n/g, ' '),
-        (d.top_workon || "").replace(/\\n/g, ' '),
-        (d.general_report || "").replace(/\\n/g, ' ')
+        (d.top_strengths || "").replace(/\n/g, ' '),
+        (d.top_workon || "").replace(/\n/g, ' '),
+        (d.general_report || "").replace(/\n/g, ' ')
       ]);
     });
 
-    const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.map(cell => '"' + (cell || "").toString().replace(/"/g, '""') + '"').join(";")).join("\\n");
+    const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.map(cell => '"' + (cell || "").toString().replace(/"/g, '""') + '"').join(";")).join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Supervision_${(gameData.global.spiel_paarung || 'Game').replace(/\\s+/g, '_')}.csv`);
+    link.setAttribute("download", `Supervision_${(gameData.global.spiel_paarung || 'Game').replace(/\s+/g, '_')}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
