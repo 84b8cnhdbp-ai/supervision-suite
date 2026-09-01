@@ -92,7 +92,7 @@
   .badge-status { background: #DCFCE7; color: #166534; }
   .badge-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #16A34A; }
 
-  .btn-theme {
+  .btn-control {
     background: rgba(255,255,255,0.15);
     color: #FFF;
     border: 1px solid rgba(255,255,255,0.3);
@@ -103,9 +103,8 @@
     cursor: pointer;
     transition: background 0.15s ease;
   }
-  .btn-theme:hover { background: rgba(255,255,255,0.3); }
+  .btn-control:hover { background: rgba(255,255,255,0.3); }
 
-  /* System Tabs */
   .system-tabs-wrapper {
     background: var(--bg-subtle);
     padding: 10px 30px 0 30px;
@@ -213,7 +212,6 @@
   textarea { resize: vertical; min-height: 55px; font-family: inherit; }
   optgroup { font-weight: bold; }
   
-  /* Analytics Bar */
   .analytics-card {
     background: var(--analytics-bg);
     border: 1px solid var(--analytics-border);
@@ -252,7 +250,6 @@
     align-items: center;
   }
 
-  /* Table styling */
   table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
   th, td { padding: 9px 12px; text-align: left; font-size: 13px; vertical-align: top; border-bottom: 1px solid var(--border); }
   th { background-color: #0B2545; color: #FFF; font-weight: 600; }
@@ -277,7 +274,6 @@
   }
   .stamp-btn:hover { background: var(--border); }
 
-  /* Toolbar buttons */
   .toolbar {
     margin-top: 30px;
     display: flex;
@@ -310,7 +306,6 @@
   .btn-danger { background-color: #FEE2E2; color: #991B1B; }
   .btn-danger:hover { background-color: #FCA5A5; }
 
-  /* Gespann-Summary View Styling */
   .summary-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -334,7 +329,6 @@
     .content { padding: 16px; }
   }
 
-  /* OPTIMIERTES DIN-A4 DRUCKLAYOUT */
   @media print {
     @page {
       size: A4 portrait;
@@ -416,21 +410,22 @@
 <div class="app-container">
   <header>
     <div class="header-titles">
-      <h1>Referee Supervision Hub</h1>
-      <p>Digitales Coaching-, Evaluations- & Analyse-Tool für Schiedsrichter-Supervisoren</p>
+      <h1 data-i18n="app_title">Referee Supervision Hub</h1>
+      <p data-i18n="app_subtitle">Digitales Coaching-, Evaluations- & Analyse-Tool für Schiedsrichter-Supervisoren</p>
     </div>
     <div class="header-controls no-print">
-      <button type="button" class="btn-theme" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+      <button type="button" class="btn-control" id="langToggle" onclick="toggleLang()">🌐 EN</button>
+      <button type="button" class="btn-control" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
       <span class="badge badge-pwa" id="pwaBadge">Offline Ready</span>
       <span class="badge badge-status" id="saveStatus">Auto-Saved</span>
     </div>
   </header>
 
-  <!-- 1. METADATEN (GLOBAL FÜR DAS GESAMTE SPIEL) -->
+  <!-- 1. METADATEN (GLOBAL) -->
   <div style="background: var(--bg-subtle); border-bottom: 1px solid var(--border); padding: 18px 30px;">
     <div class="grid-4" style="margin-bottom: 12px;">
       <div>
-        <label for="system_typ">Schiedsrichter-System</label>
+        <label for="system_typ" data-i18n="lbl_system">Schiedsrichter-System</label>
         <select id="system_typ" onchange="switchSystem(this.value)" style="font-weight: bold; border-color: var(--accent);">
           <option value="4-Man">4-Mann-System (2 Heads / 2 Lines)</option>
           <option value="3-Man">3-Mann-System (1 Head / 2 Lines)</option>
@@ -439,7 +434,7 @@
         </select>
       </div>
       <div>
-        <label for="spiel_liga">Liga / Stufe</label>
+        <label for="spiel_liga" data-i18n="lbl_league">Liga / Stufe</label>
         <select id="spiel_liga" onchange="saveGlobalState()">
           <optgroup label="Profisport">
             <option value="National League">National League (NL)</option>
@@ -486,31 +481,31 @@
         </select>
       </div>
       <div>
-        <label for="spiel_paarung">Begegnung (Heim vs. Gast)</label>
+        <label for="spiel_paarung" data-i18n="lbl_game">Begegnung (Heim vs. Gast)</label>
         <input type="text" id="spiel_paarung" placeholder="z. B. EV Zug vs. ZSC Lions" oninput="saveGlobalState()">
       </div>
       <div>
-        <label for="spiel_id">Spiel-Nr. / ID</label>
+        <label for="spiel_id" data-i18n="lbl_game_id">Spiel-Nr. / ID</label>
         <input type="text" id="spiel_id" placeholder="z. B. 10452" oninput="saveGlobalState()">
       </div>
     </div>
     <div class="grid-3">
       <div>
-        <label for="spiel_datum">Datum & Zeit</label>
+        <label for="spiel_datum" data-i18n="lbl_datetime">Datum & Zeit</label>
         <input type="datetime-local" id="spiel_datum" oninput="saveGlobalState()">
       </div>
       <div>
-        <label for="spiel_ort">Spielort / Arena</label>
+        <label for="spiel_ort" data-i18n="lbl_arena">Spielort / Arena</label>
         <input type="text" id="spiel_ort" placeholder="z. B. Bossard Arena" oninput="saveGlobalState()">
       </div>
       <div>
-        <label for="supervisor_name">Supervisor / Coach</label>
+        <label for="supervisor_name" data-i18n="lbl_supervisor">Supervisor / Coach</label>
         <input type="text" id="supervisor_name" placeholder="Name Supervisor" oninput="saveGlobalState()">
       </div>
     </div>
   </div>
 
-  <!-- DYNAMISCHE REITER FÜR SCHIEDSRICHTER & GESPAGE-SUMMARY -->
+  <!-- DYNAMISCHE TABS -->
   <div class="system-tabs-wrapper no-print">
     <div class="referee-tabs" id="tabsContainer"></div>
     <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;" id="currentSystemInfo">
@@ -521,20 +516,19 @@
   <!-- HAUPTINHALT -->
   <div class="content">
 
-    <!-- ANSICHT 1: EINZEL-SCHIEDSRICHTER-BOGEN -->
+    <!-- ANSICHT 1: EINZEL-SCHIEDSRICHTER -->
     <div id="singleRefView">
-      <!-- LIVE ANALYTICS & RADAR OVERVIEW -->
       <div class="analytics-card">
         <div>
           <div class="score-display">
             <div class="score-circle">
               <span id="scoreVal">80%</span>
-              <small>Score</small>
+              <small data-i18n="txt_score">Score</small>
             </div>
             <div>
               <strong style="font-size: 15px;" id="scoreStatusText">Leistung: Gut / Erfüllt</strong>
               <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 6px;">
-                <span>Gewichteter Score (<span id="activeRefLabel" style="font-weight: 600;">Head Referee 1</span>)</span>
+                <span><span data-i18n="txt_weighted_for">Gewichteter Score</span> (<span id="activeRefLabel" style="font-weight: 600;">Head Referee 1</span>)</span>
                 <span id="ampelDot" style="display: inline-block; width: 11px; height: 11px; border-radius: 50%; background-color: #16A34A; box-shadow: 0 0 0 2px rgba(22,163,74,0.25);"></span>
               </div>
             </div>
@@ -542,15 +536,15 @@
           <!-- Sub-Metrics Pills -->
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 14px; font-size: 11px;">
             <div style="background: var(--bg-card); padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); text-align: center;">
-              <div style="color: var(--text-muted); font-weight: 600;">Teil 2: Gesamt (30%)</div>
+              <div style="color: var(--text-muted); font-weight: 600;" data-i18n="sub_part2">Teil 2: Gesamt (30%)</div>
               <strong id="subScorePart2" style="font-size: 13px;">80%</strong>
             </div>
             <div style="background: var(--bg-card); padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); text-align: center;">
-              <div style="color: var(--text-muted); font-weight: 600;">Teil 3: Matrix (50%)</div>
+              <div style="color: var(--text-muted); font-weight: 600;" data-i18n="sub_part3">Teil 3: Matrix (50%)</div>
               <strong id="subScorePart3" style="font-size: 13px;">80%</strong>
             </div>
             <div style="background: var(--bg-card); padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); text-align: center;">
-              <div style="color: var(--text-muted); font-weight: 600;">Teil 4: Coach (20%)</div>
+              <div style="color: var(--text-muted); font-weight: 600;" data-i18n="sub_part4">Teil 4: Coach (20%)</div>
               <strong id="subScorePart4" style="font-size: 13px;">80%</strong>
             </div>
           </div>
@@ -560,74 +554,68 @@
         </div>
       </div>
 
-      <!-- 1. SCHIEDSRICHTER-ANGABEN DES REITERS -->
-      <div class="section-title"><span class="num">1</span> Angaben zur Person & Funktion</div>
+      <!-- 1. SCHIEDSRICHTER-ANGABEN -->
+      <div class="section-title"><span class="num">1</span> <span data-i18n="sec1_title">Angaben zur Person & Funktion</span></div>
       <div class="grid-2" style="margin-bottom: 12px;">
         <div>
-          <label for="current_schiri_name">Name des Schiedsrichters</label>
+          <label for="current_schiri_name" data-i18n="lbl_ref_name">Name des Schiedsrichters</label>
           <input type="text" id="current_schiri_name" placeholder="Vorname Nachname" oninput="saveCurrentRefData()">
         </div>
         <div>
-          <label for="current_schiri_partner">Gespann-Partner</label>
+          <label for="current_schiri_partner" data-i18n="lbl_partner">Gespann-Partner</label>
           <input type="text" id="current_schiri_partner" placeholder="Partner-Name(n)" oninput="saveCurrentRefData()">
         </div>
       </div>
 
       <!-- 2. GESAMTEINSCHÄTZUNG -->
-      <div class="section-title"><span class="num">2</span> Gesamteinschätzung (Standard)</div>
+      <div class="section-title"><span class="num">2</span> <span data-i18n="sec2_title">Gesamteinschätzung (Standard)</span></div>
       <table>
         <thead>
           <tr>
-            <th style="width: 8%; text-align: center;">Wahl</th>
-            <th style="width: 25%;">Stufe</th>
-            <th>Definition & Kriterien</th>
+            <th style="width: 8%; text-align: center;" data-i18n="th_choice">Wahl</th>
+            <th style="width: 25%;" data-i18n="th_grade">Stufe</th>
+            <th data-i18n="th_definition">Definition & Kriterien</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td style="text-align: center;"><input type="radio" name="overall_grade" value="100" id="grade_sg" onchange="calcScores()"></td>
-            <td><label for="grade_sg" class="radio-row" style="color: var(--green); font-weight: bold;">Sehr Gut</label></td>
-            <td>Mutige, korrekte Schlüsselentscheide unter hohem Druck (z. B. doppelte Unterzahl, Torannullierung). Kein Phantom-Pfiff, perfekte Ruhe, erstklassige Spielkontrolle.</td>
+            <td><label for="grade_sg" class="radio-row" style="color: var(--green); font-weight: bold;" data-i18n="grade_vg">Sehr Gut</label></td>
+            <td data-i18n="desc_vg">Mutige, korrekte Schlüsselentscheide unter hohem Druck (z. B. doppelte Unterzahl, Torannullierung). Kein Phantom-Pfiff, perfekte Ruhe, erstklassige Spielkontrolle.</td>
           </tr>
           <tr>
             <td style="text-align: center;"><input type="radio" name="overall_grade" value="80" id="grade_gut" checked onchange="calcScores()"></td>
-            <td><label for="grade_gut" class="radio-row" style="color: var(--navy-light); font-weight: bold;">Gut / Zufriedenstellend</label></td>
-            <td>Ordentlich geleitetes Spiel, Frustrationsniveau tief gehalten, gutes Gespür für Spielfluss. Hält sich bei Bedarf im Hintergrund und ist vor dem Spielzug an der Torlinie.</td>
+            <td><label for="grade_gut" class="radio-row" style="color: var(--navy-light); font-weight: bold;" data-i18n="grade_good">Gut / Zufriedenstellend</label></td>
+            <td data-i18n="desc_good">Ordentlich geleitetes Spiel, Frustrationsniveau tief gehalten, gutes Gespür für Spielfluss. Hält sich bei Bedarf im Hintergrund und ist vor dem Spielzug an der Torlinie.</td>
           </tr>
           <tr>
             <td style="text-align: center;"><input type="radio" name="overall_grade" value="50" id="grade_vb" onchange="calcScores()"></td>
-            <td><label for="grade_vb" class="radio-row" style="color: var(--orange); font-weight: bold;">Verbesserungsbedürftig</label></td>
-            <td>Wenig Zugriff aufs Spiel, Über- oder Unterinterpretation von Regeln, macht Routine-Situationen unnötig hektisch oder unkonsequent.</td>
+            <td><label for="grade_vb" class="radio-row" style="color: var(--orange); font-weight: bold;" data-i18n="grade_ni">Verbesserungsbedürftig</label></td>
+            <td data-i18n="desc_ni">Wenig Zugriff aufs Spiel, Über- oder Unterinterpretation von Regeln, macht Routine-Situationen unnötig hektisch oder unkonsequent.</td>
           </tr>
           <tr>
             <td style="text-align: center;"><input type="radio" name="overall_grade" value="20" id="grade_ug" onchange="calcScores()"></td>
-            <td><label for="grade_ug" class="radio-row" style="color: var(--red); font-weight: bold;">Ungenügend</label></td>
-            <td>Kontrollverlust, gravierende Regelfehlentscheide, erhebliche Sicherheits- oder Eislaufdefizite.</td>
+            <td><label for="grade_ug" class="radio-row" style="color: var(--red); font-weight: bold;" data-i18n="grade_unsat">Ungenügend</label></td>
+            <td data-i18n="desc_unsat">Kontrollverlust, gravierende Regelfehlentscheide, erhebliche Sicherheits- oder Eislaufdefizite.</td>
           </tr>
         </tbody>
       </table>
 
       <!-- 3. PERFORMANCE MATRIX -->
-      <div class="section-title"><span class="num">3</span> Leistungs-Checkliste & Rollen-Kriterien</div>
+      <div class="section-title"><span class="num">3</span> <span data-i18n="sec3_title">Leistungs-Checkliste & Rollen-Kriterien</span></div>
       <table>
         <thead>
           <tr>
-            <th style="width: 34%;">Bereich & Leitfragen</th>
-            <th style="width: 22%;">Bewertung</th>
-            <th>Szenen, Timestamps & Notizen</th>
+            <th style="width: 34%;" data-i18n="th_matrix_area">Bereich & Leitfragen</th>
+            <th style="width: 22%;" data-i18n="th_matrix_rating">Bewertung</th>
+            <th data-i18n="th_matrix_notes">Szenen, Timestamps & Notizen</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td id="lbl_perf_1"><strong>1. Eislaufen & Physis</strong><br><small style="color:var(--text-muted);">Agilität, Mobilität, Rückwärtslaufen, Fitness</small></td>
             <td>
-              <select class="perf-select" id="perf_1" onchange="calcScores()">
-                <option value="100">++ (Überdurchschnittlich)</option>
-                <option value="80" selected>+ (Erfüllt / Gut)</option>
-                <option value="50">- (Mängel erkennbar)</option>
-                <option value="20">-- (Ungenügend)</option>
-                <option value="NA">N/A (Nicht bewertbar)</option>
-              </select>
+              <select class="perf-select" id="perf_1" onchange="calcScores()"></select>
             </td>
             <td>
               <button type="button" class="stamp-btn" onclick="addTimestamp('note_1')">+ Drittel/Timestamp</button>
@@ -637,13 +625,7 @@
           <tr>
             <td id="lbl_perf_2"><strong>2. Positionsspiel & Sichtachsen</strong><br><small style="color:var(--text-muted);">Torlinie vor Spielzug, Blaue Linie, Blickfeld</small></td>
             <td>
-              <select class="perf-select" id="perf_2" onchange="calcScores()">
-                <option value="100">++ (Überdurchschnittlich)</option>
-                <option value="80" selected>+ (Erfüllt / Gut)</option>
-                <option value="50">- (Mängel erkennbar)</option>
-                <option value="20">-- (Ungenügend)</option>
-                <option value="NA">N/A (Nicht bewertbar)</option>
-              </select>
+              <select class="perf-select" id="perf_2" onchange="calcScores()"></select>
             </td>
             <td>
               <button type="button" class="stamp-btn" onclick="addTimestamp('note_2')">+ Drittel/Timestamp</button>
@@ -653,13 +635,7 @@
           <tr>
             <td id="lbl_perf_3"><strong>3. Pfiff, Zeichengebung & Präsenz</strong><br><small style="color:var(--text-muted);">Signalgebung, Prägnanz, Körpersprache</small></td>
             <td>
-              <select class="perf-select" id="perf_3" onchange="calcScores()">
-                <option value="100">++ (Überdurchschnittlich)</option>
-                <option value="80" selected>+ (Erfüllt / Gut)</option>
-                <option value="50">- (Mängel erkennbar)</option>
-                <option value="20">-- (Ungenügend)</option>
-                <option value="NA">N/A (Nicht bewertbar)</option>
-              </select>
+              <select class="perf-select" id="perf_3" onchange="calcScores()"></select>
             </td>
             <td>
               <button type="button" class="stamp-btn" onclick="addTimestamp('note_3')">+ Drittel/Timestamp</button>
@@ -669,13 +645,7 @@
           <tr>
             <td id="lbl_perf_4"><strong>4. Antizipation & Spielaufmerksamkeit</strong><br><small style="color:var(--text-muted);">Spielzüge lesen, Off-Puck Play, Gefahren</small></td>
             <td>
-              <select class="perf-select" id="perf_4" onchange="calcScores()">
-                <option value="100">++ (Überdurchschnittlich)</option>
-                <option value="80" selected>+ (Erfüllt / Gut)</option>
-                <option value="50">- (Mängel erkennbar)</option>
-                <option value="20">-- (Ungenügend)</option>
-                <option value="NA">N/A (Nicht bewertbar)</option>
-              </select>
+              <select class="perf-select" id="perf_4" onchange="calcScores()"></select>
             </td>
             <td>
               <button type="button" class="stamp-btn" onclick="addTimestamp('note_4')">+ Drittel/Timestamp</button>
@@ -685,13 +655,7 @@
           <tr>
             <td id="lbl_perf_5"><strong>5. Deeskalation & Post-Whistle</strong><br><small style="color:var(--text-muted);">Torraumabsicherung, Rudelbildungen unterbinden</small></td>
             <td>
-              <select class="perf-select" id="perf_5" onchange="calcScores()">
-                <option value="100">++ (Überdurchschnittlich)</option>
-                <option value="80" selected>+ (Erfüllt / Gut)</option>
-                <option value="50">- (Mängel erkennbar)</option>
-                <option value="20">-- (Ungenügend)</option>
-                <option value="NA">N/A (Nicht bewertbar)</option>
-              </select>
+              <select class="perf-select" id="perf_5" onchange="calcScores()"></select>
             </td>
             <td>
               <button type="button" class="stamp-btn" onclick="addTimestamp('note_5')">+ Drittel/Timestamp</button>
@@ -701,13 +665,7 @@
           <tr>
             <td id="lbl_perf_6"><strong>6. Teamwork & Kommunikation</strong><br><small style="color:var(--text-muted);">Gespann-Abstimmung, Dialog mit Captains/Coaches</small></td>
             <td>
-              <select class="perf-select" id="perf_6" onchange="calcScores()">
-                <option value="100">++ (Überdurchschnittlich)</option>
-                <option value="80" selected>+ (Erfüllt / Gut)</option>
-                <option value="50">- (Mängel erkennbar)</option>
-                <option value="20">-- (Ungenügend)</option>
-                <option value="NA">N/A (Nicht bewertbar)</option>
-              </select>
+              <select class="perf-select" id="perf_6" onchange="calcScores()"></select>
             </td>
             <td>
               <button type="button" class="stamp-btn" onclick="addTimestamp('note_6')">+ Drittel/Timestamp</button>
@@ -717,13 +675,7 @@
           <tr>
             <td id="lbl_perf_7"><strong>7. Regelanwendung & Linientreue</strong><br><small style="color:var(--text-muted);">Strafmassstab bzw. Icing/Offside-Präzision</small></td>
             <td>
-              <select class="perf-select" id="perf_7" onchange="calcScores()">
-                <option value="100">++ (Überdurchschnittlich)</option>
-                <option value="80" selected>+ (Erfüllt / Gut)</option>
-                <option value="50">- (Mängel erkennbar)</option>
-                <option value="20">-- (Ungenügend)</option>
-                <option value="NA">N/A (Nicht bewertbar)</option>
-              </select>
+              <select class="perf-select" id="perf_7" onchange="calcScores()"></select>
             </td>
             <td>
               <button type="button" class="stamp-btn" onclick="addTimestamp('note_7')">+ Drittel/Timestamp</button>
@@ -734,77 +686,64 @@
       </table>
 
       <!-- 4. COACHING & ENTWICKLUNG -->
-      <div class="section-title"><span class="num">4</span> Coaching, Trend & Mindset</div>
+      <div class="section-title"><span class="num">4</span> <span data-i18n="sec4_title">Coaching, Trend & Mindset</span></div>
       <div class="grid-3">
         <div>
-          <label for="coach_trend">Leistungsentwicklung / Trend (6.7%)</label>
-          <select id="coach_trend" onchange="calcScores()">
-            <option value="Konstant stabil" selected>Konstant stabil (Gut / 80%)</option>
-            <option value="Fortschritt erkennbar">Fortschritt erkennbar (Top / 100%)</option>
-            <option value="Erstbeobachtung">Erstbeobachtung (Neutral / 80%)</option>
-            <option value="Rückschritt / Instabil">Rückschritt / Instabil (40%)</option>
-          </select>
+          <label for="coach_trend" data-i18n="lbl_trend">Leistungsentwicklung / Trend (6.7%)</label>
+          <select id="coach_trend" onchange="calcScores()"></select>
         </div>
         <div>
-          <label for="coach_attitude">Einstellung On-/Off-Ice (6.7%)</label>
-          <select id="coach_attitude" onchange="calcScores()">
-            <option value="Gut / Angemessen" selected>Gut / Angemessen (80%)</option>
-            <option value="Vorbildlich / Professionell">Vorbildlich / Professionell (100%)</option>
-            <option value="Ausbaufähig">Ausbaufähig (45%)</option>
-          </select>
+          <label for="coach_attitude" data-i18n="lbl_attitude">Einstellung On-/Off-Ice (6.7%)</label>
+          <select id="coach_attitude" onchange="calcScores()"></select>
         </div>
         <div>
-          <label for="coach_feedback">Feedback-Bereitschaft (6.6%)</label>
-          <select id="coach_feedback" onchange="calcScores()">
-            <option value="Konstruktiv" selected>Konstruktiv (80%)</option>
-            <option value="Sehr offen & reflektiert">Sehr offen & reflektiert (100%)</option>
-            <option value="Defensiv / Rechtfertigend">Defensiv / Rechtfertigend (40%)</option>
-          </select>
+          <label for="coach_feedback" data-i18n="lbl_feedback_mind">Feedback-Bereitschaft (6.6%)</label>
+          <select id="coach_feedback" onchange="calcScores()"></select>
         </div>
       </div>
 
       <!-- 5. ABSCHLUSS & FEEDBACK -->
-      <div class="section-title"><span class="num">5</span> Abschluss-Rapport & Action Plan</div>
+      <div class="section-title"><span class="num">5</span> <span data-i18n="sec5_title">Abschluss-Rapport & Action Plan</span></div>
       <div class="grid-2" style="margin-bottom: 12px;">
         <div>
-          <label for="top_strengths">Top 2–3 Stärken (Keep Doing)</label>
+          <label for="top_strengths" data-i18n="lbl_strengths">Top 2–3 Stärken (Keep Doing)</label>
           <textarea id="top_strengths" oninput="saveCurrentRefData()" style="min-height: 85px;" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
         </div>
         <div>
-          <label for="top_workon">Top 2–3 Entwicklungsschwerpunkte (Work On)</label>
+          <label for="top_workon" data-i18n="lbl_workon">Top 2–3 Entwicklungsschwerpunkte (Work On)</label>
           <textarea id="top_workon" oninput="saveCurrentRefData()" style="min-height: 85px;" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
         </div>
       </div>
 
       <div style="margin-bottom: 14px;">
-        <label for="general_report">Ausführlicher Rapport / Besondere Vorkommnisse</label>
+        <label for="general_report" data-i18n="lbl_report">Ausführlicher Rapport / Besondere Vorkommnisse</label>
         <textarea id="general_report" oninput="saveCurrentRefData()" style="min-height: 110px;" placeholder="Szenenanalysen, Coaching-Notizen..."></textarea>
       </div>
 
       <div class="grid-2" style="margin-top: 15px;">
         <div>
-          <label for="visum_ort_datum">Ort, Datum</label>
+          <label for="visum_ort_datum" data-i18n="lbl_location_date">Ort, Datum</label>
           <input type="text" id="visum_ort_datum" oninput="saveCurrentRefData()" placeholder="z. B. Zug, 01.09.2026">
         </div>
         <div>
-          <label for="visum_name">Visum Supervisor</label>
+          <label for="visum_name" data-i18n="lbl_signature">Visum Supervisor</label>
           <input type="text" id="visum_name" oninput="saveCurrentRefData()" placeholder="Vorname Nachname">
         </div>
       </div>
     </div>
 
-    <!-- ANSICHT 2: GESPASS-ZUSAMMENFASSUNG (TEAM SUMMARY) -->
+    <!-- ANSICHT 2: GESPASS-ZUSAMMENFASSUNG -->
     <div id="summaryView" style="display: none;">
-      <div class="section-title" style="margin-top: 0;"><span class="num">★</span> Gespann-Übersicht & Team-Performance</div>
+      <div class="section-title" style="margin-top: 0;"><span class="num">★</span> <span data-i18n="sec_summary_title">Gespann-Übersicht & Team-Performance</span></div>
       <div class="analytics-card" style="grid-template-columns: 1fr 1fr;">
         <div class="score-display">
           <div class="score-circle" style="background: #4F46E5;">
             <span id="crewScoreVal">80%</span>
-            <small>Team</small>
+            <small data-i18n="txt_team">Team</small>
           </div>
           <div>
-            <strong style="font-size: 16px;">Gespann-Durchschnittsnote</strong>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+            <strong style="font-size: 16px;" data-i18n="txt_crew_avg">Gespann-Durchschnittsnote</strong>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;" data-i18n="txt_crew_sub">
               Mittelwert aus allen bewerteten Schiedsrichtern dieses Spiels
             </div>
           </div>
@@ -816,9 +755,9 @@
 
       <div class="summary-grid" id="summaryCardsContainer"></div>
 
-      <div class="section-title" style="margin-top: 28px;"><span class="num">✓</span> Gemeinsame Gespann-Beobachtungen</div>
+      <div class="section-title" style="margin-top: 28px;"><span class="num">✓</span> <span data-i18n="sec_crew_obs">Gemeinsame Gespann-Beobachtungen</span></div>
       <div>
-        <label for="crew_notes">Zusammenarbeit, Teamwork & Spielcharakter</label>
+        <label for="crew_notes" data-i18n="lbl_crew_notes">Zusammenarbeit, Teamwork & Spielcharakter</label>
         <textarea id="crew_notes" oninput="saveGlobalState()" style="min-height: 100px;" placeholder="Beurteilung der Harmonie im Gespann, gegenseitige Unterstützung bei Rudelbildungen, Absprachen vor Bullys..."></textarea>
       </div>
     </div>
@@ -826,12 +765,12 @@
     <!-- ACTIONS TOOLBAR -->
     <div class="toolbar">
       <div>
-        <button type="button" class="btn btn-danger" onclick="resetAll()">Gesamtes Spiel zurücksetzen</button>
+        <button type="button" class="btn btn-danger" onclick="resetAll()" data-i18n="btn_reset">Gesamtes Spiel zurücksetzen</button>
       </div>
       <div class="btn-group">
-        <button type="button" class="btn btn-outline" onclick="exportCSV()">CSV-Export (Alle Schiedsrichter)</button>
-        <button type="button" class="btn btn-secondary" onclick="exportJSON()">Ganzes Spiel sichern (.json)</button>
-        <button type="button" class="btn btn-primary" onclick="window.print()">Drucken / PDF-Export</button>
+        <button type="button" class="btn btn-outline" onclick="exportCSV()" data-i18n="btn_csv">CSV-Export (Alle Schiedsrichter)</button>
+        <button type="button" class="btn btn-secondary" onclick="exportJSON()" data-i18n="btn_json">Ganzes Spiel sichern (.json)</button>
+        <button type="button" class="btn btn-primary" onclick="window.print()" data-i18n="btn_print">Drucken / PDF-Export</button>
       </div>
     </div>
 
@@ -839,27 +778,201 @@
 </div>
 
 <script>
+  const I18N = {
+    de: {
+      app_title: "Referee Supervision Hub",
+      app_subtitle: "Digitales Coaching-, Evaluations- & Analyse-Tool für Schiedsrichter-Supervisoren",
+      lbl_system: "Schiedsrichter-System",
+      lbl_league: "Liga / Stufe",
+      lbl_game: "Begegnung (Heim vs. Gast)",
+      lbl_game_id: "Spiel-Nr. / ID",
+      lbl_datetime: "Datum & Zeit",
+      lbl_arena: "Spielort / Arena",
+      lbl_supervisor: "Supervisor / Coach",
+      txt_score: "Score",
+      txt_weighted_for: "Gewichteter Score",
+      sub_part2: "Teil 2: Gesamt (30%)",
+      sub_part3: "Teil 3: Matrix (50%)",
+      sub_part4: "Teil 4: Coach (20%)",
+      sec1_title: "Angaben zur Person & Funktion",
+      lbl_ref_name: "Name des Schiedsrichters",
+      lbl_partner: "Gespann-Partner",
+      sec2_title: "Gesamteinschätzung (Standard)",
+      th_choice: "Wahl",
+      th_grade: "Stufe",
+      th_definition: "Definition & Kriterien",
+      grade_vg: "Sehr Gut",
+      grade_good: "Gut / Zufriedenstellend",
+      grade_ni: "Verbesserungsbedürftig",
+      grade_unsat: "Ungenügend",
+      desc_vg: "Mutige, korrekte Schlüsselentscheide unter hohem Druck (z. B. doppelte Unterzahl, Torannullierung). Kein Phantom-Pfiff, perfekte Ruhe, erstklassige Spielkontrolle.",
+      desc_good: "Ordentlich geleitetes Spiel, Frustrationsniveau tief gehalten, gutes Gespür für Spielfluss. Hält sich bei Bedarf im Hintergrund und ist vor dem Spielzug an der Torlinie.",
+      desc_ni: "Wenig Zugriff aufs Spiel, Über- oder Unterinterpretation von Regeln, macht Routine-Situationen unnötig hektisch oder unkonsequent.",
+      desc_unsat: "Kontrollverlust, gravierende Regelfehlentscheide, erhebliche Sicherheits- oder Eislaufdefizite.",
+      sec3_title: "Leistungs-Checkliste & Rollen-Kriterien",
+      th_matrix_area: "Bereich & Leitfragen",
+      th_matrix_rating: "Bewertung",
+      th_matrix_notes: "Szenen, Timestamps & Notizen",
+      sec4_title: "Coaching, Trend & Mindset",
+      lbl_trend: "Leistungsentwicklung / Trend (6.7%)",
+      lbl_attitude: "Einstellung On-/Off-Ice (6.7%)",
+      lbl_feedback_mind: "Feedback-Bereitschaft (6.6%)",
+      sec5_title: "Abschluss-Rapport & Action Plan",
+      lbl_strengths: "Top 2–3 Stärken (Keep Doing)",
+      lbl_workon: "Top 2–3 Entwicklungsschwerpunkte (Work On)",
+      lbl_report: "Ausführlicher Rapport / Besondere Vorkommnisse",
+      lbl_location_date: "Ort, Datum",
+      lbl_signature: "Visum Supervisor",
+      sec_summary_title: "Gespann-Übersicht & Team-Performance",
+      txt_team: "Team",
+      txt_crew_avg: "Gespann-Durchschnittsnote",
+      txt_crew_sub: "Mittelwert aus allen bewerteten Schiedsrichtern dieses Spiels",
+      sec_crew_obs: "Gemeinsame Gespann-Beobachtungen",
+      lbl_crew_notes: "Zusammenarbeit, Teamwork & Spielcharakter",
+      btn_reset: "Gesamtes Spiel zurücksetzen",
+      btn_csv: "CSV-Export (Alle Schiedsrichter)",
+      btn_json: "Ganzes Spiel sichern (.json)",
+      btn_print: "Drucken / PDF-Export",
+      txt_tab_crew: "★ Gespann-Übersicht",
+      radar_labels: ["Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln"],
+      perf_options: [
+        { val: "100", text: "++ (Überdurchschnittlich)" },
+        { val: "80", text: "+ (Erfüllt / Gut)" },
+        { val: "50", text: "- (Mängel erkennbar)" },
+        { val: "20", text: "-- (Ungenügend)" },
+        { val: "NA", text: "N/A (Nicht bewertbar)" }
+      ],
+      coach_trend_opts: [
+        { val: "Konstant stabil", text: "Konstant stabil (Gut / 80%)" },
+        { val: "Fortschritt erkennbar", text: "Fortschritt erkennbar (Top / 100%)" },
+        { val: "Erstbeobachtung", text: "Erstbeobachtung (Neutral / 80%)" },
+        { val: "Rückschritt / Instabil", text: "Rückschritt / Instabil (40%)" }
+      ],
+      coach_att_opts: [
+        { val: "Gut / Angemessen", text: "Gut / Angemessen (80%)" },
+        { val: "Vorbildlich / Professionell", text: "Vorbildlich / Professionell (100%)" },
+        { val: "Ausbaufähig", text: "Ausbaufähig (45%)" }
+      ],
+      coach_feed_opts: [
+        { val: "Konstruktiv", text: "Konstruktiv (80%)" },
+        { val: "Sehr offen & reflektiert", text: "Sehr offen & reflektiert (100%)" },
+        { val: "Defensiv / Rechtfertigend", text: "Defensiv / Rechtfertigend (40%)" }
+      ],
+      status_exc: "Leistung: Überdurchschnittlich / Sehr Gut",
+      status_good: "Leistung: Gut / Erfüllt",
+      status_sat: "Leistung: Zufriedenstellend / Solide",
+      status_ni: "Leistung: Verbesserungsbedürftig",
+      status_unsat: "Leistung: Ungenügend"
+    },
+    en: {
+      app_title: "Referee Supervision Hub",
+      app_subtitle: "Digital Coaching, Evaluation & Analytics Suite for Officiating Supervisors",
+      lbl_system: "Officiating System",
+      lbl_league: "League / Level",
+      lbl_game: "Game Matchup (Home vs. Away)",
+      lbl_game_id: "Game ID / No.",
+      lbl_datetime: "Date & Time",
+      lbl_arena: "Location / Arena",
+      lbl_supervisor: "Supervisor / Coach",
+      txt_score: "Score",
+      txt_weighted_for: "Weighted Score for",
+      sub_part2: "Part 2: Overall (30%)",
+      sub_part3: "Part 3: Matrix (50%)",
+      sub_part4: "Part 4: Coach (20%)",
+      sec1_title: "Official's Information & Assignment",
+      lbl_ref_name: "Referee Name",
+      lbl_partner: "Crew Partner(s)",
+      sec2_title: "Overall Performance Rating (Standard)",
+      th_choice: "Select",
+      th_grade: "Grade",
+      th_definition: "Definition & Evaluation Criteria",
+      grade_vg: "Excellent",
+      grade_good: "Good / Satisfactory",
+      grade_ni: "Needs Improvement",
+      grade_unsat: "Unsatisfactory",
+      desc_vg: "Makes courageous, correct key decisions under high pressure. No phantom calls, complete composure, excellent game control.",
+      desc_good: "Solidly officiated game, kept frustration low, good feel for game flow. Stays out of the way when appropriate and arrives at goal line ahead of play.",
+      desc_ni: "Lack of game feel/control, inconsistent standard, over- or under-interprets rulebook, makes routine situations difficult.",
+      desc_unsat: "Loss of control, critical rule misapplications, substantial safety or skating mobility deficits.",
+      sec3_title: "Performance Matrix & Role Competencies",
+      th_matrix_area: "Area & Key Competency",
+      th_matrix_rating: "Rating",
+      th_matrix_notes: "Plays, Timestamps & Notes",
+      sec4_title: "Coaching, Trend & Mindset",
+      lbl_trend: "Performance Trend (6.7%)",
+      lbl_attitude: "On-/Off-Ice Attitude (6.7%)",
+      lbl_feedback_mind: "Feedback Receptiveness (6.6%)",
+      sec5_title: "Debrief Rapport & Action Plan",
+      lbl_strengths: "Top 2–3 Strengths (Keep Doing)",
+      lbl_workon: "Top 2–3 Action Items (Work On)",
+      lbl_report: "Detailed Game Rapport / Key Incidents",
+      lbl_location_date: "Location, Date",
+      lbl_signature: "Supervisor Signature",
+      sec_summary_title: "Crew Summary & Collective Performance",
+      txt_team: "Crew",
+      txt_crew_avg: "Crew Average Rating",
+      txt_crew_sub: "Mean score across all evaluated officials in this game",
+      sec_crew_obs: "Collective Crew Observations",
+      lbl_crew_notes: "Teamwork, Communication & Game Management",
+      btn_reset: "Reset Entire Game",
+      btn_csv: "Export CSV (All Officials)",
+      btn_json: "Backup Game (.json)",
+      btn_print: "Print / Export PDF",
+      txt_tab_crew: "★ Crew Overview",
+      radar_labels: ["Skating", "Position", "Presence", "Anticipation", "De-escalation", "Teamwork", "Rules"],
+      perf_options: [
+        { val: "100", text: "++ (Above Average)" },
+        { val: "80", text: "+ (Proficient / Good)" },
+        { val: "50", text: "- (Deficits Identified)" },
+        { val: "20", text: "-- (Unsatisfactory)" },
+        { val: "NA", text: "N/A (Not Evaluated)" }
+      ],
+      coach_trend_opts: [
+        { val: "Konstant stabil", text: "Consistent / Stable (Good / 80%)" },
+        { val: "Fortschritt erkennbar", text: "Noticeable Progress (Top / 100%)" },
+        { val: "Erstbeobachtung", text: "First Observation (Neutral / 80%)" },
+        { val: "Rückschritt / Instabil", text: "Regression / Inconsistent (40%)" }
+      ],
+      coach_att_opts: [
+        { val: "Gut / Angemessen", text: "Good / Professional (80%)" },
+        { val: "Vorbildlich / Professionell", text: "Exemplary / Role Model (100%)" },
+        { val: "Ausbaufähig", text: "Needs Development (45%)" }
+      ],
+      coach_feed_opts: [
+        { val: "Konstruktiv", text: "Constructive (80%)" },
+        { val: "Sehr offen & reflektiert", text: "Highly Receptive & Reflective (100%)" },
+        { val: "Defensiv / Rechtfertigend", text: "Defensive / Resistant (40%)" }
+      ],
+      status_exc: "Performance: Above Average / Excellent",
+      status_good: "Performance: Good / Proficient",
+      status_sat: "Performance: Satisfactory / Solid",
+      status_ni: "Performance: Needs Improvement",
+      status_unsat: "Performance: Unsatisfactory"
+    }
+  };
+
   const SYSTEM_CONFIGS = {
     "4-Man": [
-      { id: "h1", role: "Head Referee 1", type: "head", badge: "Head 1" },
-      { id: "h2", role: "Head Referee 2", type: "head", badge: "Head 2" },
-      { id: "l1", role: "Linesperson 1", type: "lines", badge: "Lines 1" },
-      { id: "l2", role: "Linesperson 2", type: "lines", badge: "Lines 2" }
+      { id: "h1", role_de: "Head Referee 1", role_en: "Head Referee 1", type: "head", badge: "Head 1" },
+      { id: "h2", role_de: "Head Referee 2", role_en: "Head Referee 2", type: "head", badge: "Head 2" },
+      { id: "l1", role_de: "Linesperson 1", role_en: "Linesperson 1", type: "lines", badge: "Lines 1" },
+      { id: "l2", role_de: "Linesperson 2", role_en: "Linesperson 2", type: "lines", badge: "Lines 2" }
     ],
     "3-Man": [
-      { id: "h1", role: "Head Referee 1", type: "head", badge: "Head" },
-      { id: "l1", role: "Linesperson 1", type: "lines", badge: "Lines 1" },
-      { id: "l2", role: "Linesperson 2", type: "lines", badge: "Lines 2" }
+      { id: "h1", role_de: "Head Referee 1", role_en: "Head Referee 1", type: "head", badge: "Head" },
+      { id: "l1", role_de: "Linesperson 1", role_en: "Linesperson 1", type: "lines", badge: "Lines 1" },
+      { id: "l2", role_de: "Linesperson 2", role_en: "Linesperson 2", type: "lines", badge: "Lines 2" }
     ],
     "2-Man": [
-      { id: "r1", role: "Referee 1", type: "dual", badge: "Ref 1" },
-      { id: "r2", role: "Referee 2", type: "dual", badge: "Ref 2" }
+      { id: "r1", role_de: "Referee 1", role_en: "Referee 1", type: "dual", badge: "Ref 1" },
+      { id: "r2", role_de: "Referee 2", role_en: "Referee 2", type: "dual", badge: "Ref 2" }
     ],
     "1-Man": [
-      { id: "r1", role: "Einzel-Schiedsrichter", type: "solo", badge: "Solo Ref" }
+      { id: "r1", role_de: "Einzel-Schiedsrichter", role_en: "Solo Referee", type: "solo", badge: "Solo Ref" }
     ]
   };
 
+  let currentLang = "de";
   let currentSystem = "4-Man";
   let activeTabType = "ref";
   let activeRefIndex = 0;
@@ -869,14 +982,85 @@
   };
 
   function initApp() {
+    loadLanguagePreference();
     loadTheme();
     loadFullState();
+    applyTranslations();
     renderTabs();
     if (activeTabType === "summary") {
-      showSummaryView();
+      renderSummaryView();
     } else {
       loadRefereeForm(activeRefIndex);
     }
+  }
+
+  function toggleLang() {
+    currentLang = currentLang === "de" ? "en" : "de";
+    document.getElementById('langToggle').innerText = currentLang === "de" ? "🌐 EN" : "🌐 DE";
+    localStorage.setItem('referee_lang_preference', currentLang);
+    applyTranslations();
+    renderTabs();
+    loadRefereeForm(activeRefIndex);
+  }
+
+  function loadLanguagePreference() {
+    const pref = localStorage.getItem('referee_lang_preference');
+    if (pref === "en" || pref === "de") currentLang = pref;
+    document.getElementById('langToggle').innerText = currentLang === "de" ? "🌐 EN" : "🌐 DE";
+  }
+
+  function applyTranslations() {
+    const dict = I18N[currentLang];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key]) el.innerText = dict[key];
+    });
+
+    for (let i = 1; i <= 7; i++) {
+      const select = document.getElementById(`perf_${i}`);
+      const curVal = select.value || "80";
+      select.innerHTML = "";
+      dict.perf_options.forEach(opt => {
+        const o = document.createElement('option');
+        o.value = opt.val;
+        o.innerText = opt.text;
+        if (opt.val === curVal) o.selected = true;
+        select.appendChild(o);
+      });
+    }
+
+    const tSel = document.getElementById('coach_trend');
+    const curT = tSel.value || "Konstant stabil";
+    tSel.innerHTML = "";
+    dict.coach_trend_opts.forEach(opt => {
+      const o = document.createElement('option');
+      o.value = opt.val;
+      o.innerText = opt.text;
+      if (curT.includes(opt.val)) o.selected = true;
+      tSel.appendChild(o);
+    });
+
+    const aSel = document.getElementById('coach_attitude');
+    const curA = aSel.value || "Gut / Angemessen";
+    aSel.innerHTML = "";
+    dict.coach_att_opts.forEach(opt => {
+      const o = document.createElement('option');
+      o.value = opt.val;
+      o.innerText = opt.text;
+      if (curA.includes(opt.val)) o.selected = true;
+      aSel.appendChild(o);
+    });
+
+    const fSel = document.getElementById('coach_feedback');
+    const curF = fSel.value || "Konstruktiv";
+    fSel.innerHTML = "";
+    dict.coach_feed_opts.forEach(opt => {
+      const o = document.createElement('option');
+      o.value = opt.val;
+      o.innerText = opt.text;
+      if (curF.includes(opt.val)) o.selected = true;
+      fSel.appendChild(o);
+    });
   }
 
   function toggleTheme() {
@@ -909,12 +1093,14 @@
     const tabsContainer = document.getElementById('tabsContainer');
     tabsContainer.innerHTML = "";
     const refs = SYSTEM_CONFIGS[currentSystem];
+    const dict = I18N[currentLang];
 
     refs.forEach((ref, index) => {
+      const roleText = currentLang === "en" ? ref.role_en : ref.role_de;
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'tab-btn' + (activeTabType === "ref" && index === activeRefIndex ? ' active' : '');
-      btn.innerHTML = `<span>${ref.role}</span> <span class="tab-badge">${ref.badge}</span>`;
+      btn.innerHTML = `<span>${roleText}</span> <span class="tab-badge">${ref.badge}</span>`;
       btn.onclick = () => selectRefTab(index);
       tabsContainer.appendChild(btn);
     });
@@ -923,12 +1109,12 @@
       const sumBtn = document.createElement('button');
       sumBtn.type = 'button';
       sumBtn.className = 'tab-btn tab-summary' + (activeTabType === "summary" ? ' active' : '');
-      sumBtn.innerHTML = `<span>★ Gespann-Übersicht</span>`;
+      sumBtn.innerHTML = `<span>${dict.txt_tab_crew}</span>`;
       sumBtn.onclick = () => selectSummaryTab();
       tabsContainer.appendChild(sumBtn);
     }
 
-    document.getElementById('currentSystemInfo').innerText = `Aktiv: ${currentSystem} (${refs.length} Schiedsrichter)`;
+    document.getElementById('currentSystemInfo').innerText = `${currentSystem} (${refs.length} ${currentLang === 'en' ? 'Officials' : 'Schiedsrichter'})`;
   }
 
   function selectRefTab(index) {
@@ -952,22 +1138,59 @@
 
   function adjustLabelsForRole(refConfig) {
     const isLines = refConfig.type === 'lines';
+    const isEn = currentLang === 'en';
+
     if (isLines) {
-      document.getElementById('lbl_perf_2').innerHTML = `<strong>2. Positionsspiel & Linienkontrolle</strong><br><small style="color:var(--text-muted);">Blaue Linie bei knappen Offsides, Icing-Beurteilung</small>`;
-      document.getElementById('lbl_perf_3').innerHTML = `<strong>3. Pfiff, Bully-Präsenz & Signale</strong><br><small style="color:var(--text-muted);">Korrektes Anspiel, Bully-Conduct, Zeichen Icing/Abseits</small>`;
-      document.getElementById('lbl_perf_5').innerHTML = `<strong>5. Deeskalation & Scrum-Intervention</strong><br><small style="color:var(--text-muted);">Schnelles Trennen von Spielern, Torraumabsicherung</small>`;
-      document.getElementById('lbl_perf_7').innerHTML = `<strong>7. Regelanwendung (Abseits / Icing / Handpass)</strong><br><small style="color:var(--text-muted);">Präzision bei Linienentscheiden & Puckkontakt</small>`;
+      document.getElementById('lbl_perf_1').innerHTML = isEn
+        ? `<strong>1. Skating & Physical Stamina</strong><br><small style="color:var(--text-muted);">Mobility, agility, backwards acceleration</small>`
+        : `<strong>1. Eislaufen & Physis</strong><br><small style="color:var(--text-muted);">Agilität, Mobilität, Rückwärtslaufen, Fitness</small>`;
+      document.getElementById('lbl_perf_2').innerHTML = isEn 
+        ? `<strong>2. Positioning & Line Judgment</strong><br><small style="color:var(--text-muted);">Blue line tight offsides, icing assessment</small>`
+        : `<strong>2. Positionsspiel & Linienkontrolle</strong><br><small style="color:var(--text-muted);">Blaue Linie bei knappen Offsides, Icing-Beurteilung</small>`;
+      document.getElementById('lbl_perf_3').innerHTML = isEn
+        ? `<strong>3. Whistle, Face-Offs & Signals</strong><br><small style="color:var(--text-muted);">Puck drop technique, face-off conduct, signals</small>`
+        : `<strong>3. Pfiff, Bully-Präsenz & Signale</strong><br><small style="color:var(--text-muted);">Korrektes Anspiel, Bully-Conduct, Zeichen Icing/Abseits</small>`;
+      document.getElementById('lbl_perf_4').innerHTML = isEn
+        ? `<strong>4. Anticipation & Play Reading</strong><br><small style="color:var(--text-muted);">Reading dump-ins, deflections, off-puck fouls</small>`
+        : `<strong>4. Antizipation & Spielaufmerksamkeit</strong><br><small style="color:var(--text-muted);">Spielzüge lesen, Off-Puck Play, Gefahren</small>`;
+      document.getElementById('lbl_perf_5').innerHTML = isEn
+        ? `<strong>5. Scrum Management & Intervention</strong><br><small style="color:var(--text-muted);">Fast separation of players, net-front safety</small>`
+        : `<strong>5. Deeskalation & Scrum-Intervention</strong><br><small style="color:var(--text-muted);">Schnelles Trennen von Spielern, Torraumabsicherung</small>`;
+      document.getElementById('lbl_perf_6').innerHTML = isEn
+        ? `<strong>6. Teamwork & Communication</strong><br><small style="color:var(--text-muted);">Partner eye contact, communication with benches</small>`
+        : `<strong>6. Teamwork & Kommunikation</strong><br><small style="color:var(--text-muted);">Gespann-Abstimmung, Dialog mit Captains/Coaches</small>`;
+      document.getElementById('lbl_perf_7').innerHTML = isEn
+        ? `<strong>7. Rule Application (Offside / Icing / Handpass)</strong><br><small style="color:var(--text-muted);">Precision on lines & high-stick puck touches</small>`
+        : `<strong>7. Regelanwendung (Abseits / Icing / Handpass)</strong><br><small style="color:var(--text-muted);">Präzision bei Linienentscheiden & Puckkontakt</small>`;
     } else {
-      document.getElementById('lbl_perf_2').innerHTML = `<strong>2. Positionsspiel & Sichtachsen</strong><br><small style="color:var(--text-muted);">Torlinie vor Spielzug, Net-Front-Position, Blickfeld</small>`;
-      document.getElementById('lbl_perf_3').innerHTML = `<strong>3. Pfiff, Zeichengebung & Präsenz</strong><br><small style="color:var(--text-muted);">Prägnanz, klare Signale, aufrechte Körpersprache</small>`;
-      document.getElementById('lbl_perf_5').innerHTML = `<strong>5. Deeskalation & Post-Whistle Management</strong><br><small style="color:var(--text-muted);">Torraumabsicherung, Rudelbildungen unterbinden</small>`;
-      document.getElementById('lbl_perf_7').innerHTML = `<strong>7. Strafmassstab & Regelanwendung</strong><br><small style="color:var(--text-muted);">Konstanz über 60 Min., Offizielles Regelbuch & Weisungen</small>`;
+      document.getElementById('lbl_perf_1').innerHTML = isEn
+        ? `<strong>1. Skating & Physical Stamina</strong><br><small style="color:var(--text-muted);">Speed, agility, backwards mobility over 60 min</small>`
+        : `<strong>1. Eislaufen & Physis</strong><br><small style="color:var(--text-muted);">Agilität, Mobilität, Rückwärtslaufen, Fitness</small>`;
+      document.getElementById('lbl_perf_2').innerHTML = isEn
+        ? `<strong>2. Positioning & Sightlines</strong><br><small style="color:var(--text-muted);">Goal line ahead of play, net-front position, sightlines</small>`
+        : `<strong>2. Positionsspiel & Sichtachsen</strong><br><small style="color:var(--text-muted);">Torlinie vor Spielzug, Net-Front-Position, Blickfeld</small>`;
+      document.getElementById('lbl_perf_3').innerHTML = isEn
+        ? `<strong>3. Whistle, Signals & Body Language</strong><br><small style="color:var(--text-muted);">Sharp whistle, authoritative signals, upright posture</small>`
+        : `<strong>3. Pfiff, Zeichengebung & Präsenz</strong><br><small style="color:var(--text-muted);">Prägnanz, klare Signale, aufrechte Körpersprache</small>`;
+      document.getElementById('lbl_perf_4').innerHTML = isEn
+        ? `<strong>4. Anticipation & Game Awareness</strong><br><small style="color:var(--text-muted);">Reading plays, anticipating contact, awareness</small>`
+        : `<strong>4. Antizipation & Spielaufmerksamkeit</strong><br><small style="color:var(--text-muted);">Spielzüge lesen, Off-Puck Play, Gefahren</small>`;
+      document.getElementById('lbl_perf_5').innerHTML = isEn
+        ? `<strong>5. De-escalation & Post-Whistle Control</strong><br><small style="color:var(--text-muted);">Protecting goalies, stopping scrums immediately</small>`
+        : `<strong>5. Deeskalation & Post-Whistle Management</strong><br><small style="color:var(--text-muted);">Torraumabsicherung, Rudelbildungen unterbinden</small>`;
+      document.getElementById('lbl_perf_6').innerHTML = isEn
+        ? `<strong>6. Teamwork & Communication</strong><br><small style="color:var(--text-muted);">Crew coordination, respectful bench dialogue</small>`
+        : `<strong>6. Teamwork & Kommunikation</strong><br><small style="color:var(--text-muted);">Gespann-Abstimmung, Dialog mit Captains/Coaches</small>`;
+      document.getElementById('lbl_perf_7').innerHTML = isEn
+        ? `<strong>7. Penalty Standard & Rulebook Adherence</strong><br><small style="color:var(--text-muted);">60-min consistency, adherence to official rulebook</small>`
+        : `<strong>7. Strafmassstab & Regelanwendung</strong><br><small style="color:var(--text-muted);">Konstanz über 60 Min., Offizielles Regelbuch & Weisungen</small>`;
     }
   }
 
   function loadRefereeForm(index) {
     const refConfig = SYSTEM_CONFIGS[currentSystem][index];
-    document.getElementById('activeRefLabel').innerText = refConfig.role;
+    const roleName = currentLang === 'en' ? refConfig.role_en : refConfig.role_de;
+    document.getElementById('activeRefLabel').innerText = roleName;
     adjustLabelsForRole(refConfig);
 
     const refKey = `${currentSystem}_${refConfig.id}`;
@@ -986,9 +1209,9 @@
       document.getElementById(`note_${i}`).value = data[`note_${i}`] || "";
     }
 
-    document.getElementById('coach_trend').value = data.coach_trend || "Konstant stabil (Gut / 80%)";
-    document.getElementById('coach_attitude').value = data.coach_attitude || "Gut / Angemessen (80%)";
-    document.getElementById('coach_feedback').value = data.coach_feedback || "Konstruktiv (80%)";
+    if (data.coach_trend) document.getElementById('coach_trend').value = data.coach_trend;
+    if (data.coach_attitude) document.getElementById('coach_attitude').value = data.coach_attitude;
+    if (data.coach_feedback) document.getElementById('coach_feedback').value = data.coach_feedback;
 
     document.getElementById('top_strengths').value = data.top_strengths || "";
     document.getElementById('top_workon').value = data.top_workon || "";
@@ -1003,11 +1226,10 @@
     const refConfig = SYSTEM_CONFIGS[currentSystem][activeRefIndex];
     if (!refConfig) return;
     const refKey = `${currentSystem}_${refConfig.id}`;
-
     const selectedGrade = document.querySelector('input[name="overall_grade"]:checked');
 
     const data = {
-      role: refConfig.role,
+      role: currentLang === 'en' ? refConfig.role_en : refConfig.role_de,
       name: document.getElementById('current_schiri_name').value,
       partner: document.getElementById('current_schiri_partner').value,
       overall_grade: selectedGrade ? selectedGrade.value : "80",
@@ -1034,9 +1256,9 @@
     return {
       overall_grade: "80",
       perf_1: "80", perf_2: "80", perf_3: "80", perf_4: "80", perf_5: "80", perf_6: "80", perf_7: "80",
-      coach_trend: "Konstant stabil (Gut / 80%)",
-      coach_attitude: "Gut / Angemessen (80%)",
-      coach_feedback: "Konstruktiv (80%)"
+      coach_trend: "Konstant stabil",
+      coach_attitude: "Gut / Angemessen",
+      coach_feedback: "Konstruktiv"
     };
   }
 
@@ -1058,7 +1280,7 @@
     localStorage.setItem('referee_multi_supervision_data', JSON.stringify(gameData));
     const status = document.getElementById('saveStatus');
     if (status) {
-      status.innerText = "Auto-Saved (" + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'}) + ")";
+      status.innerText = (currentLang === 'en' ? "Auto-Saved (" : "Auto-Gespeichert (") + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'}) + ")";
     }
   }
 
@@ -1090,7 +1312,10 @@
 
   function addTimestamp(targetId) {
     const field = document.getElementById(targetId);
-    const stamp = prompt("Drittel & Spielminute eingeben (z. B. 'P2 08:34'):", "P1 00:00");
+    const promptMsg = currentLang === 'en' 
+      ? "Enter Period & Game Clock (e.g. 'P2 08:34'):"
+      : "Drittel & Spielminute eingeben (z. B. 'P2 08:34'):";
+    const stamp = prompt(promptMsg, "P1 00:00");
     if (stamp) {
       field.value += (field.value.trim() ? "\n" : "") + "[" + stamp + "] ";
       field.focus();
@@ -1099,6 +1324,7 @@
   }
 
   function calcScores(shouldSave = true) {
+    const dict = I18N[currentLang];
     const selectedGrade = document.querySelector('input[name="overall_grade"]:checked');
     const part2Score = selectedGrade ? parseInt(selectedGrade.value, 10) : 80;
 
@@ -1133,9 +1359,9 @@
     const attitudeVal = document.getElementById('coach_attitude').value;
     const feedbackVal = document.getElementById('coach_feedback').value;
 
-    let scoreTrend = trendVal.includes('Fortschritt') ? 100 : (trendVal.includes('Rückschritt') ? 40 : 80);
-    let scoreAttitude = attitudeVal.includes('Vorbildlich') ? 100 : (attitudeVal.includes('Ausbaufähig') ? 45 : 80);
-    let scoreFeedback = feedbackVal.includes('Sehr offen') ? 100 : (feedbackVal.includes('Defensiv') ? 40 : 80);
+    let scoreTrend = (trendVal.includes('Fortschritt') || trendVal.includes('Noticeable')) ? 100 : ((trendVal.includes('Rückschritt') || trendVal.includes('Regression')) ? 40 : 80);
+    let scoreAttitude = (attitudeVal.includes('Vorbildlich') || attitudeVal.includes('Exemplary')) ? 100 : ((attitudeVal.includes('Ausbaufähig') || attitudeVal.includes('Development')) ? 45 : 80);
+    let scoreFeedback = (feedbackVal.includes('Sehr offen') || feedbackVal.includes('Highly')) ? 100 : ((feedbackVal.includes('Defensiv') || feedbackVal.includes('Defensive')) ? 40 : 80);
 
     const part4Score = Math.round((scoreTrend + scoreAttitude + scoreFeedback) / 3);
     const totalScore = Math.round((part2Score * 0.30) + (part3Score * 0.50) + (part4Score * 0.20));
@@ -1149,23 +1375,23 @@
     const ampelDot = document.getElementById('ampelDot');
 
     if (totalScore > 80) {
-      statusText.innerText = "Leistung: Überdurchschnittlich / Sehr Gut";
+      statusText.innerText = dict.status_exc;
       ampelDot.style.backgroundColor = "var(--green)";
       ampelDot.style.boxShadow = "0 0 0 3px rgba(22, 163, 74, 0.25)";
     } else if (totalScore >= 75) {
-      statusText.innerText = "Leistung: Gut / Erfüllt";
+      statusText.innerText = dict.status_good;
       ampelDot.style.backgroundColor = "#16A34A";
       ampelDot.style.boxShadow = "0 0 0 3px rgba(22, 163, 74, 0.25)";
     } else if (totalScore >= 60) {
-      statusText.innerText = "Leistung: Zufriedenstellend / Solide";
+      statusText.innerText = dict.status_sat;
       ampelDot.style.backgroundColor = "#84CC16";
       ampelDot.style.boxShadow = "0 0 0 3px rgba(132, 204, 22, 0.25)";
     } else if (totalScore >= 45) {
-      statusText.innerText = "Leistung: Verbesserungsbedürftig";
+      statusText.innerText = dict.status_ni;
       ampelDot.style.backgroundColor = "var(--orange)";
       ampelDot.style.boxShadow = "0 0 0 3px rgba(234, 88, 12, 0.25)";
     } else {
-      statusText.innerText = "Leistung: Ungenügend";
+      statusText.innerText = dict.status_unsat;
       ampelDot.style.backgroundColor = "var(--red)";
       ampelDot.style.boxShadow = "0 0 0 3px rgba(220, 38, 38, 0.25)";
     }
@@ -1184,6 +1410,7 @@
 
     refs.forEach((ref, idx) => {
       const d = gameData.referees[`${currentSystem}_${ref.id}`] || getDefaultRefData();
+      const roleText = currentLang === 'en' ? ref.role_en : ref.role_de;
       
       const p2 = parseInt(d.overall_grade || "80", 10);
       let mTotal = 0;
@@ -1194,9 +1421,9 @@
       }
       const p3 = Math.round(mTotal / 7);
 
-      let sTrend = (d.coach_trend || "").includes('Fortschritt') ? 100 : ((d.coach_trend || "").includes('Rückschritt') ? 40 : 80);
-      let sAtt = (d.coach_attitude || "").includes('Vorbildlich') ? 100 : ((d.coach_attitude || "").includes('Ausbaufähig') ? 45 : 80);
-      let sFeed = (d.coach_feedback || "").includes('Sehr offen') ? 100 : ((d.coach_feedback || "").includes('Defensiv') ? 40 : 80);
+      let sTrend = ((d.coach_trend || "").includes('Fortschritt') || (d.coach_trend || "").includes('Noticeable')) ? 100 : (((d.coach_trend || "").includes('Rückschritt') || (d.coach_trend || "").includes('Regression')) ? 40 : 80);
+      let sAtt = ((d.coach_attitude || "").includes('Vorbildlich') || (d.coach_attitude || "").includes('Exemplary')) ? 100 : (((d.coach_attitude || "").includes('Ausbaufähig') || (d.coach_attitude || "").includes('Development')) ? 45 : 80);
+      let sFeed = ((d.coach_feedback || "").includes('Sehr offen') || (d.coach_feedback || "").includes('Highly')) ? 100 : (((d.coach_feedback || "").includes('Defensiv') || (d.coach_feedback || "").includes('Defensive')) ? 40 : 80);
       const p4 = Math.round((sTrend + sAtt + sFeed) / 3);
 
       const refScore = Math.round((p2 * 0.3) + (p3 * 0.5) + (p4 * 0.2));
@@ -1205,10 +1432,10 @@
       const card = document.createElement('div');
       card.className = "summary-card";
       card.innerHTML = `
-        <h3>${ref.role}</h3>
-        <div class="name">${d.name || "<i>Kein Name</i>"}</div>
+        <h3>${roleText}</h3>
+        <div class="name">${d.name || (currentLang === 'en' ? "<i>Unnamed Official</i>" : "<i>Kein Name</i>")}</div>
         <div class="score">${refScore}%</div>
-        <div style="font-size: 11px; color: var(--text-muted);">Note: ${p2}% | Matrix: ${p3}% | Coach: ${p4}%</div>
+        <div style="font-size: 11px; color: var(--text-muted);">${currentLang === 'en' ? 'Grade' : 'Note'}: ${p2}% | Matrix: ${p3}% | Coach: ${p4}%</div>
       `;
       container.appendChild(card);
     });
@@ -1229,7 +1456,7 @@
     const cx = w / 2;
     const cy = h / 2;
     const radius = Math.min(cx, cy) - 16;
-    const labels = ["Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln"];
+    const labels = I18N[currentLang].radar_labels;
     const total = labels.length;
 
     const isDark = document.body.classList.contains('dark-mode');
@@ -1295,7 +1522,10 @@
   }
 
   function resetAll() {
-    if (confirm("Möchten Sie das gesamte Spiel und alle Schiedsrichter-Reiter zurücksetzen?")) {
+    const confirmMsg = currentLang === 'en'
+      ? "Reset the entire game evaluation and all officiating tabs?"
+      : "Möchten Sie das gesamte Spiel und alle Schiedsrichter-Reiter zurücksetzen?";
+    if (confirm(confirmMsg)) {
       localStorage.removeItem('referee_multi_supervision_data');
       location.reload();
     }
@@ -1303,7 +1533,7 @@
 
   function exportJSON() {
     if (activeTabType === "ref") saveCurrentRefData();
-    const filename = `Supervision_${document.getElementById('spiel_paarung').value.replace(/\s+/g, '_') || 'Spiel'}_${document.getElementById('spiel_id').value || 'ID'}.json`;
+    const filename = `Supervision_${document.getElementById('spiel_paarung').value.replace(/\\s+/g, '_') || 'Game'}_${document.getElementById('spiel_id').value || 'ID'}.json`;
     const blob = new Blob([JSON.stringify(gameData, null, 2)], { type: "application/json" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -1313,24 +1543,28 @@
 
   function exportCSV() {
     if (activeTabType === "ref") saveCurrentRefData();
+    const isEn = currentLang === 'en';
     const rows = [
-      ["Spiel-ID", gameData.global.spiel_id || ""],
-      ["Liga", gameData.global.spiel_liga || ""],
-      ["Begegnung", gameData.global.spiel_paarung || ""],
-      ["Datum", gameData.global.spiel_datum || ""],
-      ["Ort", gameData.global.spiel_ort || ""],
-      ["Supervisor", gameData.global.supervisor_name || ""],
-      ["System", currentSystem],
-      ["Gespann-Notizen", (gameData.global.crew_notes || "").replace(/\n/g, ' ')],
+      [isEn ? "Game-ID" : "Spiel-ID", gameData.global.spiel_id || ""],
+      [isEn ? "League" : "Liga", gameData.global.spiel_liga || ""],
+      [isEn ? "Matchup" : "Begegnung", gameData.global.spiel_paarung || ""],
+      [isEn ? "Date" : "Datum", gameData.global.spiel_datum || ""],
+      [isEn ? "Arena" : "Ort", gameData.global.spiel_ort || ""],
+      [isEn ? "Supervisor" : "Supervisor", gameData.global.supervisor_name || ""],
+      [isEn ? "System" : "System", currentSystem],
+      [isEn ? "Crew Notes" : "Gespann-Notizen", (gameData.global.crew_notes || "").replace(/\\n/g, ' ')],
       [],
-      ["Rolle", "Name", "Gesamtnote", "Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln", "Trend", "Einstellung", "Feedback", "Top Stärken", "Entwicklung", "Rapport"]
+      isEn
+        ? ["Role", "Name", "Overall Grade", "Skating", "Positioning", "Presence", "Anticipation", "De-escalation", "Teamwork", "Rules", "Trend", "Attitude", "Feedback", "Top Strengths", "Work On", "Rapport"]
+        : ["Rolle", "Name", "Gesamtnote", "Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln", "Trend", "Einstellung", "Feedback", "Top Stärken", "Entwicklung", "Rapport"]
     ];
 
     const refs = SYSTEM_CONFIGS[currentSystem];
     refs.forEach(ref => {
       const d = gameData.referees[`${currentSystem}_${ref.id}`] || {};
+      const roleText = isEn ? ref.role_en : ref.role_de;
       rows.push([
-        ref.role,
+        roleText,
         d.name || "",
         d.overall_grade || "80",
         d.perf_1 || "80",
@@ -1343,23 +1577,22 @@
         d.coach_trend || "",
         d.coach_attitude || "",
         d.coach_feedback || "",
-        (d.top_strengths || "").replace(/\n/g, ' '),
-        (d.top_workon || "").replace(/\n/g, ' '),
-        (d.general_report || "").replace(/\n/g, ' ')
+        (d.top_strengths || "").replace(/\\n/g, ' '),
+        (d.top_workon || "").replace(/\\n/g, ' '),
+        (d.general_report || "").replace(/\\n/g, ' ')
       ]);
     });
 
-    const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.map(cell => '"' + (cell || "").toString().replace(/"/g, '""') + '"').join(";")).join("\n");
+    const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.map(cell => '"' + (cell || "").toString().replace(/"/g, '""') + '"').join(";")).join("\\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Supervision_${(gameData.global.spiel_paarung || 'Spiel').replace(/\s+/g, '_')}.csv`);
+    link.setAttribute("download", `Supervision_${(gameData.global.spiel_paarung || 'Game').replace(/\\s+/g, '_')}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   }
 
-  // PWA Service Worker Registration
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js')
