@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sihf-supervision-v1';
+const CACHE_NAME = 'referee-supervision-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
