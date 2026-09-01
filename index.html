@@ -10,10 +10,11 @@
 <link rel="manifest" href="manifest.json">
 <style>
   :root {
+    --bg-page: #F4F7FA;
+    --bg-card: #FFFFFF;
+    --bg-subtle: #F8FAFC;
     --navy: #0B2545;
     --navy-light: #134074;
-    --ice-bg: #F4F7FA;
-    --ice-card: #FFFFFF;
     --border: #CBD5E1;
     --text: #0F172A;
     --text-muted: #64748B;
@@ -22,40 +23,66 @@
     --yellow: #D97706;
     --orange: #EA580C;
     --red: #DC2626;
+    --tab-inactive: #CBD5E1;
+    --tab-inactive-text: #475569;
+    --table-zebra: #F8FAFC;
+    --analytics-bg: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%);
+    --analytics-border: #BFDBFE;
   }
+
+  body.dark-mode {
+    --bg-page: #0B132B;
+    --bg-card: #1C2541;
+    --bg-subtle: #151E36;
+    --navy: #1C2541;
+    --navy-light: #3A506B;
+    --border: #3A506B;
+    --text: #F8FAFC;
+    --text-muted: #94A3B8;
+    --accent: #3B82F6;
+    --tab-inactive: #151E36;
+    --tab-inactive-text: #94A3B8;
+    --table-zebra: #18223C;
+    --analytics-bg: linear-gradient(135deg, #18223C 0%, #1E293B 100%);
+    --analytics-border: #3A506B;
+  }
+
   * { box-sizing: border-box; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--ice-bg);
+    background-color: var(--bg-page);
     color: var(--text);
     margin: 0;
     padding: 24px 16px;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
   .app-container {
     max-width: 1060px;
     margin: 0 auto;
-    background: var(--ice-card);
+    background: var(--bg-card);
     border-radius: 12px;
-    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08);
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.12);
     overflow: hidden;
+    border: 1px solid var(--border);
   }
   header {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    background: linear-gradient(135deg, #0B2545 0%, #134074 100%);
     color: #FFF;
-    padding: 24px 30px;
+    padding: 20px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 16px;
   }
-  .header-titles h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 0.5px; }
-  .header-titles p { margin: 4px 0 0 0; font-size: 13px; color: #94A3B8; }
-  .header-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+  .header-titles h1 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 0.5px; }
+  .header-titles p { margin: 3px 0 0 0; font-size: 12px; color: #94A3B8; }
+  .header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
   .badge {
-    padding: 5px 12px;
+    padding: 5px 11px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     display: inline-flex;
     align-items: center;
@@ -63,11 +90,24 @@
   }
   .badge-pwa { background: rgba(255,255,255,0.15); color: #FFF; }
   .badge-status { background: #DCFCE7; color: #166534; }
-  .badge-status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #16A34A; }
+  .badge-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #16A34A; }
 
-  /* Tab Navigation System */
+  .btn-theme {
+    background: rgba(255,255,255,0.15);
+    color: #FFF;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .btn-theme:hover { background: rgba(255,255,255,0.3); }
+
+  /* System Tabs */
   .system-tabs-wrapper {
-    background: #E2E8F0;
+    background: var(--bg-subtle);
     padding: 10px 30px 0 30px;
     border-bottom: 1px solid var(--border);
     display: flex;
@@ -82,25 +122,38 @@
     overflow-x: auto;
   }
   .tab-btn {
-    padding: 10px 20px;
-    background: #CBD5E1;
+    padding: 10px 18px;
+    background: var(--tab-inactive);
     border: none;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     font-size: 13px;
     font-weight: 700;
-    color: #475569;
+    color: var(--tab-inactive-text);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
-  .tab-btn:hover { background: #E2E8F0; }
+  .tab-btn:hover { opacity: 0.9; }
   .tab-btn.active {
-    background: #FFFFFF;
-    color: var(--navy);
+    background: var(--bg-card);
+    color: var(--text);
     border-top: 3px solid var(--accent);
+  }
+  .tab-btn.tab-summary {
+    background: #E0E7FF;
+    color: #3730A3;
+  }
+  body.dark-mode .tab-btn.tab-summary {
+    background: #312E81;
+    color: #E0E7FF;
+  }
+  .tab-btn.tab-summary.active {
+    background: var(--bg-card);
+    color: var(--accent);
+    border-top: 3px solid #6366F1;
   }
   .tab-badge {
     background: rgba(0,0,0,0.1);
@@ -109,60 +162,61 @@
     font-size: 10px;
   }
 
-  .content { padding: 30px; }
+  .content { padding: 26px 30px; }
   
   .section-title {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 800;
-    color: var(--navy);
+    color: var(--text);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin: 28px 0 14px 0;
+    margin: 24px 0 12px 0;
     display: flex;
     align-items: center;
     gap: 8px;
-    border-bottom: 2px solid #E2E8F0;
+    border-bottom: 2px solid var(--border);
     padding-bottom: 6px;
   }
   .section-title span.num {
-    background: var(--navy);
+    background: #0B2545;
     color: #FFF;
     border-radius: 50%;
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-size: 10px;
   }
+  body.dark-mode .section-title span.num { background: var(--accent); }
 
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
   .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
   
-  label { font-size: 12px; font-weight: 700; color: var(--navy-light); display: block; margin-bottom: 5px; }
+  label { font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
   input, select, textarea {
     width: 100%;
-    padding: 9px 12px;
+    padding: 8px 11px;
     border: 1px solid var(--border);
     border-radius: 6px;
     font-size: 13px;
-    background-color: #FFF;
+    background-color: var(--bg-card);
     color: var(--text);
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
   }
   input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.18);
   }
-  textarea { resize: vertical; min-height: 60px; font-family: inherit; }
-  optgroup { font-weight: bold; color: var(--navy); }
+  textarea { resize: vertical; min-height: 55px; font-family: inherit; }
+  optgroup { font-weight: bold; }
   
-  /* Live Analytics Bar */
+  /* Analytics Bar */
   .analytics-card {
-    background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%);
-    border: 1px solid #BFDBFE;
+    background: var(--analytics-bg);
+    border: 1px solid var(--analytics-border);
     border-radius: 10px;
     padding: 16px 20px;
     margin-bottom: 20px;
@@ -180,7 +234,7 @@
     width: 65px;
     height: 65px;
     border-radius: 50%;
-    background: var(--navy);
+    background: #0B2545;
     color: #FFF;
     display: flex;
     flex-direction: column;
@@ -188,9 +242,10 @@
     justify-content: center;
     font-weight: 800;
     font-size: 18px;
-    box-shadow: 0 4px 8px rgba(11,37,69,0.2);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   }
-  .score-circle small { font-size: 9px; font-weight: 400; color: #94A3B8; text-transform: uppercase; }
+  body.dark-mode .score-circle { background: #3B82F6; }
+  .score-circle small { font-size: 9px; font-weight: 400; color: #CBD5E1; text-transform: uppercase; }
   .radar-container {
     display: flex;
     justify-content: center;
@@ -199,27 +254,28 @@
 
   /* Table styling */
   table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
-  th, td { padding: 10px 12px; text-align: left; font-size: 13px; vertical-align: top; border-bottom: 1px solid var(--border); }
-  th { background-color: var(--navy); color: #FFF; font-weight: 600; }
+  th, td { padding: 9px 12px; text-align: left; font-size: 13px; vertical-align: top; border-bottom: 1px solid var(--border); }
+  th { background-color: #0B2545; color: #FFF; font-weight: 600; }
+  body.dark-mode th { background-color: #151E36; }
   tr:last-child td { border-bottom: none; }
-  tr:nth-child(even) { background-color: #F8FAFC; }
+  tr:nth-child(even) { background-color: var(--table-zebra); }
 
   .radio-row { display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0; }
   .radio-row input { width: auto; margin: 0; cursor: pointer; }
 
   .stamp-btn {
-    padding: 4px 8px;
-    background: #E2E8F0;
-    border: none;
+    padding: 3px 7px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
     border-radius: 4px;
     font-size: 11px;
     font-weight: 600;
-    color: #475569;
+    color: var(--text-muted);
     cursor: pointer;
     margin-bottom: 4px;
     display: inline-block;
   }
-  .stamp-btn:hover { background: #CBD5E1; }
+  .stamp-btn:hover { background: var(--border); }
 
   /* Toolbar buttons */
   .toolbar {
@@ -229,12 +285,12 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 12px;
-    border-top: 2px solid #E2E8F0;
+    border-top: 2px solid var(--border);
     padding-top: 20px;
   }
   .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
   button.btn {
-    padding: 10px 18px;
+    padding: 9px 16px;
     border: none;
     border-radius: 6px;
     font-size: 13px;
@@ -245,14 +301,32 @@
     gap: 6px;
     transition: all 0.15s ease;
   }
-  .btn-primary { background-color: var(--navy); color: #FFF; }
-  .btn-primary:hover { background-color: #081B33; }
-  .btn-secondary { background-color: var(--navy-light); color: #FFF; }
-  .btn-secondary:hover { background-color: #0E3056; }
-  .btn-outline { background-color: #FFF; color: #475569; border: 1px solid var(--border); }
-  .btn-outline:hover { background-color: #F1F5F9; }
+  .btn-primary { background-color: #0B2545; color: #FFF; }
+  .btn-primary:hover { background-color: #134074; }
+  .btn-secondary { background-color: #134074; color: #FFF; }
+  .btn-secondary:hover { background-color: #1E293B; }
+  .btn-outline { background-color: var(--bg-card); color: var(--text); border: 1px solid var(--border); }
+  .btn-outline:hover { background-color: var(--bg-subtle); }
   .btn-danger { background-color: #FEE2E2; color: #991B1B; }
   .btn-danger:hover { background-color: #FCA5A5; }
+
+  /* Gespann-Summary View Styling */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 14px;
+  }
+  .summary-card {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+  .summary-card h3 { margin: 0 0 6px 0; font-size: 14px; color: var(--text); }
+  .summary-card .score { font-size: 24px; font-weight: 800; color: var(--accent); margin: 6px 0; }
+  .summary-card .name { font-weight: 700; font-size: 13px; margin-bottom: 8px; }
 
   @media (max-width: 860px) {
     .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
@@ -260,13 +334,80 @@
     .content { padding: 16px; }
   }
 
+  /* OPTIMIERTES DIN-A4 DRUCKLAYOUT */
   @media print {
-    body { background: #FFF; padding: 0; }
-    .app-container { box-shadow: none; border-radius: 0; }
-    .toolbar, .no-print, .stamp-btn, .system-tabs-wrapper { display: none !important; }
-    header { background: var(--navy) !important; color: #FFF !important; -webkit-print-color-adjust: exact; }
-    table { page-break-inside: avoid; }
+    @page {
+      size: A4 portrait;
+      margin: 12mm 15mm;
+    }
+    body {
+      background: #FFF !important;
+      color: #000 !important;
+      padding: 0 !important;
+      font-size: 11pt !important;
+    }
+    .app-container {
+      box-shadow: none !important;
+      border: none !important;
+      max-width: 100% !important;
+    }
+    header {
+      background: #0B2545 !important;
+      color: #FFF !important;
+      padding: 12px 16px !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      border-radius: 4px;
+    }
+    .header-controls, .system-tabs-wrapper, .toolbar, .no-print, .stamp-btn {
+      display: none !important;
+    }
+    .content { padding: 12px 0 !important; }
+    .section-title {
+      color: #0B2545 !important;
+      border-bottom: 1.5pt solid #0B2545 !important;
+      font-size: 11pt !important;
+      margin-top: 14pt !important;
+      page-break-after: avoid;
+    }
+    .section-title span.num {
+      background: #0B2545 !important;
+      color: #FFF !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    input, select, textarea {
+      border: 1px solid #94A3B8 !important;
+      background: #FFF !important;
+      color: #000 !important;
+      font-size: 10pt !important;
+      padding: 4px 6px !important;
+    }
+    table {
+      page-break-inside: avoid;
+      font-size: 9.5pt !important;
+    }
+    th {
+      background-color: #0B2545 !important;
+      color: #FFF !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
     tr { page-break-inside: avoid; }
+    .analytics-card {
+      background: #F1F5F9 !important;
+      border: 1pt solid #CBD5E1 !important;
+      padding: 8px 12px !important;
+      margin-bottom: 12px !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .score-circle {
+      background: #0B2545 !important;
+      color: #FFF !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
   }
 </style>
 </head>
@@ -278,14 +419,15 @@
       <h1>SIHF Referee Supervision Hub</h1>
       <p>Digitales Coaching-, Evaluations- & Analyse-Tool für Schiedsrichter-Supervisoren</p>
     </div>
-    <div class="header-badges no-print">
-      <span class="badge badge-pwa" id="pwaBadge">Offline PWA Ready</span>
+    <div class="header-controls no-print">
+      <button type="button" class="btn-theme" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+      <span class="badge badge-pwa" id="pwaBadge">Offline Ready</span>
       <span class="badge badge-status" id="saveStatus">Auto-Saved</span>
     </div>
   </header>
 
   <!-- 1. METADATEN (GLOBAL FÜR DAS GESAMTE SPIEL) -->
-  <div style="background: #F8FAFC; border-bottom: 1px solid var(--border); padding: 20px 30px;">
+  <div style="background: var(--bg-subtle); border-bottom: 1px solid var(--border); padding: 18px 30px;">
     <div class="grid-4" style="margin-bottom: 12px;">
       <div>
         <label for="system_typ">Schiedsrichter-System</label>
@@ -368,285 +510,316 @@
     </div>
   </div>
 
-  <!-- DYNAMISCHE REITER FÜR SCHIEDSRICHTER -->
+  <!-- DYNAMISCHE REITER FÜR SCHIEDSRICHTER & GESPAGE-SUMMARY -->
   <div class="system-tabs-wrapper no-print">
-    <div class="referee-tabs" id="tabsContainer">
-      <!-- Tabs werden dynamisch per JavaScript anhand des ausgewählten Systems generiert -->
-    </div>
-    <div style="font-size: 11px; color: #64748B; font-weight: 600;" id="currentSystemInfo">
-      Aktiv: 4-Mann-System (4 Einzelbewertungen)
+    <div class="referee-tabs" id="tabsContainer"></div>
+    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;" id="currentSystemInfo">
+      Aktiv: 4-Mann-System
     </div>
   </div>
 
-  <!-- AKTIVER BEWERTUNGSBOGEN -->
+  <!-- HAUPTINHALT -->
   <div class="content">
 
-    <!-- LIVE ANALYTICS & RADAR OVERVIEW -->
-    <div class="analytics-card no-print">
-      <div>
-        <div class="score-display">
-          <div class="score-circle">
-            <span id="scoreVal">80%</span>
-            <small>Score</small>
+    <!-- ANSICHT 1: EINZEL-SCHIEDSRICHTER-BOGEN -->
+    <div id="singleRefView">
+      <!-- LIVE ANALYTICS & RADAR OVERVIEW -->
+      <div class="analytics-card">
+        <div>
+          <div class="score-display">
+            <div class="score-circle">
+              <span id="scoreVal">80%</span>
+              <small>Score</small>
+            </div>
+            <div>
+              <strong style="font-size: 15px;" id="scoreStatusText">Leistung: Gut / Erfüllt</strong>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 6px;">
+                <span>Gewichteter Score (<span id="activeRefLabel" style="font-weight: 600;">Head Referee 1</span>)</span>
+                <span id="ampelDot" style="display: inline-block; width: 11px; height: 11px; border-radius: 50%; background-color: #16A34A; box-shadow: 0 0 0 2px rgba(22,163,74,0.25);"></span>
+              </div>
+            </div>
           </div>
-          <div>
-            <strong style="font-size: 15px; color: var(--navy);" id="scoreStatusText">Leistung: Gut / Erfüllt</strong>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 6px;">
-              <span>Gewichteter Score (<span id="activeRefLabel">Head Referee 1</span>)</span>
-              <span id="ampelDot" style="display: inline-block; width: 11px; height: 11px; border-radius: 50%; background-color: #16A34A; box-shadow: 0 0 0 2px rgba(22,163,74,0.2);"></span>
+          <!-- Sub-Metrics Pills -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 14px; font-size: 11px;">
+            <div style="background: var(--bg-card); padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); text-align: center;">
+              <div style="color: var(--text-muted); font-weight: 600;">Teil 2: Gesamt (30%)</div>
+              <strong id="subScorePart2" style="font-size: 13px;">80%</strong>
+            </div>
+            <div style="background: var(--bg-card); padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); text-align: center;">
+              <div style="color: var(--text-muted); font-weight: 600;">Teil 3: Matrix (50%)</div>
+              <strong id="subScorePart3" style="font-size: 13px;">80%</strong>
+            </div>
+            <div style="background: var(--bg-card); padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); text-align: center;">
+              <div style="color: var(--text-muted); font-weight: 600;">Teil 4: Coach (20%)</div>
+              <strong id="subScorePart4" style="font-size: 13px;">80%</strong>
             </div>
           </div>
         </div>
-        <!-- Sub-Metrics Pills -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 14px; font-size: 11px;">
-          <div style="background: #FFF; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); text-align: center;">
-            <div style="color: var(--text-muted); font-weight: 600;">Teil 2: Gesamt (30%)</div>
-            <strong id="subScorePart2" style="font-size: 13px; color: var(--navy);">80%</strong>
-          </div>
-          <div style="background: #FFF; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); text-align: center;">
-            <div style="color: var(--text-muted); font-weight: 600;">Teil 3: Matrix (50%)</div>
-            <strong id="subScorePart3" style="font-size: 13px; color: var(--navy);">80%</strong>
-          </div>
-          <div style="background: #FFF; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); text-align: center;">
-            <div style="color: var(--text-muted); font-weight: 600;">Teil 4: Coach (20%)</div>
-            <strong id="subScorePart4" style="font-size: 13px; color: var(--navy);">80%</strong>
-          </div>
+        <div class="radar-container">
+          <canvas id="radarChart" width="220" height="150" style="max-width: 100%;"></canvas>
         </div>
       </div>
-      <div class="radar-container">
-        <canvas id="radarChart" width="220" height="150" style="max-width: 100%;"></canvas>
+
+      <!-- 1. SCHIEDSRICHTER-ANGABEN DES REITERS -->
+      <div class="section-title"><span class="num">1</span> Angaben zur Person & Funktion</div>
+      <div class="grid-2" style="margin-bottom: 12px;">
+        <div>
+          <label for="current_schiri_name">Name des Schiedsrichters</label>
+          <input type="text" id="current_schiri_name" placeholder="Vorname Nachname" oninput="saveCurrentRefData()">
+        </div>
+        <div>
+          <label for="current_schiri_partner">Gespann-Partner</label>
+          <input type="text" id="current_schiri_partner" placeholder="Partner-Name(n)" oninput="saveCurrentRefData()">
+        </div>
+      </div>
+
+      <!-- 2. GESAMTEINSCHÄTZUNG -->
+      <div class="section-title"><span class="num">2</span> Gesamteinschätzung (Offizieller SIHF Standard)</div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 8%; text-align: center;">Wahl</th>
+            <th style="width: 25%;">Stufe</th>
+            <th>Definition & Kriterien</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="text-align: center;"><input type="radio" name="overall_grade" value="100" id="grade_sg" onchange="calcScores()"></td>
+            <td><label for="grade_sg" class="radio-row" style="color: var(--green); font-weight: bold;">Sehr Gut</label></td>
+            <td>Mutige, korrekte Schlüsselentscheide unter hohem Druck (z. B. doppelte Unterzahl, Torannullierung). Kein Phantom-Pfiff, perfekte Ruhe, erstklassige Spielkontrolle.</td>
+          </tr>
+          <tr>
+            <td style="text-align: center;"><input type="radio" name="overall_grade" value="80" id="grade_gut" checked onchange="calcScores()"></td>
+            <td><label for="grade_gut" class="radio-row" style="color: var(--navy-light); font-weight: bold;">Gut / Zufriedenstellend</label></td>
+            <td>Ordentlich geleitetes Spiel, Frustrationsniveau tief gehalten, gutes Gespür für Spielfluss. Hält sich bei Bedarf im Hintergrund und ist vor dem Spielzug an der Torlinie.</td>
+          </tr>
+          <tr>
+            <td style="text-align: center;"><input type="radio" name="overall_grade" value="50" id="grade_vb" onchange="calcScores()"></td>
+            <td><label for="grade_vb" class="radio-row" style="color: var(--orange); font-weight: bold;">Verbesserungsbedürftig</label></td>
+            <td>Wenig Zugriff aufs Spiel, Über- oder Unterinterpretation von Regeln, macht Routine-Situationen unnötig hektisch oder unkonsequent.</td>
+          </tr>
+          <tr>
+            <td style="text-align: center;"><input type="radio" name="overall_grade" value="20" id="grade_ug" onchange="calcScores()"></td>
+            <td><label for="grade_ug" class="radio-row" style="color: var(--red); font-weight: bold;">Ungenügend</label></td>
+            <td>Kontrollverlust, gravierende Regelfehlentscheide, erhebliche Sicherheits- oder Eislaufdefizite.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 3. PERFORMANCE MATRIX -->
+      <div class="section-title"><span class="num">3</span> Leistungs-Checkliste & Rollen-Kriterien</div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 34%;">Bereich & Leitfragen</th>
+            <th style="width: 22%;">Bewertung</th>
+            <th>Szenen, Timestamps & Notizen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="lbl_perf_1"><strong>1. Eislaufen & Physis</strong><br><small style="color:var(--text-muted);">Agilität, Mobilität, Rückwärtslaufen, Fitness</small></td>
+            <td>
+              <select class="perf-select" id="perf_1" onchange="calcScores()">
+                <option value="100">++ (Überdurchschnittlich)</option>
+                <option value="80" selected>+ (Erfüllt / Gut)</option>
+                <option value="50">- (Mängel erkennbar)</option>
+                <option value="20">-- (Ungenügend)</option>
+                <option value="NA">N/A (Nicht bewertbar)</option>
+              </select>
+            </td>
+            <td>
+              <button type="button" class="stamp-btn" onclick="addTimestamp('note_1')">+ Drittel/Timestamp</button>
+              <textarea id="note_1" oninput="saveCurrentRefData()" placeholder="Laufstil, Antritt, Ermüdung..."></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td id="lbl_perf_2"><strong>2. Positionsspiel & Sichtachsen</strong><br><small style="color:var(--text-muted);">Torlinie vor Spielzug, Blaue Linie, Blickfeld</small></td>
+            <td>
+              <select class="perf-select" id="perf_2" onchange="calcScores()">
+                <option value="100">++ (Überdurchschnittlich)</option>
+                <option value="80" selected>+ (Erfüllt / Gut)</option>
+                <option value="50">- (Mängel erkennbar)</option>
+                <option value="20">-- (Ungenügend)</option>
+                <option value="NA">N/A (Nicht bewertbar)</option>
+              </select>
+            </td>
+            <td>
+              <button type="button" class="stamp-btn" onclick="addTimestamp('note_2')">+ Drittel/Timestamp</button>
+              <textarea id="note_2" oninput="saveCurrentRefData()" placeholder="Positionierung, Einblick..."></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td id="lbl_perf_3"><strong>3. Pfiff, Zeichengebung & Präsenz</strong><br><small style="color:var(--text-muted);">Signalgebung, Prägnanz, Körpersprache</small></td>
+            <td>
+              <select class="perf-select" id="perf_3" onchange="calcScores()">
+                <option value="100">++ (Überdurchschnittlich)</option>
+                <option value="80" selected>+ (Erfüllt / Gut)</option>
+                <option value="50">- (Mängel erkennbar)</option>
+                <option value="20">-- (Ungenügend)</option>
+                <option value="NA">N/A (Nicht bewertbar)</option>
+              </select>
+            </td>
+            <td>
+              <button type="button" class="stamp-btn" onclick="addTimestamp('note_3')">+ Drittel/Timestamp</button>
+              <textarea id="note_3" oninput="saveCurrentRefData()" placeholder="Präsenz, Signalgebung..."></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td id="lbl_perf_4"><strong>4. Antizipation & Spielaufmerksamkeit</strong><br><small style="color:var(--text-muted);">Spielzüge lesen, Off-Puck Play, Gefahren</small></td>
+            <td>
+              <select class="perf-select" id="perf_4" onchange="calcScores()">
+                <option value="100">++ (Überdurchschnittlich)</option>
+                <option value="80" selected>+ (Erfüllt / Gut)</option>
+                <option value="50">- (Mängel erkennbar)</option>
+                <option value="20">-- (Ungenügend)</option>
+                <option value="NA">N/A (Nicht bewertbar)</option>
+              </select>
+            </td>
+            <td>
+              <button type="button" class="stamp-btn" onclick="addTimestamp('note_4')">+ Drittel/Timestamp</button>
+              <textarea id="note_4" oninput="saveCurrentRefData()" placeholder="Spielzüge antizipieren..."></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td id="lbl_perf_5"><strong>5. Deeskalation & Post-Whistle</strong><br><small style="color:var(--text-muted);">Torraumabsicherung, Rudelbildungen unterbinden</small></td>
+            <td>
+              <select class="perf-select" id="perf_5" onchange="calcScores()">
+                <option value="100">++ (Überdurchschnittlich)</option>
+                <option value="80" selected>+ (Erfüllt / Gut)</option>
+                <option value="50">- (Mängel erkennbar)</option>
+                <option value="20">-- (Ungenügend)</option>
+                <option value="NA">N/A (Nicht bewertbar)</option>
+              </select>
+            </td>
+            <td>
+              <button type="button" class="stamp-btn" onclick="addTimestamp('note_5')">+ Drittel/Timestamp</button>
+              <textarea id="note_5" oninput="saveCurrentRefData()" placeholder="Präsenz nach dem Pfiff..."></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td id="lbl_perf_6"><strong>6. Teamwork & Kommunikation</strong><br><small style="color:var(--text-muted);">Gespann-Abstimmung, Dialog mit Captains/Coaches</small></td>
+            <td>
+              <select class="perf-select" id="perf_6" onchange="calcScores()">
+                <option value="100">++ (Überdurchschnittlich)</option>
+                <option value="80" selected>+ (Erfüllt / Gut)</option>
+                <option value="50">- (Mängel erkennbar)</option>
+                <option value="20">-- (Ungenügend)</option>
+                <option value="NA">N/A (Nicht bewertbar)</option>
+              </select>
+            </td>
+            <td>
+              <button type="button" class="stamp-btn" onclick="addTimestamp('note_6')">+ Drittel/Timestamp</button>
+              <textarea id="note_6" oninput="saveCurrentRefData()" placeholder="Absprachen, Dialogton..."></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td id="lbl_perf_7"><strong>7. Regelanwendung & Linientreue</strong><br><small style="color:var(--text-muted);">Strafmassstab bzw. Icing/Offside-Präzision</small></td>
+            <td>
+              <select class="perf-select" id="perf_7" onchange="calcScores()">
+                <option value="100">++ (Überdurchschnittlich)</option>
+                <option value="80" selected>+ (Erfüllt / Gut)</option>
+                <option value="50">- (Mängel erkennbar)</option>
+                <option value="20">-- (Ungenügend)</option>
+                <option value="NA">N/A (Nicht bewertbar)</option>
+              </select>
+            </td>
+            <td>
+              <button type="button" class="stamp-btn" onclick="addTimestamp('note_7')">+ Drittel/Timestamp</button>
+              <textarea id="note_7" oninput="saveCurrentRefData()" placeholder="Linientreue, SIHF-Regeln..."></textarea>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 4. COACHING & ENTWICKLUNG -->
+      <div class="section-title"><span class="num">4</span> Coaching, Trend & Mindset</div>
+      <div class="grid-3">
+        <div>
+          <label for="coach_trend">Leistungsentwicklung / Trend (6.7%)</label>
+          <select id="coach_trend" onchange="calcScores()">
+            <option value="Konstant stabil" selected>Konstant stabil (Gut / 80%)</option>
+            <option value="Fortschritt erkennbar">Fortschritt erkennbar (Top / 100%)</option>
+            <option value="Erstbeobachtung">Erstbeobachtung (Neutral / 80%)</option>
+            <option value="Rückschritt / Instabil">Rückschritt / Instabil (40%)</option>
+          </select>
+        </div>
+        <div>
+          <label for="coach_attitude">Einstellung On-/Off-Ice (6.7%)</label>
+          <select id="coach_attitude" onchange="calcScores()">
+            <option value="Gut / Angemessen" selected>Gut / Angemessen (80%)</option>
+            <option value="Vorbildlich / Professionell">Vorbildlich / Professionell (100%)</option>
+            <option value="Ausbaufähig">Ausbaufähig (45%)</option>
+          </select>
+        </div>
+        <div>
+          <label for="coach_feedback">Feedback-Bereitschaft (6.6%)</label>
+          <select id="coach_feedback" onchange="calcScores()">
+            <option value="Konstruktiv" selected>Konstruktiv (80%)</option>
+            <option value="Sehr offen & reflektiert">Sehr offen & reflektiert (100%)</option>
+            <option value="Defensiv / Rechtfertigend">Defensiv / Rechtfertigend (40%)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 5. ABSCHLUSS & FEEDBACK -->
+      <div class="section-title"><span class="num">5</span> Abschluss-Rapport & Action Plan</div>
+      <div class="grid-2" style="margin-bottom: 12px;">
+        <div>
+          <label for="top_strengths">Top 2–3 Stärken (Keep Doing)</label>
+          <textarea id="top_strengths" oninput="saveCurrentRefData()" style="min-height: 85px;" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
+        </div>
+        <div>
+          <label for="top_workon">Top 2–3 Entwicklungsschwerpunkte (Work On)</label>
+          <textarea id="top_workon" oninput="saveCurrentRefData()" style="min-height: 85px;" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 14px;">
+        <label for="general_report">Ausführlicher Rapport / Besondere Vorkommnisse</label>
+        <textarea id="general_report" oninput="saveCurrentRefData()" style="min-height: 110px;" placeholder="Szenenanalysen, Coaching-Notizen..."></textarea>
+      </div>
+
+      <div class="grid-2" style="margin-top: 15px;">
+        <div>
+          <label for="visum_ort_datum">Ort, Datum</label>
+          <input type="text" id="visum_ort_datum" oninput="saveCurrentRefData()" placeholder="z. B. Zug, 01.09.2026">
+        </div>
+        <div>
+          <label for="visum_name">Visum Supervisor</label>
+          <input type="text" id="visum_name" oninput="saveCurrentRefData()" placeholder="Vorname Nachname">
+        </div>
       </div>
     </div>
 
-    <!-- 1. SCHIEDSRICHTER-ANGABEN DES REITERS -->
-    <div class="section-title"><span class="num">1</span> Angaben zur Person & Funktion</div>
-    <div class="grid-2" style="margin-bottom: 12px;">
-      <div>
-        <label for="current_schiri_name">Name des Schiedsrichters</label>
-        <input type="text" id="current_schiri_name" placeholder="Vorname Nachname" oninput="saveCurrentRefData()">
+    <!-- ANSICHT 2: GESPASS-ZUSAMMENFASSUNG (TEAM SUMMARY) -->
+    <div id="summaryView" style="display: none;">
+      <div class="section-title" style="margin-top: 0;"><span class="num">★</span> Gespann-Übersicht & Team-Performance</div>
+      <div class="analytics-card" style="grid-template-columns: 1fr 1fr;">
+        <div class="score-display">
+          <div class="score-circle" style="background: #4F46E5;">
+            <span id="crewScoreVal">80%</span>
+            <small>Team</small>
+          </div>
+          <div>
+            <strong style="font-size: 16px;">Gespann-Durchschnittsnote</strong>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+              Mittelwert aus allen bewerteten Schiedsrichtern dieses Spiels
+            </div>
+          </div>
+        </div>
+        <div class="radar-container">
+          <canvas id="crewRadarChart" width="220" height="150" style="max-width: 100%;"></canvas>
+        </div>
       </div>
-      <div>
-        <label for="current_schiri_partner">Gespann-Partner</label>
-        <input type="text" id="current_schiri_partner" placeholder="Partner-Name(n)" oninput="saveCurrentRefData()">
-      </div>
-    </div>
 
-    <!-- 2. GESAMTEINSCHÄTZUNG -->
-    <div class="section-title"><span class="num">2</span> Gesamteinschätzung (Offizieller SIHF Standard)</div>
-    <table>
-      <thead>
-        <tr>
-          <th style="width: 8%; text-align: center;">Wahl</th>
-          <th style="width: 25%;">Stufe</th>
-          <th>Definition & Kriterien</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="text-align: center;"><input type="radio" name="overall_grade" value="100" id="grade_sg" onchange="calcScores()"></td>
-          <td><label for="grade_sg" class="radio-row" style="color: var(--green); font-weight: bold;">Sehr Gut</label></td>
-          <td>Mutige, korrekte Schlüsselentscheide unter hohem Druck (z. B. doppelte Unterzahl, Torannullierung). Kein Phantom-Pfiff, perfekte Ruhe, erstklassige Spielkontrolle.</td>
-        </tr>
-        <tr>
-          <td style="text-align: center;"><input type="radio" name="overall_grade" value="80" id="grade_gut" checked onchange="calcScores()"></td>
-          <td><label for="grade_gut" class="radio-row" style="color: var(--navy-light); font-weight: bold;">Gut / Zufriedenstellend</label></td>
-          <td>Ordentlich geleitetes Spiel, Frustrationsniveau tief gehalten, gutes Gespür für Spielfluss. Hält sich bei Bedarf im Hintergrund und ist vor dem Spielzug an der Torlinie.</td>
-        </tr>
-        <tr>
-          <td style="text-align: center;"><input type="radio" name="overall_grade" value="50" id="grade_vb" onchange="calcScores()"></td>
-          <td><label for="grade_vb" class="radio-row" style="color: var(--orange); font-weight: bold;">Verbesserungsbedürftig</label></td>
-          <td>Wenig Zugriff aufs Spiel, Über- oder Unterinterpretation von Regeln, macht Routine-Situationen unnötig hektisch oder unkonsequent.</td>
-        </tr>
-        <tr>
-          <td style="text-align: center;"><input type="radio" name="overall_grade" value="20" id="grade_ug" onchange="calcScores()"></td>
-          <td><label for="grade_ug" class="radio-row" style="color: var(--red); font-weight: bold;">Ungenügend</label></td>
-          <td>Kontrollverlust, gravierende Regelfehlentscheide, erhebliche Sicherheits- oder Eislaufdefizite.</td>
-        </tr>
-      </tbody>
-    </table>
+      <div class="summary-grid" id="summaryCardsContainer"></div>
 
-    <!-- 3. PERFORMANCE MATRIX (ROLLEN-SPEZIFISCH ANGEPASST) -->
-    <div class="section-title"><span class="num">3</span> Leistungs-Checkliste & Rollen-Kriterien</div>
-    <table>
-      <thead>
-        <tr>
-          <th style="width: 34%;">Bereich & Leitfragen</th>
-          <th style="width: 22%;">Bewertung</th>
-          <th>Szenen, Timestamps & Notizen</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td id="lbl_perf_1"><strong>1. Eislaufen & Physis</strong><br><small style="color:var(--text-muted);">Agilität, Mobilität, Rückwärtslaufen, Fitness</small></td>
-          <td>
-            <select class="perf-select" id="perf_1" onchange="calcScores()">
-              <option value="100">++ (Überdurchschnittlich)</option>
-              <option value="80" selected>+ (Erfüllt / Gut)</option>
-              <option value="50">- (Mängel erkennbar)</option>
-              <option value="20">-- (Ungenügend)</option>
-              <option value="NA">N/A (Nicht bewertbar)</option>
-            </select>
-          </td>
-          <td>
-            <button type="button" class="stamp-btn" onclick="addTimestamp('note_1')">+ Drittel/Timestamp</button>
-            <textarea id="note_1" oninput="saveCurrentRefData()" placeholder="Laufstil, Antritt, Ermüdung..."></textarea>
-          </td>
-        </tr>
-        <tr>
-          <td id="lbl_perf_2"><strong>2. Positionsspiel & Sichtachsen</strong><br><small style="color:var(--text-muted);">Torlinie vor Spielzug, Blaue Linie, Blickfeld</small></td>
-          <td>
-            <select class="perf-select" id="perf_2" onchange="calcScores()">
-              <option value="100">++ (Überdurchschnittlich)</option>
-              <option value="80" selected>+ (Erfüllt / Gut)</option>
-              <option value="50">- (Mängel erkennbar)</option>
-              <option value="20">-- (Ungenügend)</option>
-              <option value="NA">N/A (Nicht bewertbar)</option>
-            </select>
-          </td>
-          <td>
-            <button type="button" class="stamp-btn" onclick="addTimestamp('note_2')">+ Drittel/Timestamp</button>
-            <textarea id="note_2" oninput="saveCurrentRefData()" placeholder="Positionierung, Einblick..."></textarea>
-          </td>
-        </tr>
-        <tr>
-          <td id="lbl_perf_3"><strong>3. Pfiff, Zeichengebung & Präsenz</strong><br><small style="color:var(--text-muted);">Signalgebung, Prägnanz, Körpersprache</small></td>
-          <td>
-            <select class="perf-select" id="perf_3" onchange="calcScores()">
-              <option value="100">++ (Überdurchschnittlich)</option>
-              <option value="80" selected>+ (Erfüllt / Gut)</option>
-              <option value="50">- (Mängel erkennbar)</option>
-              <option value="20">-- (Ungenügend)</option>
-              <option value="NA">N/A (Nicht bewertbar)</option>
-            </select>
-          </td>
-          <td>
-            <button type="button" class="stamp-btn" onclick="addTimestamp('note_3')">+ Drittel/Timestamp</button>
-            <textarea id="note_3" oninput="saveCurrentRefData()" placeholder="Präsenz, Signalgebung..."></textarea>
-          </td>
-        </tr>
-        <tr>
-          <td id="lbl_perf_4"><strong>4. Antizipation & Spielaufmerksamkeit</strong><br><small style="color:var(--text-muted);">Spielzüge lesen, Off-Puck Play, Gefahren</small></td>
-          <td>
-            <select class="perf-select" id="perf_4" onchange="calcScores()">
-              <option value="100">++ (Überdurchschnittlich)</option>
-              <option value="80" selected>+ (Erfüllt / Gut)</option>
-              <option value="50">- (Mängel erkennbar)</option>
-              <option value="20">-- (Ungenügend)</option>
-              <option value="NA">N/A (Nicht bewertbar)</option>
-            </select>
-          </td>
-          <td>
-            <button type="button" class="stamp-btn" onclick="addTimestamp('note_4')">+ Drittel/Timestamp</button>
-            <textarea id="note_4" oninput="saveCurrentRefData()" placeholder="Spielzüge antizipieren..."></textarea>
-          </td>
-        </tr>
-        <tr>
-          <td id="lbl_perf_5"><strong>5. Deeskalation & Post-Whistle</strong><br><small style="color:var(--text-muted);">Torraumabsicherung, Rudelbildungen unterbinden</small></td>
-          <td>
-            <select class="perf-select" id="perf_5" onchange="calcScores()">
-              <option value="100">++ (Überdurchschnittlich)</option>
-              <option value="80" selected>+ (Erfüllt / Gut)</option>
-              <option value="50">- (Mängel erkennbar)</option>
-              <option value="20">-- (Ungenügend)</option>
-              <option value="NA">N/A (Nicht bewertbar)</option>
-            </select>
-          </td>
-          <td>
-            <button type="button" class="stamp-btn" onclick="addTimestamp('note_5')">+ Drittel/Timestamp</button>
-            <textarea id="note_5" oninput="saveCurrentRefData()" placeholder="Präsenz nach dem Pfiff..."></textarea>
-          </td>
-        </tr>
-        <tr>
-          <td id="lbl_perf_6"><strong>6. Teamwork & Kommunikation</strong><br><small style="color:var(--text-muted);">Gespann-Abstimmung, Dialog mit Captains/Coaches</small></td>
-          <td>
-            <select class="perf-select" id="perf_6" onchange="calcScores()">
-              <option value="100">++ (Überdurchschnittlich)</option>
-              <option value="80" selected>+ (Erfüllt / Gut)</option>
-              <option value="50">- (Mängel erkennbar)</option>
-              <option value="20">-- (Ungenügend)</option>
-              <option value="NA">N/A (Nicht bewertbar)</option>
-            </select>
-          </td>
-          <td>
-            <button type="button" class="stamp-btn" onclick="addTimestamp('note_6')">+ Drittel/Timestamp</button>
-            <textarea id="note_6" oninput="saveCurrentRefData()" placeholder="Absprachen, Dialogton..."></textarea>
-          </td>
-        </tr>
-        <tr>
-          <td id="lbl_perf_7"><strong>7. Regelanwendung & Linientreue</strong><br><small style="color:var(--text-muted);">Strafmassstab (Head) bzw. Icing/Offside-Präzision (Lines)</small></td>
-          <td>
-            <select class="perf-select" id="perf_7" onchange="calcScores()">
-              <option value="100">++ (Überdurchschnittlich)</option>
-              <option value="80" selected>+ (Erfüllt / Gut)</option>
-              <option value="50">- (Mängel erkennbar)</option>
-              <option value="20">-- (Ungenügend)</option>
-              <option value="NA">N/A (Nicht bewertbar)</option>
-            </select>
-          </td>
-          <td>
-            <button type="button" class="stamp-btn" onclick="addTimestamp('note_7')">+ Drittel/Timestamp</button>
-            <textarea id="note_7" oninput="saveCurrentRefData()" placeholder="Linientreue, SIHF-Regeln..."></textarea>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- 4. COACHING & ENTWICKLUNG -->
-    <div class="section-title"><span class="num">4</span> Coaching, Trend & Mindset</div>
-    <div class="grid-3">
+      <div class="section-title" style="margin-top: 28px;"><span class="num">✓</span> Gemeinsame Gespann-Beobachtungen</div>
       <div>
-        <label for="coach_trend">Leistungsentwicklung / Trend (6.7%)</label>
-        <select id="coach_trend" onchange="calcScores()">
-          <option value="Konstant stabil" selected>Konstant stabil (Gut / 80%)</option>
-          <option value="Fortschritt erkennbar">Fortschritt erkennbar (Top / 100%)</option>
-          <option value="Erstbeobachtung">Erstbeobachtung (Neutral / 80%)</option>
-          <option value="Rückschritt / Instabil">Rückschritt / Instabil (40%)</option>
-        </select>
-      </div>
-      <div>
-        <label for="coach_attitude">Einstellung On-/Off-Ice (6.7%)</label>
-        <select id="coach_attitude" onchange="calcScores()">
-          <option value="Gut / Angemessen" selected>Gut / Angemessen (80%)</option>
-          <option value="Vorbildlich / Professionell">Vorbildlich / Professionell (100%)</option>
-          <option value="Ausbaufähig">Ausbaufähig (45%)</option>
-        </select>
-      </div>
-      <div>
-        <label for="coach_feedback">Feedback-Bereitschaft (6.6%)</label>
-        <select id="coach_feedback" onchange="calcScores()">
-          <option value="Konstruktiv" selected>Konstruktiv (80%)</option>
-          <option value="Sehr offen & reflektiert">Sehr offen & reflektiert (100%)</option>
-          <option value="Defensiv / Rechtfertigend">Defensiv / Rechtfertigend (40%)</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- 5. ABSCHLUSS & FEEDBACK -->
-    <div class="section-title"><span class="num">5</span> Abschluss-Rapport & Action Plan</div>
-    <div class="grid-2" style="margin-bottom: 12px;">
-      <div>
-        <label for="top_strengths">Top 2–3 Stärken (Keep Doing)</label>
-        <textarea id="top_strengths" oninput="saveCurrentRefData()" style="min-height: 85px;" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
-      </div>
-      <div>
-        <label for="top_workon">Top 2–3 Entwicklungsschwerpunkte (Work On)</label>
-        <textarea id="top_workon" oninput="saveCurrentRefData()" style="min-height: 85px;" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
-      </div>
-    </div>
-
-    <div style="margin-bottom: 14px;">
-      <label for="general_report">Ausführlicher Rapport / Besondere Vorkommnisse</label>
-      <textarea id="general_report" oninput="saveCurrentRefData()" style="min-height: 110px;" placeholder="Szenenanalysen, Coaching-Notizen..."></textarea>
-    </div>
-
-    <div class="grid-2" style="margin-top: 15px;">
-      <div>
-        <label for="visum_ort_datum">Ort, Datum</label>
-        <input type="text" id="visum_ort_datum" oninput="saveCurrentRefData()" placeholder="z. B. Zug, 01.09.2026">
-      </div>
-      <div>
-        <label for="visum_name">Visum Supervisor</label>
-        <input type="text" id="visum_name" oninput="saveCurrentRefData()" placeholder="Vorname Nachname">
+        <label for="crew_notes">Zusammenarbeit, Teamwork & Spielcharakter</label>
+        <textarea id="crew_notes" oninput="saveGlobalState()" style="min-height: 100px;" placeholder="Beurteilung der Harmonie im Gespann, gegenseitige Unterstützung bei Rudelbildungen, Absprachen vor Bullys..."></textarea>
       </div>
     </div>
 
@@ -666,7 +839,6 @@
 </div>
 
 <script>
-  // Definition der Systeme & Reiter-Konfigurationen
   const SYSTEM_CONFIGS = {
     "4-Man": [
       { id: "h1", role: "Head Referee 1", type: "head", badge: "Head 1" },
@@ -689,29 +861,53 @@
   };
 
   let currentSystem = "4-Man";
+  let activeTabType = "ref"; // "ref" oder "summary"
   let activeRefIndex = 0;
   let gameData = {
     global: {},
     referees: {}
   };
 
-  // Initialisierung
   function initApp() {
+    loadTheme();
     loadFullState();
     renderTabs();
-    loadRefereeForm(activeRefIndex);
+    if (activeTabType === "summary") {
+      showSummaryView();
+    } else {
+      loadRefereeForm(activeRefIndex);
+    }
   }
 
-  // System umschalten (2-Mann, 3-Mann, 4-Mann, 1-Mann)
+  // Dark Mode Toggle
+  function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    document.getElementById('themeToggle').innerText = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
+    localStorage.setItem('sihf_theme_preference', isDark ? 'dark' : 'light');
+    calcScores(false);
+    if (activeTabType === "summary") renderSummaryView();
+  }
+
+  function loadTheme() {
+    const pref = localStorage.getItem('sihf_theme_preference');
+    if (pref === 'dark') {
+      document.body.classList.add('dark-mode');
+      document.getElementById('themeToggle').innerText = "☀️ Light Mode";
+    }
+  }
+
+  // System Umschaltung
   function switchSystem(newSys) {
     currentSystem = newSys;
+    activeTabType = "ref";
     activeRefIndex = 0;
     saveGlobalState();
     renderTabs();
     loadRefereeForm(activeRefIndex);
   }
 
-  // Dynamische Tabs anhand des aktiven Systems zeichnen
+  // Tabs inkl. Summary-Reiter
   function renderTabs() {
     const tabsContainer = document.getElementById('tabsContainer');
     tabsContainer.innerHTML = "";
@@ -720,27 +916,46 @@
     refs.forEach((ref, index) => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'tab-btn' + (index === activeRefIndex ? ' active' : '');
+      btn.className = 'tab-btn' + (activeTabType === "ref" && index === activeRefIndex ? ' active' : '');
       btn.innerHTML = `<span>${ref.role}</span> <span class="tab-badge">${ref.badge}</span>`;
-      btn.onclick = () => selectTab(index);
+      btn.onclick = () => selectRefTab(index);
       tabsContainer.appendChild(btn);
     });
 
-    document.getElementById('currentSystemInfo').innerText = `Aktiv: ${currentSystem} (${refs.length} ${refs.length === 1 ? 'Reiter' : 'Reiter'})`;
+    // Gespann-Zusammenfassungs-Reiter (bei Mehr-Personen-Systemen)
+    if (refs.length > 1) {
+      const sumBtn = document.createElement('button');
+      sumBtn.type = 'button';
+      sumBtn.className = 'tab-btn tab-summary' + (activeTabType === "summary" ? ' active' : '');
+      sumBtn.innerHTML = `<span>★ Gespann-Übersicht</span>`;
+      sumBtn.onclick = () => selectSummaryTab();
+      tabsContainer.appendChild(sumBtn);
+    }
+
+    document.getElementById('currentSystemInfo').innerText = `Aktiv: ${currentSystem} (${refs.length} Schiedsrichter)`;
   }
 
-  function selectTab(index) {
-    saveCurrentRefData();
+  function selectRefTab(index) {
+    if (activeTabType === "ref") saveCurrentRefData();
+    activeTabType = "ref";
     activeRefIndex = index;
+    document.getElementById('singleRefView').style.display = "block";
+    document.getElementById('summaryView').style.display = "none";
     renderTabs();
     loadRefereeForm(activeRefIndex);
   }
 
-  // Rollenspezifische Kriterienbezeichnungen anpassen
+  function selectSummaryTab() {
+    if (activeTabType === "ref") saveCurrentRefData();
+    activeTabType = "summary";
+    document.getElementById('singleRefView').style.display = "none";
+    document.getElementById('summaryView').style.display = "block";
+    renderTabs();
+    renderSummaryView();
+  }
+
   function adjustLabelsForRole(refConfig) {
     const isLines = refConfig.type === 'lines';
-    const isHead = refConfig.type === 'head';
-
     if (isLines) {
       document.getElementById('lbl_perf_2').innerHTML = `<strong>2. Positionsspiel & Linienkontrolle</strong><br><small style="color:var(--text-muted);">Blaue Linie bei knappen Offsides, Icing-Beurteilung</small>`;
       document.getElementById('lbl_perf_3').innerHTML = `<strong>3. Pfiff, Bully-Präsenz & Signale</strong><br><small style="color:var(--text-muted);">Korrektes Anspiel, Bully-Conduct, Zeichen Icing/Abseits</small>`;
@@ -754,7 +969,6 @@
     }
   }
 
-  // Daten für den aktuellen Reiter laden
   function loadRefereeForm(index) {
     const refConfig = SYSTEM_CONFIGS[currentSystem][index];
     document.getElementById('activeRefLabel').innerText = refConfig.role;
@@ -766,24 +980,20 @@
     document.getElementById('current_schiri_name').value = data.name || "";
     document.getElementById('current_schiri_partner').value = data.partner || "";
 
-    // Grade
     const radios = document.querySelectorAll('input[name="overall_grade"]');
     radios.forEach(r => {
       r.checked = (r.value === (data.overall_grade || "80"));
     });
 
-    // Performance Selects & Notes
     for (let i = 1; i <= 7; i++) {
       document.getElementById(`perf_${i}`).value = data[`perf_${i}`] || "80";
       document.getElementById(`note_${i}`).value = data[`note_${i}`] || "";
     }
 
-    // Coaching Dropdowns
     document.getElementById('coach_trend').value = data.coach_trend || "Konstant stabil (Gut / 80%)";
     document.getElementById('coach_attitude').value = data.coach_attitude || "Gut / Angemessen (80%)";
     document.getElementById('coach_feedback').value = data.coach_feedback || "Konstruktiv (80%)";
 
-    // Textbereiche
     document.getElementById('top_strengths').value = data.top_strengths || "";
     document.getElementById('top_workon').value = data.top_workon || "";
     document.getElementById('general_report').value = data.general_report || "";
@@ -793,9 +1003,9 @@
     calcScores(false);
   }
 
-  // Daten des aktuellen Reiters im Zustand sichern
   function saveCurrentRefData() {
     const refConfig = SYSTEM_CONFIGS[currentSystem][activeRefIndex];
+    if (!refConfig) return;
     const refKey = `${currentSystem}_${refConfig.id}`;
 
     const selectedGrade = document.querySelector('input[name="overall_grade"]:checked');
@@ -842,7 +1052,8 @@
       spiel_id: document.getElementById('spiel_id').value,
       spiel_datum: document.getElementById('spiel_datum').value,
       spiel_ort: document.getElementById('spiel_ort').value,
-      supervisor_name: document.getElementById('supervisor_name').value
+      supervisor_name: document.getElementById('supervisor_name').value,
+      crew_notes: document.getElementById('crew_notes') ? document.getElementById('crew_notes').value : ""
     };
     saveToStorage();
   }
@@ -871,6 +1082,9 @@
           document.getElementById('spiel_datum').value = gameData.global.spiel_datum || "";
           document.getElementById('spiel_ort').value = gameData.global.spiel_ort || "";
           document.getElementById('supervisor_name').value = gameData.global.supervisor_name || "";
+          if (document.getElementById('crew_notes')) {
+            document.getElementById('crew_notes').value = gameData.global.crew_notes || "";
+          }
         }
       } catch(e) {
         console.error(e);
@@ -878,7 +1092,6 @@
     }
   }
 
-  // Notiz-Zeitstempel
   function addTimestamp(targetId) {
     const field = document.getElementById(targetId);
     const stamp = prompt("Drittel & Spielminute eingeben (z. B. 'P2 08:34'):", "P1 00:00");
@@ -889,7 +1102,6 @@
     }
   }
 
-  // Berechnung & Radar-Zeichnung
   function calcScores(shouldSave = true) {
     const selectedGrade = document.querySelector('input[name="overall_grade"]:checked');
     const part2Score = selectedGrade ? parseInt(selectedGrade.value, 10) : 80;
@@ -962,12 +1174,61 @@
       ampelDot.style.boxShadow = "0 0 0 3px rgba(220, 38, 38, 0.25)";
     }
 
-    drawRadar(radarScores);
+    drawRadar('radarChart', radarScores, '#2563EB');
     if (shouldSave) saveCurrentRefData();
   }
 
-  function drawRadar(scores) {
-    const canvas = document.getElementById('radarChart');
+  // Gespann-Zusammenfassung rendern
+  function renderSummaryView() {
+    const refs = SYSTEM_CONFIGS[currentSystem];
+    const container = document.getElementById('summaryCardsContainer');
+    container.innerHTML = "";
+
+    let totalCrewScore = 0;
+    const avgScores7 = [0, 0, 0, 0, 0, 0, 0];
+
+    refs.forEach((ref, idx) => {
+      const d = gameData.referees[`${currentSystem}_${ref.id}`] || getDefaultRefData();
+      
+      // Calculate single score
+      const p2 = parseInt(d.overall_grade || "80", 10);
+      let mTotal = 0;
+      for (let i = 1; i <= 7; i++) {
+        const val = parseInt(d[`perf_${i}`] || "80", 10);
+        mTotal += isNaN(val) ? 80 : val;
+        avgScores7[i-1] += (isNaN(val) ? 80 : val) / 33.33;
+      }
+      const p3 = Math.round(mTotal / 7);
+
+      let sTrend = (d.coach_trend || "").includes('Fortschritt') ? 100 : ((d.coach_trend || "").includes('Rückschritt') ? 40 : 80);
+      let sAtt = (d.coach_attitude || "").includes('Vorbildlich') ? 100 : ((d.coach_attitude || "").includes('Ausbaufähig') ? 45 : 80);
+      let sFeed = (d.coach_feedback || "").includes('Sehr offen') ? 100 : ((d.coach_feedback || "").includes('Defensiv') ? 40 : 80);
+      const p4 = Math.round((sTrend + sAtt + sFeed) / 3);
+
+      const refScore = Math.round((p2 * 0.3) + (p3 * 0.5) + (p4 * 0.2));
+      totalCrewScore += refScore;
+
+      const card = document.createElement('div');
+      card.className = "summary-card";
+      card.innerHTML = `
+        <h3>${ref.role}</h3>
+        <div class="name">${d.name || "<i>Kein Name</i>"}</div>
+        <div class="score">${refScore}%</div>
+        <div style="font-size: 11px; color: var(--text-muted);">Note: ${p2}% | Matrix: ${p3}% | Coach: ${p4}%</div>
+      `;
+      container.appendChild(card);
+    });
+
+    const crewAvg = Math.round(totalCrewScore / refs.length);
+    document.getElementById('crewScoreVal').innerText = crewAvg + "%";
+
+    // Normalize average radar
+    const crewRadar = avgScores7.map(sum => sum / refs.length);
+    drawRadar('crewRadarChart', crewRadar, '#4F46E5');
+  }
+
+  function drawRadar(canvasId, scores, polyColor = '#2563EB') {
+    const canvas = document.getElementById(canvasId);
     if (!canvas || !canvas.getContext) return;
     const ctx = canvas.getContext('2d');
     const w = canvas.width;
@@ -978,11 +1239,16 @@
     const labels = ["Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln"];
     const total = labels.length;
 
+    const isDark = document.body.classList.contains('dark-mode');
+    const gridStroke = isDark ? "#3A506B" : "#CBD5E1";
+    const axisStroke = isDark ? "#2A3B53" : "#E2E8F0";
+
     ctx.clearRect(0, 0, w, h);
 
+    // Raster
     for (let level = 1; level <= 3; level++) {
       ctx.beginPath();
-      ctx.strokeStyle = "#CBD5E1";
+      ctx.strokeStyle = gridStroke;
       ctx.lineWidth = 1;
       const r = (radius / 3) * level;
       for (let i = 0; i < total; i++) {
@@ -996,18 +1262,20 @@
       ctx.stroke();
     }
 
+    // Achsen
     for (let i = 0; i < total; i++) {
       const angle = (Math.PI * 2 / total) * i - Math.PI / 2;
       ctx.beginPath();
-      ctx.strokeStyle = "#E2E8F0";
+      ctx.strokeStyle = axisStroke;
       ctx.moveTo(cx, cy);
       ctx.lineTo(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius);
       ctx.stroke();
     }
 
+    // Polygon
     ctx.beginPath();
-    ctx.fillStyle = "rgba(37, 99, 235, 0.25)";
-    ctx.strokeStyle = "#2563EB";
+    ctx.fillStyle = polyColor === '#4F46E5' ? "rgba(79, 70, 229, 0.28)" : "rgba(37, 99, 235, 0.25)";
+    ctx.strokeStyle = polyColor;
     ctx.lineWidth = 2;
 
     for (let i = 0; i < total; i++) {
@@ -1023,6 +1291,7 @@
     ctx.fill();
     ctx.stroke();
 
+    // Punkte
     for (let i = 0; i < total; i++) {
       const val = scores[i] !== undefined ? scores[i] : 2;
       const r = (radius / 3) * Math.max(0.3, val);
@@ -1031,7 +1300,7 @@
       const y = cy + Math.sin(angle) * r;
       ctx.beginPath();
       ctx.arc(x, y, 3, 0, Math.PI * 2);
-      ctx.fillStyle = "#0B2545";
+      ctx.fillStyle = isDark ? "#FFFFFF" : "#0B2545";
       ctx.fill();
     }
   }
@@ -1044,7 +1313,7 @@
   }
 
   function exportJSON() {
-    saveCurrentRefData();
+    if (activeTabType === "ref") saveCurrentRefData();
     const filename = `Supervision_${document.getElementById('spiel_paarung').value.replace(/\s+/g, '_') || 'Spiel'}_${document.getElementById('spiel_id').value || 'ID'}.json`;
     const blob = new Blob([JSON.stringify(gameData, null, 2)], { type: "application/json" });
     const link = document.createElement("a");
@@ -1054,7 +1323,7 @@
   }
 
   function exportCSV() {
-    saveCurrentRefData();
+    if (activeTabType === "ref") saveCurrentRefData();
     const rows = [
       ["Spiel-ID", gameData.global.spiel_id || ""],
       ["Liga", gameData.global.spiel_liga || ""],
@@ -1063,6 +1332,7 @@
       ["Ort", gameData.global.spiel_ort || ""],
       ["Supervisor", gameData.global.supervisor_name || ""],
       ["System", currentSystem],
+      ["Gespann-Notizen", (gameData.global.crew_notes || "").replace(/\n/g, ' ')],
       [],
       ["Rolle", "Name", "Gesamtnote", "Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln", "Trend", "Einstellung", "Feedback", "Top Stärken", "Entwicklung", "Rapport"]
     ];
@@ -1106,10 +1376,10 @@
       navigator.serviceWorker.register('./sw.js')
         .then(reg => {
           const badge = document.getElementById('pwaBadge');
-          if (badge) badge.innerText = "● PWA Offline Ready";
+          if (badge) badge.innerText = "● PWA Ready";
         })
         .catch(err => {
-          console.log('SW registration skipped or error:', err);
+          console.log('SW registration error:', err);
         });
     });
   }
