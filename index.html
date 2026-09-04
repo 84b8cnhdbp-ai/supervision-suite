@@ -1,3 +1,10 @@
+Noch viel besser und logischer! Wenn wir das Datum und den Spielort direkt **1:1 von oben spiegeln**, musst du es an der Bande überhaupt nicht zweimal auswählen.
+
+Das Feld übernimmt das Datum automatisch aus dem Feld `spiel_datum` von ganz oben (und falls oben nichts steht, nimmt es den heutigen Tag).
+
+Hier ist der vollständige, bereinigte Code für deine `index.html`:
+
+```html
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -180,13 +187,6 @@
     border-top: 3px solid var(--green);
   }
 
-  .tab-badge {
-    background: rgba(0,0,0,0.1);
-    padding: 2px 6px;
-    border-radius: 12px;
-    font-size: 10px;
-  }
-
   .content { padding: 26px 30px; }
   
   .section-title {
@@ -325,8 +325,6 @@
   }
   .btn-primary { background-color: #0B2545; color: #FFF; }
   .btn-primary:hover { background-color: #134074; }
-  .btn-secondary { background-color: #134074; color: #FFF; }
-  .btn-secondary:hover { background-color: #1E293B; }
   .btn-accent { background-color: #0284C7; color: #FFF; }
   .btn-accent:hover { background-color: #0369A1; }
   .btn-outline { background-color: var(--bg-card); color: var(--text); border: 1px solid var(--border); }
@@ -467,20 +465,20 @@
     <div class="grid-3">
       <div>
         <label for="spiel_datum" data-i18n="lbl_datetime">Datum & Zeit</label>
-        <input type="datetime-local" id="spiel_datum" oninput="saveGlobalState()">
+        <input type="datetime-local" id="spiel_datum" oninput="handleGlobalDateTimeChange()">
       </div>
       <div>
         <label for="spiel_ort" data-i18n="lbl_arena">Spielort / Arena</label>
-        <input type="text" id="spiel_ort" placeholder="z. B. Bossard Arena" oninput="saveGlobalState()">
+        <input type="text" id="spiel_ort" placeholder="z. B. Bossard Arena" oninput="handleGlobalArenaChange()">
       </div>
       <div>
         <label for="supervisor_name" data-i18n="lbl_supervisor">Supervisor / Coach</label>
-        <input type="text" id="supervisor_name" placeholder="Name Supervisor" oninput="saveGlobalState()">
+        <input type="text" id="supervisor_name" placeholder="Name Supervisor" oninput="handleGlobalSupervisorChange()">
       </div>
     </div>
   </div>
 
-  <!-- DYNAMISCHE TABS -->
+  <!-- DYNAMISCHE TABS OHNE DOPPELUNGEN -->
   <div class="system-tabs-wrapper no-print">
     <div class="referee-tabs" id="tabsContainer"></div>
     <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;" id="currentSystemInfo">
@@ -529,7 +527,7 @@
         </div>
       </div>
 
-      <!-- 1. SCHIEDSRICHTER-ANGABEN MIT EVZ-DROPDOWN & REVIEW-RUNDE -->
+      <!-- 1. SCHIEDSRICHTER-ANGABEN MIT SMARTEM GESPASS-PARTNER -->
       <div class="section-title"><span class="num">1</span> <span data-i18n="sec1_title">Angaben zur Person & Funktion</span></div>
       <div class="grid-3" style="margin-bottom: 12px;">
         <div>
@@ -547,8 +545,8 @@
           </select>
         </div>
         <div>
-          <label for="current_schiri_partner" data-i18n="lbl_partner">Gespann-Partner</label>
-          <input type="text" id="current_schiri_partner" placeholder="Partner-Name(n)" oninput="saveCurrentRefData()">
+          <label for="current_schiri_partner" data-i18n="lbl_partner">Gespann-Partner (Automatisch)</label>
+          <input type="text" id="current_schiri_partner" placeholder="Wird automatisch aus den Reitern geladen" readonly style="background-color: var(--bg-subtle); color: var(--text-muted); cursor: not-allowed;">
         </div>
       </div>
 
@@ -687,7 +685,7 @@
         </div>
       </div>
 
-      <!-- 5. ABSCHLUSS & FEEDBACK -->
+      <!-- 5. ABSCHLUSS & FEEDBACK MIT AUTOMATISCHEM ORT/DATUM -->
       <div class="section-title"><span class="num">5</span> <span data-i18n="sec5_title">Abschluss-Rapport & Action Plan</span></div>
       <div class="grid-2" style="margin-bottom: 12px;">
         <div>
@@ -707,8 +705,8 @@
 
       <div class="grid-2" style="margin-top: 15px;">
         <div>
-          <label for="visum_ort_datum" data-i18n="lbl_location_date">Ort, Datum</label>
-          <input type="text" id="visum_ort_datum" oninput="saveCurrentRefData()" placeholder="z. B. Zug, 04.09.2026">
+          <label for="visum_ort_datum" data-i18n="lbl_location_date">Ort, Datum (Übernommen aus Metadaten)</label>
+          <input type="text" id="visum_ort_datum" oninput="saveCurrentRefData()" placeholder="Wird automatisch generiert...">
         </div>
         <div>
           <label for="visum_name" data-i18n="lbl_signature">Visum Supervisor</label>
@@ -767,16 +765,15 @@
       </div>
     </div>
 
-    <!-- ACTIONS TOOLBAR -->
+    <!-- ACTIONS TOOLBAR AUFGERÄUMT -->
     <div class="toolbar">
       <div>
         <button type="button" class="btn btn-danger" onclick="resetAll()" data-i18n="btn_reset">Gesamtes Spiel zurücksetzen</button>
       </div>
       <div class="btn-group">
-        <button type="button" class="btn btn-accent" onclick="exportSingleReviewJSON()">💾 Dieses Review sichern (.json)</button>
-        <button type="button" class="btn btn-secondary" onclick="exportJSON()" data-i18n="btn_json">Ganzes Spiel sichern (.json)</button>
-        <button type="button" class="btn btn-outline" onclick="exportCSV()" data-i18n="btn_csv">CSV-Export (Alle Refs)</button>
-        <button type="button" class="btn btn-primary" onclick="window.print()" data-i18n="btn_print">Drucken / PDF-Export</button>
+        <button type="button" class="btn btn-accent" onclick="exportSingleReviewJSON()">💾 Review sichern</button>
+        <button type="button" class="btn btn-outline" onclick="exportCSV()">CSV-Export</button>
+        <button type="button" class="btn btn-primary" onclick="window.print()">Drucken / PDF</button>
       </div>
     </div>
 
@@ -811,8 +808,8 @@
       sub_part3: "Teil 3: Matrix (50%)",
       sub_part4: "Teil 4: Coach (20%)",
       sec1_title: "Angaben zur Person & Funktion",
-      lbl_ref_name: "Schiedsrichter (EVZ)",
-      lbl_partner: "Gespann-Partner",
+      lbl_ref_name: "Schiedsrichter (EVZ Kader)",
+      lbl_partner: "Gespann-Partner (Automatisch)",
       sec2_title: "Gesamteinschätzung (Standard)",
       th_choice: "Wahl",
       th_grade: "Stufe",
@@ -837,7 +834,7 @@
       lbl_strengths: "Top 2–3 Stärken (Keep Doing)",
       lbl_workon: "Top 2–3 Entwicklungsschwerpunkte (Work On)",
       lbl_report: "Ausführlicher Rapport / Besondere Vorkommnisse",
-      lbl_location_date: "Ort, Datum",
+      lbl_location_date: "Ort, Datum (Übernommen aus Metadaten)",
       lbl_signature: "Visum Supervisor",
       sec_summary_title: "Gespann-Übersicht & Team-Performance",
       txt_team: "Team",
@@ -846,9 +843,6 @@
       sec_crew_obs: "Gemeinsame Gespann-Beobachtungen",
       lbl_crew_notes: "Zusammenarbeit, Teamwork & Spielcharakter",
       btn_reset: "Gesamtes Spiel zurücksetzen",
-      btn_csv: "CSV-Export (Alle Schiedsrichter)",
-      btn_json: "Ganzes Spiel sichern (.json)",
-      btn_print: "Drucken / PDF-Export",
       txt_tab_crew: "★ Gespann-Übersicht",
       txt_tab_stats: "📊 EVZ Saison-Statistik",
       radar_labels: ["Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln"],
@@ -897,8 +891,8 @@
       sub_part3: "Part 3: Matrix (50%)",
       sub_part4: "Part 4: Coach (20%)",
       sec1_title: "Official's Information & Assignment",
-      lbl_ref_name: "Referee (EVZ)",
-      lbl_partner: "Crew Partner(s)",
+      lbl_ref_name: "Referee (EVZ Roster)",
+      lbl_partner: "Crew Partner(s) (Auto)",
       sec2_title: "Overall Performance Rating (Standard)",
       th_choice: "Select",
       th_grade: "Grade",
@@ -923,7 +917,7 @@
       lbl_strengths: "Top 2–3 Strengths (Keep Doing)",
       lbl_workon: "Top 2–3 Action Items (Work On)",
       lbl_report: "Detailed Game Rapport / Key Incidents",
-      lbl_location_date: "Location, Date",
+      lbl_location_date: "Location, Date (Inherited)",
       lbl_signature: "Supervisor Signature",
       sec_summary_title: "Crew Summary & Collective Performance",
       txt_team: "Crew",
@@ -932,9 +926,6 @@
       sec_crew_obs: "Collective Crew Observations",
       lbl_crew_notes: "Teamwork, Communication & Game Management",
       btn_reset: "Reset Entire Game",
-      btn_csv: "Export CSV (All Officials)",
-      btn_json: "Backup Game (.json)",
-      btn_print: "Print / Export PDF",
       txt_tab_crew: "★ Crew Overview",
       txt_tab_stats: "📊 EVZ Season Stats",
       radar_labels: ["Skating", "Position", "Presence", "Anticipation", "De-escalation", "Teamwork", "Rules"],
@@ -971,28 +962,28 @@
 
   const SYSTEM_CONFIGS = {
     "4-Man": [
-      { id: "h1", role_de: "Head Referee 1", role_en: "Head Referee 1", type: "head", badge: "Head 1" },
-      { id: "h2", role_de: "Head Referee 2", role_en: "Head Referee 2", type: "head", badge: "Head 2" },
-      { id: "l1", role_de: "Linesperson 1", role_en: "Linesperson 1", type: "lines", badge: "Lines 1" },
-      { id: "l2", role_de: "Linesperson 2", role_en: "Linesperson 2", type: "lines", badge: "Lines 2" }
+      { id: "h1", role_de: "Head Referee 1", role_en: "Head Referee 1", type: "head" },
+      { id: "h2", role_de: "Head Referee 2", role_en: "Head Referee 2", type: "head" },
+      { id: "l1", role_de: "Linesperson 1", role_en: "Linesperson 1", type: "lines" },
+      { id: "l2", role_de: "Linesperson 2", role_en: "Linesperson 2", type: "lines" }
     ],
     "3-Man": [
-      { id: "h1", role_de: "Head Referee 1", role_en: "Head Referee 1", type: "head", badge: "Head" },
-      { id: "l1", role_de: "Linesperson 1", role_en: "Linesperson 1", type: "lines", badge: "Lines 1" },
-      { id: "l2", role_de: "Linesperson 2", role_en: "Linesperson 2", type: "lines", badge: "Lines 2" }
+      { id: "h1", role_de: "Head Referee 1", role_en: "Head Referee 1", type: "head" },
+      { id: "l1", role_de: "Linesperson 1", role_en: "Linesperson 1", type: "lines" },
+      { id: "l2", role_de: "Linesperson 2", role_en: "Linesperson 2", type: "lines" }
     ],
     "2-Man": [
-      { id: "r1", role_de: "Referee 1", role_en: "Referee 1", type: "dual", badge: "Ref 1" },
-      { id: "r2", role_de: "Referee 2", role_en: "Referee 2", type: "dual", badge: "Ref 2" }
+      { id: "r1", role_de: "Referee 1", role_en: "Referee 1", type: "dual" },
+      { id: "r2", role_de: "Referee 2", role_en: "Referee 2", type: "dual" }
     ],
     "1-Man": [
-      { id: "r1", role_de: "Einzel-Schiedsrichter", role_en: "Solo Referee", type: "solo", badge: "Solo Ref" }
+      { id: "r1", role_de: "Einzel-Schiedsrichter", role_en: "Solo Referee", type: "solo" }
     ]
   };
 
   let currentLang = "de";
   let currentSystem = "4-Man";
-  let activeTabType = "ref"; // "ref", "summary" oder "stats"
+  let activeTabType = "ref"; 
   let activeRefIndex = 0;
   let gameData = {
     global: {},
@@ -1041,6 +1032,7 @@
       customInput.value = "";
     }
     saveCurrentRefData();
+    updatePartnerField();
   }
 
   function toggleLang() {
@@ -1138,6 +1130,7 @@
     loadRefereeForm(activeRefIndex);
   }
 
+  // TABS RENDERN (OHNE BADGE-DOPPELUNG)
   function renderTabs() {
     const tabsContainer = document.getElementById('tabsContainer');
     tabsContainer.innerHTML = "";
@@ -1149,7 +1142,7 @@
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'tab-btn' + (activeTabType === "ref" && index === activeRefIndex ? ' active' : '');
-      btn.innerHTML = `<span>${roleText}</span> <span class="tab-badge">${ref.badge}</span>`;
+      btn.innerHTML = `<span>${roleText}</span>`;
       btn.onclick = () => selectRefTab(index);
       tabsContainer.appendChild(btn);
     });
@@ -1163,7 +1156,6 @@
       tabsContainer.appendChild(sumBtn);
     }
 
-    // Neuer Tab: EVZ Saison-Statistik
     const statBtn = document.createElement('button');
     statBtn.type = 'button';
     statBtn.className = 'tab-btn tab-stats' + (activeTabType === "stats" ? ' active' : '');
@@ -1264,6 +1256,80 @@
     return sel.value;
   }
 
+  // AUTOMATISCHE GESPASS-PARTNER-BERECHNUNG
+  function updatePartnerField() {
+    const currentRefConfig = SYSTEM_CONFIGS[currentSystem][activeRefIndex];
+    if (!currentRefConfig) return;
+
+    const partners = [];
+    const refs = SYSTEM_CONFIGS[currentSystem];
+
+    refs.forEach((ref, idx) => {
+      if (idx !== activeRefIndex) {
+        const partnerKey = `${currentSystem}_${ref.id}`;
+        const pData = gameData.referees[partnerKey];
+        if (pData && pData.name && pData.name.trim()) {
+          const roleText = currentLang === 'en' ? ref.role_en : ref.role_de;
+          partners.push(`${pData.name} (${roleText})`);
+        }
+      }
+    });
+
+    const partnerField = document.getElementById('current_schiri_partner');
+    if (partners.length > 0) {
+      partnerField.value = partners.join(", ");
+    } else {
+      partnerField.value = "Noch keine Partner in den anderen Reitern erfasst";
+    }
+  }
+
+  // AUTOMATISCHES SPIEGELN VON ORT & DATUM
+  function updateDerivedLocationAndDate() {
+    const arena = document.getElementById('spiel_ort').value.trim();
+    const dtVal = document.getElementById('spiel_datum').value;
+
+    let formattedDate = "";
+    if (dtVal) {
+      const d = new Date(dtVal);
+      if (!isNaN(d.getTime())) {
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        formattedDate = `${day}.${month}.${year}`;
+      }
+    } else {
+      const today = new Date();
+      const day = String(today.getDate()).padStart(2, '0');
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const year = today.getFullYear();
+      formattedDate = `${day}.${month}.${year}`;
+    }
+
+    const targetField = document.getElementById('visum_ort_datum');
+    if (arena && formattedDate) {
+      targetField.value = `${arena}, ${formattedDate}`;
+    } else if (formattedDate) {
+      targetField.value = formattedDate;
+    } else {
+      targetField.value = arena;
+    }
+  }
+
+  function handleGlobalDateTimeChange() {
+    saveGlobalState();
+    updateDerivedLocationAndDate();
+  }
+
+  function handleGlobalArenaChange() {
+    saveGlobalState();
+    updateDerivedLocationAndDate();
+  }
+
+  function handleGlobalSupervisorChange() {
+    saveGlobalState();
+    document.getElementById('visum_name').value = document.getElementById('supervisor_name').value;
+  }
+
   function loadRefereeForm(index) {
     const refConfig = SYSTEM_CONFIGS[currentSystem][index];
     const roleName = currentLang === 'en' ? refConfig.role_en : refConfig.role_de;
@@ -1273,7 +1339,6 @@
     const refKey = `${currentSystem}_${refConfig.id}`;
     const data = gameData.referees[refKey] || getDefaultRefData();
 
-    // Namen ins Dropdown bzw. Custom-Feld laden
     const sel = document.getElementById('current_schiri_name');
     const custom = document.getElementById('current_schiri_name_custom');
     if (data.name && EVZ_KADER.includes(data.name)) {
@@ -1291,7 +1356,6 @@
     }
 
     document.getElementById('current_review_round').value = data.review_round || "R1";
-    document.getElementById('current_schiri_partner').value = data.partner || "";
 
     const radios = document.querySelectorAll('input[name="overall_grade"]');
     radios.forEach(r => {
@@ -1310,9 +1374,17 @@
     document.getElementById('top_strengths').value = data.top_strengths || "";
     document.getElementById('top_workon').value = data.top_workon || "";
     document.getElementById('general_report').value = data.general_report || "";
-    document.getElementById('visum_ort_datum').value = data.visum_ort_datum || gameData.global.visum_ort_datum || "";
-    document.getElementById('visum_name').value = data.visum_name || gameData.global.supervisor_name || "";
+    
+    // Ort/Datum und Visum spiegeln
+    if (data.visum_ort_datum) {
+      document.getElementById('visum_ort_datum').value = data.visum_ort_datum;
+    } else {
+      updateDerivedLocationAndDate();
+    }
 
+    document.getElementById('visum_name').value = data.visum_name || document.getElementById('supervisor_name').value || "";
+
+    updatePartnerField();
     calcScores(false);
   }
 
@@ -1627,7 +1699,7 @@
     }
   }
 
-  // EXPORT: Einzelnes Review als JSON sichern (für den spezifischen Ref-Ordner)
+  // EXPORT: Einzelnes Review sichern
   function exportSingleReviewJSON() {
     saveCurrentRefData();
     const refConfig = SYSTEM_CONFIGS[currentSystem][activeRefIndex];
@@ -1637,7 +1709,6 @@
     const name = refData.name || "Unbekannt";
     const round = refData.review_round || "R1";
     
-    // Spieldatum oder heutiges Datum holen
     let dateStr = gameData.global.spiel_datum ? gameData.global.spiel_datum.split("T")[0] : new Date().toISOString().split("T")[0];
 
     const payload = {
@@ -1658,19 +1729,8 @@
       supervisor: gameData.global.supervisor_name || ""
     };
 
-    // Dateiname formatieren: YYYY-MM-DD_R1.json
     const filename = `${dateStr}_${round}.json`;
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
-  }
-
-  function exportJSON() {
-    if (activeTabType === "ref") saveCurrentRefData();
-    const filename = `Supervision_${document.getElementById('spiel_paarung').value.replace(/\s+/g, '_') || 'Game'}_${document.getElementById('spiel_id').value || 'ID'}.json`;
-    const blob = new Blob([JSON.stringify(gameData, null, 2)], { type: "application/json" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = filename;
@@ -1745,7 +1805,6 @@
         const text = await file.text();
         const json = JSON.parse(text);
         
-        // Entweder Einzelreview oder Spiel-Export
         if (json.schiedsrichter && json.reviewRunde) {
           if (!stats[json.schiedsrichter]) stats[json.schiedsrichter] = { R1: null, R2: null };
           stats[json.schiedsrichter][json.reviewRunde] = json;
@@ -1879,3 +1938,5 @@
 </script>
 </body>
 </html>
+
+```
