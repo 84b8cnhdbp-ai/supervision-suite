@@ -9,5 +9,19 @@ Im Code stehen keine Namen und keine Bewertungen.
 
 ## Release
 1. Änderungen machen und lokal testen (`python3 -m http.server`).
-2. In `sw.js` die `CACHE_NAME`-Version erhöhen.
+2. Wenn `css/` oder `js/` geändert wurden: in `index.html` die Nummer `?v=` bei **allen** CSS-/JS-Links um 1 erhöhen (z. B. Suchen/Ersetzen `?v=7` → `?v=8`).
 3. Commit und Push auf `main` → GitHub Pages veröffentlicht automatisch.
+
+Die App lädt beim Start Seite, CSS und JS als ein Paket. Ist das Netz innert 3 Sekunden nicht fertig, startet sie mit der gespeicherten Version und übernimmt die neue beim nächsten Start. Wurde `?v=` vergessen, bleibt die bisherige Version aktiv und oben erscheint „⚠ Update blockiert – Version nicht erhöht“.
+
+### Prüfung vor jedem Commit (einmalig aktivieren)
+Im Projektordner einmal ausführen:
+
+```sh
+git config core.hooksPath .githooks
+```
+
+Danach lehnt `git commit` ab, wenn `css/` oder `js/` geändert wurden, `?v=` aber nicht erhöht wurde, oder wenn die Links verschiedene Nummern haben. Im Notfall überspringen: `git commit --no-verify`.
+
+### Entwickeln mit Live Server
+Der Service Worker liefert CSS/JS mit gleicher Nummer aus seinem Speicher. Damit lokale Änderungen ohne neue Nummer sofort sichtbar sind: in den Entwicklertools unter **Application → Service Workers** die Option **„Bypass for network“** einschalten.

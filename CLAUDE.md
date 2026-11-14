@@ -21,11 +21,16 @@ Genutzt auf MacBook und iPad (hoch und quer), selten auf dem Handy.
 
 ## Technik
 - Reines HTML/CSS/JavaScript, **kein Build-Schritt, keine Frameworks, keine CDNs** (muss offline laufen).
-- Dateien: `index.html`, `sw.js` (Service Worker), `manifest.json`, `icons/`, `logo-evz.svg`. Nach Etappe 1 zusätzlich `css/` und `js/`.
-- Jede neue Datei, die offline verfügbar sein muss, in `ASSETS_TO_CACHE` in `sw.js` eintragen.
+- Dateien: `index.html`, `css/app.css`, `js/*.js`, `sw.js` (Service Worker), `manifest.json`, `icons/`, `logo-evz.svg`.
+- Neue CSS-/JS-Dateien in `index.html` mit `?v=N` einbinden (gleiche Nummer wie die übrigen Links). Der Service Worker speichert automatisch alles, was `index.html` einbindet.
+- Andere neue Dateien, die offline verfügbar sein müssen (Bilder, Icons), in `STATIC_ASSETS` in `sw.js` eintragen.
+- Service Worker: `index.html` + ihre CSS/JS sind ein Paket. Ein neues Paket wird nur vollständig übernommen (Zeitlimit 3 s, sonst gespeichertes Paket); nie gemischte Versionen.
 
 ## Release-Regel
-Bei **jeder** Änderung an ausgelieferten Dateien `CACHE_NAME` in `sw.js` erhöhen (`referee-supervision-v6` → `v7` …). Sonst sehen Tablet und Mac die neue Version nicht.
+- Bei **jeder** Änderung an `css/` oder `js/` die Nummer `?v=` in `index.html` erhöhen, bei **allen** Links gleich (`?v=7` → `?v=8`). Sonst blockiert der Service Worker das Update (Hinweis im Badge oben: „Update blockiert – Version nicht erhöht“).
+- Der pre-commit-Hook in `.githooks/` prüft das (Aktivierung siehe README).
+- Nur `index.html` geändert: keine Erhöhung nötig.
+- `CACHE_NAME` in `sw.js` nur ändern, wenn sich der Aufbau des Caches in `sw.js` ändert. Änderungen an `sw.js` selbst lädt der Browser automatisch.
 
 ## Fachliche Regeln (nicht ohne Rückfrage ändern)
 - Score = Gesamteinschätzung × 30 % + Leistungs-Checkliste × 50 % + Coaching × 20 %.

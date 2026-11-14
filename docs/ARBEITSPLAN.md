@@ -9,8 +9,8 @@ Nach dem Vorschlag gibst du das Go. Erst wenn die Etappe getestet und committet 
 ## Etappe 1 – Code aufräumen (ohne sichtbare Änderung)
 **Ziel:** Die 2000 Zeilen in `index.html` aufteilen, damit das neue Design sauber umsetzbar ist.
 - CSS nach `css/app.css`, JavaScript nach `js/` (`i18n.js`, `config.js`, `scoring.js`, `storage.js`, `ui.js`, `export.js`, `stats.js`, `app.js`), als normale `<script>`-Dateien ohne Build. Code nur verschieben, nicht umschreiben; Inline-Handler (`onclick` …) bleiben.
-- Alle neuen Dateien in `sw.js` cachen, `CACHE_NAME` erhöhen.
-- Service Worker: CSS und JS wie die Seite zuerst aus dem Netz laden, offline aus dem Cache (damit Seite und Skripte nie verschiedene Versionen haben).
+- Alle neuen Dateien im Service Worker cachen; Versionsnummer `?v=` in den CSS-/JS-Links von `index.html` (Release-Regel neu, siehe CLAUDE.md), pre-commit-Hook prüft sie.
+- Service Worker: Seite + CSS/JS als ein Paket mit `cache: 'no-cache'` laden; nur vollständig übernehmen (Zeitlimit 3 s, sonst gespeichertes Paket), nie gemischte Versionen; Hinweis im Badge, wenn ein Update wegen nicht erhöhter Nummer blockiert ist.
 - Beispieldateien mit erfundenen Namen unter `tests/fixtures/` (Version 1.0 und 1.1, ganzes Spiel, Kader).
 
 **Fertig, wenn:** Die App sieht exakt gleich aus und verhält sich gleich; alle Tests aus CLAUDE.md laufen; online ist eine neue Version sofort sichtbar; Offline-Start funktioniert vollständig.
@@ -85,6 +85,6 @@ Stil:
 ---
 
 ## Laufend
-- Bei jedem Release `CACHE_NAME` in `sw.js` erhöhen.
+- Bei jeder Änderung an `css/` oder `js/` die Nummer `?v=` in `index.html` erhöhen (Hook prüft es).
 - Versionsnummer in der Fusszeile nachführen.
 - README aktuell halten.

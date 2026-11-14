@@ -1,0 +1,38 @@
+#!/bin/sh
+# pre-commit: Release-Regel prüfen (Referee Supervision Suite)
+# - Alle lokalen CSS-/JS-Links in index.html tragen dieselbe Nummer ?v=N.
+# - Wenn css/ oder js/ geändert wurden, muss N höher sein als im letzten Commit.
+# Einmalig aktivieren: git config core.hooksPath .githooks
+
+staged=$(git diff --cached --name-only --diff-filter=ACMRD)
+echo "$staged" | grep -qE '^(css/|js/|index\.html$)' || exit 0
+
+fail() {
+  echo "" >&2
+  echo "✗ Commit abgelehnt: $1" >&2
+  echo "  Release-Regel: Bei jeder Änderung an css/ oder js/ die Nummer ?v= in index.html" >&2
+  echo "  bei allen Links um 1 erhöhen (z. B. ?v=7 → ?v=8)." >&2
+  echo "" >&2
+  exit 1
+}
+
+new_html=$(git show :index.html 2>/dev/null) || fail "index.html fehlt im Commit."
+
+# Lokale CSS-/JS-Links ohne ?v=
+missing=$(printf '%s\n' "$new_html" | grep -oE '(href|src)="[^":]+\.(css|js)"' )
+[ -n "$missing" ] && fail "Link ohne ?v= in index.html: $missing"
+
+new_versions=$(printf '%s\n' "$new_html" | grep -oE '(href|src)="[^":]+\.(css|js)\?v=[0-9]+"' | grep -oE 'v=[0-9]+' | sort -u)
+count=$(printf '%s\n' "$new_versions" | grep -c .)
+[ "$count" -eq 0 ] && fail "keine Links mit ?v= in index.html gefunden."
+[ "$count" -gt 1 ] && fail "unterschiedliche Nummern in index.html: $(echo $new_versions)"
+new_v=${new_versions#v=}
+
+if echo "$staged" | grep -qE '^(css|js)/'; then
+  old_v=$(git show HEAD:index.html 2>/dev/null | grep -oE '(href|src)="[^":]+\.(css|js)\?v=[0-9]+"' | grep -oE 'v=[0-9]+' | sort -t= -k2 -n | tail -1)
+  old_v=${old_v#v=}
+  if [ -n "$old_v" ] && [ "$new_v" -le "$old_v" ]; then
+    fail "css/ oder js/ geändert, aber ?v= ist noch $new_v (letzter Commit: $old_v)."
+  fi
+fi
+exit 0
