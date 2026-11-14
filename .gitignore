@@ -1,0 +1,7 @@
+# Personendaten gehören nie ins Repo
+Kaderliste*.json
+Bewertungen/
+*_R1_*.json
+*_R2_*.json
+*.csv
+.DS_Store
