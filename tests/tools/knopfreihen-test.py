@@ -51,6 +51,34 @@ PRUEFE_REIHEN = r"""((auswahl) => {
   return fehler;
 })"""
 FORMULAR = "'.app-container fieldset.seg'"
+
+# iPad quer / MacBook: In der Formularspalte bricht nichts um und nichts ragt hinaus
+# (Knopf-Beschriftungen, Feldbezeichnungen, Abschnittstitel; Fliesstext wie Definitionen darf umbrechen).
+EINZEILIG = r"""(() => {
+  const f = [];
+  const spalte = document.querySelector('#singleRefView .formular-spalte');
+  if (spalte.scrollWidth > spalte.clientWidth + 1) f.push(`Formularspalte zu breit (${spalte.scrollWidth} > ${spalte.clientWidth})`);
+  const zeilen = (el) => {
+    const teile = [...el.childNodes].filter((n) => n.nodeType === 3 ? n.textContent.trim() : !n.classList.contains('sr-only'));
+    // Zeilen = Gruppen von Rechtecken, die sich in der Höhe überlappen (Kreis-Nummer + Text = eine Zeile)
+    const rects = [];
+    teile.forEach((n) => { const r = document.createRange(); r.selectNodeContents(n); rects.push(...[...r.getClientRects()].filter((q) => q.width > 0)); });
+    rects.sort((a, b) => a.top - b.top);
+    let anzahl = 0, unten = -Infinity;
+    rects.forEach((q) => { if (q.top >= unten - 1) { anzahl++; unten = q.bottom; } else unten = Math.max(unten, q.bottom); });
+    return anzahl;
+  };
+  spalte.querySelectorAll('.seg-opt, .feld-label, label, .section-title, .seg-legende').forEach((el) => {
+    if (!el.offsetParent || !el.textContent.trim()) return;
+    if (zeilen(el) > 1) f.push(`„${el.textContent.trim().slice(0, 40)}“ bricht um`);
+  });
+  spalte.querySelectorAll('input, select, textarea, fieldset.seg').forEach((el) => {
+    if (!el.offsetParent) return;
+    const r = el.getBoundingClientRect(), s = spalte.getBoundingClientRect();
+    if (r.right > s.right + 1) f.push(`${el.id || el.name || el.tagName} ragt aus der Formularspalte`);
+  });
+  return f;
+})()"""
 MENU = "'#mehrMenu fieldset.seg'"
 
 
@@ -69,6 +97,9 @@ def main():
                         b.js(f'selectRefTab({tab})')
                         for f in b.js(PRUEFE_REIHEN + f'({FORMULAR})'):
                             fehler.append(f'{w}px {sprache} {rolle}: {f}')
+                        if w >= 1194:
+                            for f in b.js(EINZEILIG):
+                                fehler.append(f'{w}px {sprache} {rolle}: {f}')
                     anzahl = b.js(f"document.querySelectorAll({FORMULAR}).length")
                     if anzahl != 13:
                         fehler.append(f'{w}px {sprache}: {anzahl} Knopfreihen im Formular statt 13')

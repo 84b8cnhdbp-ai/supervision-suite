@@ -13,7 +13,7 @@ python3 tests/tools/alle-tests.py            # alle Tests (ca. 5 Min.)
 python3 tests/tools/alle-tests.py --ohne-sw  # ohne Service-Worker-Test (ca. 1 Min.)
 ```
 
-Führt Daten-Test (Deutsch und Englisch), Texte-, Vereins-, Fenster-, Knopfreihen-, Layout- und Service-Worker-Test aus und zeigt eine
+Führt Daten-Test (Deutsch und Englisch), Texte-, Vereins-, Fenster-, Knopfreihen-, Layout-, Score- und Service-Worker-Test aus und zeigt eine
 Zusammenfassung. Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
 
 ## Daten-Test – „gleiche Eingaben, gleiche Daten“
@@ -78,7 +78,7 @@ python3 tests/tools/knopfreihen-test.py
 
 Auf 834, 1194 und 1440 px, Deutsch und Englisch, Head Referee und Linesperson: jede Knopfreihe ist eine echte
 Radiogruppe mit Namen (VoiceOver), jedes Segment mindestens 44 × 44 px, nichts abgeschnitten, keine waagrechte
-Bildlaufleiste; Reihenfolge vom besten zum schlechtesten Wert (Trend mit „Erstbeobachtung“); Gesamteinschätzung
+Bildlaufleiste; bei 1194 und 1440 px bricht in der Formularspalte nichts um; Reihenfolge vom besten zum schlechtesten Wert (Trend mit „Erstbeobachtung“); Gesamteinschätzung
 ohne Vorwahl mit Hinweis, nach der Wahl mit Definition; jede Option speichert den bisherigen Wert (echter Klick),
 auch nach Neuladen; Pfeiltasten wechseln die Wahl.
 
@@ -94,6 +94,18 @@ ausser dem letzten Wort („Von Rotz Peter“ → „Von Rotz“), Reiter folgen
 Seitenleiste (Spiel, Statistik, Fuss mit Version/Stand aus `?v=`, Kader, Offline-Status, Gespeichert-Zeit).
 Menü „Mehr“ mit echten Klicks: Esc / daneben tippen schliesst, CSV, Kader, Sprache, Darstellung, Zurücksetzen
 (rot, mit Abstand). Kader-Knopf beim Schiedsrichter-Feld nur ohne Kader. Druck ohne Seitenleiste/Werkzeugleiste.
+
+## Score-Test – rechte Spalte
+
+```sh
+python3 tests/tools/score-test.py
+```
+
+iPad quer und MacBook: zwei Spalten, die rechte bleibt beim Scrollen stehen und ist ganz sichtbar; iPad hochkant:
+Score oben. Angezeigte Werte = `computeRefScores` in allen Reitern, Ring passend, Statustexte und Schwellen,
+kurze Begriffe bei der Gesamteinschätzung. Netzdiagramm mit 7 Punkten, N/A als hohler grauer Punkt mit „(N/A)“,
+im Druck sichtbar. „Bereit zum Sichern?“: fehlende Punkte springen zum Feld, gleiche Liste wie das Fenster beim
+Sichern, nicht im Druck.
 
 ## Service-Worker-Test – Updates, offline, langsames Netz
 

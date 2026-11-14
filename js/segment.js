@@ -72,10 +72,10 @@ function baueAlleKnopfreihen() {
   baueSegmente('current_review_round', t('round_options'), { standard: 'R1', onChange: () => saveCurrentRefData() });
 
   baueSegmente('overall_grade', [
-    { val: '100', kurz: t('grade_vg'), farbe: '--r-pp' },
-    { val: '80', kurz: t('grade_good'), farbe: '--r-p' },
-    { val: '50', kurz: t('grade_ni'), farbe: '--r-m' },
-    { val: '20', kurz: t('grade_unsat'), farbe: '--r-mm' }
+    { val: '100', kurz: t('grade_kurz_vg'), lang: t('grade_vg'), farbe: '--r-pp' },
+    { val: '80', kurz: t('grade_kurz_good'), lang: t('grade_good'), farbe: '--r-p' },
+    { val: '50', kurz: t('grade_kurz_ni'), lang: t('grade_ni'), farbe: '--r-m' },
+    { val: '20', kurz: t('grade_kurz_unsat'), lang: t('grade_unsat'), farbe: '--r-mm' }
   ], { onChange: () => calcScores() });   // keine Vorwahl: bewusst wählen
 
   const noten = t('perf_options').map((o) => ({ ...o, farbe: farben[o.val] }));

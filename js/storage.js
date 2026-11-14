@@ -74,6 +74,7 @@ function saveGlobalState() {
 
 function saveToStorage() {
   localStorage.setItem('referee_multi_supervision_data', JSON.stringify(gameData));
+  if (typeof zeigeBereit === 'function') zeigeBereit();   // „Bereit zum Sichern?“ nachführen
   const status = document.getElementById('saveStatus');
   if (status) {
     status.innerText = t('saved_status', { zeit: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });

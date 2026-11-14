@@ -34,6 +34,7 @@
   /* Bewertungsfarben als Schrift auf Karten */
   --t-good: #13662B;
   --t-good2: #2E7D3A;
+  --t-solid: #A16207;
   --t-warn: #9A4A07;
   --t-bad: #B42318;
   --danger-soft: #FDECEA;
@@ -65,7 +66,7 @@
     --bg: #000000; --card: #1C1C1E; --text: #F5F5F7; --secondary: #A1A1A6; --sep: #38383A;
     --seg: #2C2C2E; --seg-sel: #5A5A5E; --toolbar: #111113; --sidebar: #161618; --input: #111113;
     --accent: #4C9AFF; --accent-hover: #7AB4FF; --accent-soft: rgba(76, 154, 255, 0.28); --on-accent: #000000; --card-shadow: none;
-    --t-good: #7EE2A0; --t-good2: #B4F0C8; --t-warn: #FDBA74; --t-bad: #FF8A80; --danger-soft: #3A1714;
+    --t-good: #7EE2A0; --t-good2: #B4F0C8; --t-solid: #FCD34D; --t-warn: #FDBA74; --t-bad: #FF8A80; --danger-soft: #3A1714;
     --radar-grid: #48484A; --radar-axis: #38383A; --radar-point: #F5F5F7; --radar-na: #8E8E93;
   }
 }
@@ -74,7 +75,7 @@
   --bg: #000000; --card: #1C1C1E; --text: #F5F5F7; --secondary: #A1A1A6; --sep: #38383A;
   --seg: #2C2C2E; --seg-sel: #5A5A5E; --toolbar: #111113; --sidebar: #161618; --input: #111113;
   --accent: #4C9AFF; --accent-hover: #7AB4FF; --accent-soft: rgba(76, 154, 255, 0.28); --on-accent: #000000; --card-shadow: none;
-  --t-good: #7EE2A0; --t-good2: #B4F0C8; --t-warn: #FDBA74; --t-bad: #FF8A80; --danger-soft: #3A1714;
+  --t-good: #7EE2A0; --t-good2: #B4F0C8; --t-solid: #FCD34D; --t-warn: #FDBA74; --t-bad: #FF8A80; --danger-soft: #3A1714;
   --radar-grid: #48484A; --radar-axis: #38383A; --radar-point: #F5F5F7; --radar-na: #8E8E93;
 }
 
@@ -93,7 +94,7 @@ body {
   background: var(--card);
   border-radius: 12px;
   box-shadow: var(--card-shadow);
-  overflow: hidden;
+  overflow: clip;   /* nicht hidden: sonst bleibt die rechte Spalte beim Scrollen nicht stehen */
 }
 header {
   background: var(--toolbar);
@@ -462,7 +463,7 @@ fieldset.seg {
   position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; min-height: 0; pointer-events: none;
 }
 .seg .seg-opt {
-  flex: 1 1 0; min-width: 44px; min-height: 44px; margin: 0; padding: 4px 8px;
+  flex: 1 1 auto; min-width: 44px; min-height: 44px; margin: 0; padding: 4px 8px; white-space: nowrap;
   display: flex; align-items: center; justify-content: center; text-align: center;
   border-radius: 7px; font-size: 14px; font-weight: 600; line-height: 1.2; color: var(--text);
   cursor: pointer; user-select: none; -webkit-user-select: none; overflow-wrap: break-word; hyphens: manual;
@@ -485,7 +486,7 @@ fieldset.seg {
 
 /* Coaching: eine Zeile pro Feld */
 .coach-liste { display: flex; flex-direction: column; gap: 12px; }
-.coach-zeile { display: grid; grid-template-columns: minmax(170px, 28%) 1fr; gap: 12px; align-items: center; }
+.coach-zeile { display: grid; grid-template-columns: minmax(250px, 34%) 1fr; gap: 12px; align-items: center; }
 .coach-zeile .feld-label { margin: 0; font-size: 14px; color: var(--text); }
 
 @media (prefers-reduced-motion: reduce) { .seg .seg-opt { transition: none; } }
@@ -553,13 +554,78 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
   .feld-hervorheben { animation: none; box-shadow: 0 0 0 4px var(--accent-soft), 0 0 0 2px var(--accent); }
 }
 
-/* iPad hochkant und schmaler: Kriterien und Coaching untereinander, nichts abgeschnitten (nur Bildschirm) */
-@media screen and (max-width: 900px) {
+/* ---------- Bewertung: Formular links, rechte Spalte (Score, Profil, Bereit?) ---------- */
+.formular-spalte { container: formular / inline-size; min-width: 0; }
+.score-spalte { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+@media screen and (min-width: 1000px) {
+  .bewertung { display: grid; grid-template-columns: minmax(0, 1fr) 320px; grid-template-areas: "formular score"; gap: 28px; align-items: start; }
+  .formular-spalte { grid-area: formular; }
+  .score-spalte {
+    grid-area: score; margin: 0; position: sticky; top: 82px;   /* unter der Werkzeugleiste */
+    max-height: calc(100vh - 98px); overflow-y: auto;
+  }
+  .content { padding: 24px; }
+}
+.karte { background: var(--card); border: 1px solid var(--sep); border-radius: 12px; box-shadow: var(--card-shadow); padding: 14px 16px; }
+.karten-titel { margin: 0 0 10px; font-size: 13px; font-weight: 600; color: var(--secondary); }
+.score-zeile { display: flex; align-items: center; gap: 14px; }
+.score-ring { position: relative; width: 92px; height: 92px; flex-shrink: 0; }
+.score-ring svg { width: 100%; height: 100%; }
+.ring-grund { fill: none; stroke: var(--seg); stroke-width: 12; }
+.ring-wert { fill: none; stroke: var(--r-none); stroke-width: 12; stroke-linecap: round; transition: stroke-dasharray 0.4s ease; }
+.score-zahl { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.score-status { min-width: 0; font-size: 16px; line-height: 1.25; hyphens: auto; -webkit-hyphens: auto; overflow-wrap: break-word; }
+.score-teile { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 12px; }
+.score-teil { display: flex; flex-direction: column; gap: 2px; padding: 6px 4px; border-radius: 8px; background: var(--toolbar); text-align: center; }
+.score-teil span { font-size: 12px; color: var(--secondary); white-space: nowrap; }
+.score-teil .score-gewicht { font-size: 11px; }
+.score-teil strong { font-size: 16px; font-variant-numeric: tabular-nums; }
+.netz { width: 100%; max-width: 320px; height: auto; display: block; margin: 0 auto; overflow: visible; }
+.netz-gitter { fill: none; stroke: var(--radar-grid); stroke-width: 1; }
+.netz-achse { stroke: var(--radar-axis); stroke-width: 1; }
+.netz-flaeche { fill: var(--accent); fill-opacity: 0.22; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
+.netz-punkt { fill: var(--radar-point); }
+.netz-na { fill: var(--card); stroke: var(--radar-na); stroke-width: 1.6; }
+.netz-label { font-size: 11px; fill: var(--secondary); }
+.netz-label-na { font-style: italic; }
+.bereit-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.bereit-liste li { display: flex; }
+.bereit-ok { align-items: center; gap: 10px; min-height: 36px; font-size: 14px; }
+.bereit-fehlt {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 0 8px; margin: 0 -8px;
+  border: 0; border-radius: 8px; background: transparent; color: var(--text); font: inherit; font-size: 14px; font-weight: 600; text-align: left; cursor: pointer;
+}
+.bereit-fehlt::after { content: "›"; margin-left: auto; font-size: 18px; color: var(--secondary); }
+.bereit-fehlt:hover { background: var(--seg); }
+.bereit-fehlt:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+.bereit-zeichen { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; color: #FFFFFF; font-size: 13px; font-weight: 700; }
+.bereit-zeichen.ok { background: var(--r-p); }
+.bereit-zeichen.fehlt { background: var(--r-m); }
+.bereit-status { margin: 10px 0 0; font-size: 13px; color: var(--t-warn); }
+.bereit-status.bereit-ja { color: var(--t-good); }
+
+/* Kriterien am Bildschirm als Zeilen: Titel | Knopfreihe, darunter Notizen; schmal alles untereinander */
+@media screen {
+  .perf-table { display: block; }
   .perf-table thead { display: none; }
-  .perf-table tr { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 12px; border-bottom: 1px solid var(--sep); }
+  .perf-table tbody { display: block; }
+  .perf-table tr {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(250px, 300px); grid-template-areas: "titel wert" "notiz notiz";
+    gap: 8px 16px; padding: 12px; border-bottom: 1px solid var(--sep);
+  }
   .perf-table tr:last-child { border-bottom: 0; }
   .perf-table td { display: block; padding: 0; border: 0; }
+  .perf-table td:nth-child(1) { grid-area: titel; }
+  .perf-table td:nth-child(2) { grid-area: wert; }
+  .perf-table td:nth-child(3) { grid-area: notiz; }
+}
+@container formular (max-width: 620px) {
+  .perf-table tr { grid-template-columns: 1fr; grid-template-areas: "titel" "wert" "notiz"; }
   .coach-zeile { grid-template-columns: 1fr; gap: 6px; }
+  .grid-3, .grid-2 { grid-template-columns: 1fr; }
+}
+@container formular (min-width: 621px) and (max-width: 900px) {
+  .grid-3 { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 860px) {
@@ -574,7 +640,7 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
     color-scheme: light;
     --bg: #FFFFFF; --card: #FFFFFF; --text: #000000; --secondary: #3A3A3C; --sep: #C7C7CC; --seg: #E6E6EB;
     --toolbar: #F2F2F7; --input: #FFFFFF; --accent: #0A58CA; --seg-sel: #FFFFFF; --radar-grid: #C7C7CC; --radar-axis: #D8D8DE; --radar-point: #000000;
-    --t-good: #13662B; --t-good2: #2E7D3A; --t-warn: #9A4A07; --t-bad: #B42318; --on-accent: #FFFFFF;
+    --t-good: #13662B; --t-good2: #2E7D3A; --t-solid: #A16207; --t-warn: #9A4A07; --t-bad: #B42318; --on-accent: #FFFFFF; --radar-na: #636366;
   }
   body { background: #FFF !important; color: #000 !important; padding: 0 !important; font-size: 11pt !important; }
   .app-container { box-shadow: none !important; border: none !important; max-width: 100% !important; }
@@ -584,6 +650,10 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
   .app { display: block; }
   .haupt { padding: 0 !important; }
   .app-container { margin: 0 !important; }
+  .score-spalte { display: grid !important; grid-template-columns: 1fr 1fr; gap: 8pt; position: static !important; max-height: none !important; margin-bottom: 10pt; }
+  .karte { box-shadow: none !important; border: 1pt solid #C7C7CC !important; padding: 8pt !important; break-inside: avoid; }
+  .ring-wert, .ring-grund { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .netz { max-height: 190pt; }
   .druck-kopf { display: flex !important; align-items: center; gap: 10pt; padding: 0 0 8pt; margin-bottom: 8pt; border-bottom: 1.5pt solid #000; }
   .druck-kopf img { height: 36pt; width: auto; }
   .druck-kopf strong { display: block; font-size: 15pt; }

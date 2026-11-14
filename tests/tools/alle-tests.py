@@ -18,6 +18,7 @@ TESTS = [
     ('Fenster-Test', ['fenster-test.py']),
     ('Knopfreihen-Test', ['knopfreihen-test.py']),
     ('Layout-Test', ['layout-test.py']),
+    ('Score-Test', ['score-test.py']),
     ('Service-Worker-Test', ['sw-test.py']),
 ]
 

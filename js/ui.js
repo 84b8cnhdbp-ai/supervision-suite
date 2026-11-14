@@ -133,7 +133,7 @@ function selectRefTab(index) {
   if (activeTabType === "ref") saveCurrentRefData();
   activeTabType = "ref";
   activeRefIndex = index;
-  document.getElementById('singleRefView').style.display = "block";
+  document.getElementById('singleRefView').style.display = "";   // Anzeige bestimmt das CSS (z. B. zwei Spalten)
   document.getElementById('summaryView').style.display = "none";
   document.getElementById('seasonStatsView').style.display = "none";
   renderTabs();
@@ -144,7 +144,7 @@ function selectSummaryTab() {
   if (activeTabType === "ref") saveCurrentRefData();
   activeTabType = "summary";
   document.getElementById('singleRefView').style.display = "none";
-  document.getElementById('summaryView').style.display = "block";
+  document.getElementById('summaryView').style.display = "";   // Anzeige bestimmt das CSS (z. B. zwei Spalten)
   document.getElementById('seasonStatsView').style.display = "none";
   renderTabs();
   renderSummaryView();
@@ -155,7 +155,7 @@ function selectStatsTab() {
   activeTabType = "stats";
   document.getElementById('singleRefView').style.display = "none";
   document.getElementById('summaryView').style.display = "none";
-  document.getElementById('seasonStatsView').style.display = "block";
+  document.getElementById('seasonStatsView').style.display = "";   // Anzeige bestimmt das CSS (z. B. zwei Spalten)
   renderTabs();
 }
 
@@ -354,9 +354,53 @@ function readFormData() {
   return d;
 }
 
+// Status zum Gesamtscore: Text, Ringfarbe, Schriftfarbe (Schwellen wie bisher)
+function scoreStatus(total) {
+  if (total === null) return { text: 'status_missing', farbe: '--r-none', schrift: '--secondary' };
+  if (total > 80) return { text: 'status_exc', farbe: '--r-pp', schrift: '--t-good' };
+  if (total >= 75) return { text: 'status_good', farbe: '--r-p', schrift: '--t-good2' };
+  if (total >= 60) return { text: 'status_sat', farbe: '--r-solid', schrift: '--t-solid' };
+  if (total >= 45) return { text: 'status_ni', farbe: '--r-m', schrift: '--t-warn' };
+  return { text: 'status_unsat', farbe: '--r-mm', schrift: '--t-bad' };
+}
+
+// „Bereit zum Sichern?“: erledigte Punkte mit Haken, fehlende antippbar (springt zum Feld)
+function zeigeBereit() {
+  const liste = document.getElementById('bereitListe');
+  if (!liste || activeTabType !== 'ref') return;
+  const punkte = pruefeSicherbar({ name: getEffectiveRefName(), overall_grade: segWert('overall_grade') });
+  liste.innerHTML = '';
+  punkte.forEach((p) => {
+    const li = document.createElement('li');
+    const zeichen = document.createElement('span');
+    zeichen.className = 'bereit-zeichen ' + (p.ok ? 'ok' : 'fehlt');
+    zeichen.setAttribute('aria-hidden', 'true');
+    zeichen.textContent = p.ok ? '✓' : '!';
+    if (p.ok) {
+      li.className = 'bereit-ok';
+      li.append(zeichen, document.createTextNode(p.text));
+      const sr = document.createElement('span'); sr.className = 'sr-only'; sr.textContent = ' – ' + t('ready_done');
+      li.appendChild(sr);
+    } else {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'bereit-fehlt';
+      b.dataset.punkt = p.schluessel;
+      b.append(zeichen, document.createTextNode(p.text));
+      const sr = document.createElement('span'); sr.className = 'sr-only'; sr.textContent = ' – ' + t('ready_missing');
+      b.appendChild(sr);
+      b.addEventListener('click', p.aktion);
+      li.appendChild(b);
+    }
+    liste.appendChild(li);
+  });
+  const fehlen = punkte.filter((p) => !p.ok).length;
+  const status = document.getElementById('bereitStatus');
+  status.textContent = fehlen ? t('ready_no', { n: fehlen }) : t('ready_yes');
+  status.classList.toggle('bereit-ja', !fehlen);
+}
+
 function calcScores(shouldSave = true) {
-  const dict = { status_missing: t('status_missing'), status_exc: t('status_exc'), status_good: t('status_good'),
-    status_sat: t('status_sat'), status_ni: t('status_ni'), status_unsat: t('status_unsat') };
   const sc = computeRefScores(readFormData());
   const fmt = v => v === null ? "–" : v + "%";
 
@@ -367,21 +411,16 @@ function calcScores(shouldSave = true) {
 
   zeigeStufenText();   // Definition der gewählten Stufe bzw. Hinweis (oranger Rahmen)
 
+  // Status und Ring (Schwellen unverändert, siehe scoreStatus)
+  const status = scoreStatus(sc.total);
   const statusText = document.getElementById('scoreStatusText');
-  const ampelDot = document.getElementById('ampelDot');
-  const setAmpel = (text, farbe) => {
-    statusText.innerText = text;
-    ampelDot.style.backgroundColor = `var(${farbe})`;
-    ampelDot.style.boxShadow = `0 0 0 3px var(--accent-soft)`;
-  };
-  // Schwellen unverändert; Farben = Bewertungsfarben aus css/app.css
-  const total = sc.total;
-  if (total === null) setAmpel(dict.status_missing, '--r-none');
-  else if (total > 80) setAmpel(dict.status_exc, '--r-pp');
-  else if (total >= 75) setAmpel(dict.status_good, '--r-p');
-  else if (total >= 60) setAmpel(dict.status_sat, '--r-solid');
-  else if (total >= 45) setAmpel(dict.status_ni, '--r-m');
-  else setAmpel(dict.status_unsat, '--r-mm');
+  statusText.innerText = t(status.text);
+  statusText.style.color = `var(${status.schrift})`;
+  const ring = document.getElementById('scoreRing');
+  const umfang = 2 * Math.PI * 64;
+  ring.setAttribute('stroke-dasharray', `${(sc.total === null ? 0 : umfang * sc.total / 100).toFixed(1)} ${umfang.toFixed(1)}`);
+  ring.style.stroke = `var(${status.farbe})`;
+  zeigeBereit();
 
   drawRadar('radarChart', sc.radar);
   if (shouldSave) saveCurrentRefData();
@@ -424,88 +463,40 @@ function renderSummaryView() {
   drawRadar('crewRadarChart', crewRadar);
 }
 
-function drawRadar(canvasId, scores) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas || !canvas.getContext) return;
-  const ctx = canvas.getContext('2d');
-  const w = canvas.width;
-  const h = canvas.height;
-  const cx = w / 2;
-  const cy = h / 2;
-  const radius = Math.min(cx, cy) - 16;
+// Netzdiagramm als SVG. scores: Werte 0–3 (Note / 33.33) oder null (N/A = hohler grauer Punkt).
+// Farben über CSS-Klassen (hell/dunkel/Druck).
+function drawRadar(svgId, scores) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
   const labels = t('radar_labels');
-  const total = labels.length;
-
-  // Farben aus den CSS-Variablen (hell/dunkel)
-  const css = getComputedStyle(document.documentElement);
-  const farbe = (name) => css.getPropertyValue(name).trim();
-  const gridStroke = farbe('--radar-grid');
-  const axisStroke = farbe('--radar-axis');
-  const polyColor = farbe('--accent');
-
-  ctx.clearRect(0, 0, w, h);
-
-  for (let level = 1; level <= 3; level++) {
-    ctx.beginPath();
-    ctx.strokeStyle = gridStroke;
-    ctx.lineWidth = 1;
-    const r = (radius / 3) * level;
-    for (let i = 0; i < total; i++) {
-      const angle = (Math.PI * 2 / total) * i - Math.PI / 2;
-      const x = cx + Math.cos(angle) * r;
-      const y = cy + Math.sin(angle) * r;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-    ctx.stroke();
+  const n = labels.length;
+  const cx = 150, cy = 116, R = 72;
+  const punkt = (i, f) => {
+    const a = (Math.PI * 2 / n) * i - Math.PI / 2;
+    return [cx + Math.cos(a) * R * f, cy + Math.sin(a) * R * f];
+  };
+  const xy = (p) => p.map((v) => v.toFixed(1)).join(',');
+  const istNA = (v) => v === null || v === undefined;
+  const anteil = (v) => (istNA(v) ? 0.1 : Math.max(0.1, Math.min(1, v / 3)));
+  let html = '';
+  for (let stufe = 1; stufe <= 3; stufe++) {
+    html += `<polygon class="netz-gitter" points="${labels.map((_, i) => xy(punkt(i, stufe / 3))).join(' ')}"/>`;
   }
-
-  for (let i = 0; i < total; i++) {
-    const angle = (Math.PI * 2 / total) * i - Math.PI / 2;
-    ctx.beginPath();
-    ctx.strokeStyle = axisStroke;
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius);
-    ctx.stroke();
-  }
-
-  ctx.beginPath();
-  ctx.fillStyle = polyColor;
-  ctx.strokeStyle = polyColor;
-  ctx.lineWidth = 2;
-
-  for (let i = 0; i < total; i++) {
-    const val = (scores[i] === null || scores[i] === undefined) ? 0.3 : scores[i];
-    const r = (radius / 3) * Math.max(0.3, val);
-    const angle = (Math.PI * 2 / total) * i - Math.PI / 2;
-    const x = cx + Math.cos(angle) * r;
-    const y = cy + Math.sin(angle) * r;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
-  ctx.closePath();
-  ctx.globalAlpha = 0.25;
-  ctx.fill();
-  ctx.globalAlpha = 1;
-  ctx.stroke();
-
-  for (let i = 0; i < total; i++) {
-    const isNA = scores[i] === null || scores[i] === undefined;
-    const val = isNA ? 0.3 : scores[i];
-    const r = (radius / 3) * Math.max(0.3, val);
-    const angle = (Math.PI * 2 / total) * i - Math.PI / 2;
-    const x = cx + Math.cos(angle) * r;
-    const y = cy + Math.sin(angle) * r;
-    ctx.beginPath();
-    ctx.arc(x, y, 3, 0, Math.PI * 2);
-    if (isNA) {
-      ctx.strokeStyle = farbe('--radar-na'); ctx.lineWidth = 1.5; ctx.stroke();
-    } else {
-      ctx.fillStyle = farbe('--radar-point');
-      ctx.fill();
-    }
-  }
+  labels.forEach((_, i) => {
+    const [x, y] = punkt(i, 1);
+    html += `<line class="netz-achse" x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+  });
+  html += `<polygon class="netz-flaeche" points="${labels.map((_, i) => xy(punkt(i, anteil(scores[i])))).join(' ')}"/>`;
+  labels.forEach((label, i) => {
+    const [x, y] = punkt(i, anteil(scores[i]));
+    html += `<circle class="${istNA(scores[i]) ? 'netz-na' : 'netz-punkt'}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${istNA(scores[i]) ? 4 : 3.5}"/>`;
+    const [lx, ly] = punkt(i, 1.22);
+    const anker = Math.abs(lx - cx) < 8 ? 'middle' : (lx > cx ? 'start' : 'end');
+    html += `<text class="netz-label${istNA(scores[i]) ? ' netz-label-na' : ''}" x="${lx.toFixed(1)}" y="${(ly + 4).toFixed(1)}" text-anchor="${anker}">${escapeHtml(label)}${istNA(scores[i]) ? ' (N/A)' : ''}</text>`;
+  });
+  svg.innerHTML = html;
+  svg.setAttribute('aria-label', t('radar_title') + ': ' + labels.map((l, i) =>
+    `${l} ${istNA(scores[i]) ? 'N/A' : Math.round(scores[i] * 33.33) + ' %'}`).join(', '));
 }
 
 async function resetAll() {

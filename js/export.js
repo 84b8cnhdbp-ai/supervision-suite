@@ -16,6 +16,24 @@ function downloadBlob(blob, filename) {
   setTimeout(() => URL.revokeObjectURL(link.href), 1000);
 }
 
+// Was zum Sichern fehlt – dieselbe Prüfung für „Bereit zum Sichern?“ und das Fenster beim Sichern.
+// d: Daten des Schiedsrichters (name, overall_grade); Spieldatum aus den Spieldaten.
+function pruefeSicherbar(d) {
+  return [
+    { schluessel: 'name', text: t('missing_name'), ok: !!d.name, aktion: () => {
+      const sel = document.getElementById('current_schiri_name');
+      const custom = document.getElementById('current_schiri_name_custom');
+      springeZuFeld(sel.value === '_CUSTOM_' ? custom : sel);
+    } },
+    { schluessel: 'datum', text: t('missing_date'), ok: !!(gameData.global && gameData.global.spiel_datum),
+      aktion: () => springeZuFeld(document.getElementById('spiel_datum')) },
+    { schluessel: 'note', text: t('missing_grade'), ok: computeRefScores(d).part2 !== null, aktion: () => {
+      const erste = document.querySelector('input[name="overall_grade"]');
+      springeZuFeld(erste, document.getElementById('gradeBox'));
+    } }
+  ];
+}
+
 function exportSingleReviewJSON() {
   saveCurrentRefData();
   const refConfig = SYSTEM_CONFIGS[currentSystem][activeRefIndex];
@@ -24,17 +42,7 @@ function exportSingleReviewJSON() {
   const sc = computeRefScores(refData);
 
   // Fehlt etwas, Fenster mit Liste; ein Tipp auf einen Eintrag springt zum Feld
-  const missing = [];
-  if (!refData.name) missing.push({ text: t('missing_name'), aktion: () => {
-    const sel = document.getElementById('current_schiri_name');
-    const custom = document.getElementById('current_schiri_name_custom');
-    springeZuFeld(sel.value === '_CUSTOM_' ? custom : sel);
-  } });
-  if (!gameData.global.spiel_datum) missing.push({ text: t('missing_date'), aktion: () => springeZuFeld(document.getElementById('spiel_datum')) });
-  if (sc.part2 === null) missing.push({ text: t('missing_grade'), aktion: () => {
-    const erste = document.querySelector('input[name="overall_grade"]');
-    springeZuFeld(erste, document.getElementById('gradeBox'));
-  } });
+  const missing = pruefeSicherbar(refData).filter((p) => !p.ok);
   if (missing.length) {
     zeigeFenster({
       titel: t('export_missing_title'), text: t('export_missing_hint'), liste: missing,
