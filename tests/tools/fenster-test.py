@@ -48,7 +48,7 @@ def main():
                 # 2. Sichern mit fehlenden Feldern (Linesperson 1: Gesamteinschätzung fehlt)
                 start()
                 b.js('selectRefTab(2)')
-                b.klick('.btn-accent')   # „Review sichern“
+                b.klick('#btnSichern')   # „Sichern“ in der Werkzeugleiste
                 pruefe(b.js(FENSTER + ' !== null'), L + 'Sichern ohne Gesamteinschätzung: kein Fenster')
                 pruefe(b.js(f"{FENSTER}.querySelector('.fenster-titel').innerText") == T('export_missing_title'), L + 'Sichern: falscher Titel')
                 eintraege = b.js(f"[...{FENSTER}.querySelectorAll('.fenster-eintrag')].map((e) => e.innerText.replace('›', '').trim())")
@@ -65,14 +65,14 @@ def main():
 
                 # neues leeres 2-Mann-Spiel ohne Datum: Name, Datum und Note fehlen
                 b.js("switchSystem('2-Man'); document.getElementById('spiel_datum').value = ''; handleGlobalDateTimeChange();")
-                b.klick('.btn-accent')
+                b.klick('#btnSichern')
                 eintraege = b.js(f"[...{FENSTER}.querySelectorAll('.fenster-eintrag')].map((e) => e.innerText.replace('›', '').trim())")
                 pruefe(eintraege == [T('missing_name'), T('missing_date'), T('missing_grade')], L + f'Sichern (leer): Liste {eintraege}')
                 b.klick('dialog.fenster[open] .fenster-eintrag:nth-of-type(1)')
                 b.js("document.querySelectorAll('dialog.fenster[open] .fenster-eintrag')[1]?.click()")
                 b.js('new Promise((r) => setTimeout(r, 600))')
                 pruefe(b.js("document.activeElement.id") == 'current_schiri_name', L + f"Sichern: Sprung zum Namen landet bei {b.js('document.activeElement.id')}")
-                b.klick('.btn-accent')
+                b.klick('#btnSichern')
                 b.js(f"{FENSTER}.querySelectorAll('.fenster-eintrag')[1].click()")
                 b.js('new Promise((r) => setTimeout(r, 600))')
                 pruefe(b.js("document.activeElement.id") == 'spiel_datum', L + f"Sichern: Sprung zum Datum landet bei {b.js('document.activeElement.id')}")
@@ -80,18 +80,18 @@ def main():
                 # 3. Zurücksetzen
                 start()
                 daten = lambda: b.js("localStorage.getItem('referee_multi_supervision_data') !== null")
-                b.klick('.btn-danger')
+                b.klick('#btnMehr'); b.klick('#menuReset')
                 pruefe(b.js(FENSTER + ' !== null'), L + 'Zurücksetzen: kein Fenster')
                 pruefe(b.js("document.activeElement.innerText") == T('dlg_cancel'), L + f"Zurücksetzen: vorgewählt ist „{b.js('document.activeElement.innerText')}“ statt Abbrechen")
                 rot = b.js(f"getComputedStyle({FENSTER}.querySelector('.fenster-knopf-gefahr')).backgroundColor")
                 pruefe(rot == 'rgb(180, 35, 24)', L + f'Zurücksetzen: Knopf nicht rot ({rot})')
                 b.taste('Enter')
                 pruefe(b.js(FENSTER + ' === null') and daten(), L + 'Zurücksetzen: Enter hat nicht nur abgebrochen')
-                b.klick('.btn-danger'); b.taste('Escape')
+                b.klick('#btnMehr'); b.klick('#menuReset'); b.taste('Escape')
                 pruefe(b.js(FENSTER + ' === null') and daten(), L + 'Zurücksetzen: Esc hat nicht nur abgebrochen')
-                b.klick('.btn-danger'); b.klick('dialog.fenster[open] .fenster-knopf:not(.fenster-knopf-gefahr)')
+                b.klick('#btnMehr'); b.klick('#menuReset'); b.klick('dialog.fenster[open] .fenster-knopf:not(.fenster-knopf-gefahr)')
                 pruefe(daten(), L + 'Zurücksetzen: Abbrechen-Knopf hat gelöscht')
-                b.klick('.btn-danger'); b.klick('dialog.fenster[open] .fenster-knopf-gefahr')
+                b.klick('#btnMehr'); b.klick('#menuReset'); b.klick('dialog.fenster[open] .fenster-knopf-gefahr')
                 b.js('new Promise((r) => setTimeout(r, 800))')
                 pruefe(not daten(), L + 'Zurücksetzen: roter Knopf hat nicht gelöscht')
 

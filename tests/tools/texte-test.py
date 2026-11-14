@@ -35,7 +35,8 @@ def verwendete_schluessel():
             # bei Bedingungen (a ? 'x' : 'y') nur die Ergebnisse, nicht den Vergleichswert
             muster = r"[?:]\s*'([a-z0-9_]+)'" if '?' in erstes else r"'([a-z0-9_]+)'"
             for lit in re.findall(muster, erstes):
-                keys.add(lit)
+                if not re.search(rf"'{re.escape(lit)}'\s*\+", erstes):   # 'theme_' + x: nur als Anfang zählen (unten)
+                    keys.add(lit)
             # dynamisch zusammengesetzte Schlüssel: t('theme_' + …)
             for prefix in re.findall(r"'([a-z0-9_]+_)'\s*\+", erstes):
                 keys.add(prefix + '*')
@@ -102,7 +103,7 @@ def main():
 
             # 5. Verhalten der Sprachwahl
             sichtbar = [s['code'] for s in d['sprachen'] if s['sichtbar']]
-            auswahl = b.js("[...document.querySelectorAll('#langSelect option')].map((o) => o.value)")
+            auswahl = b.js("[...document.querySelectorAll('input[name=sprache]')].map((o) => o.value)")
             if auswahl != sichtbar:
                 fehler.append(f'Sprachauswahl zeigt {auswahl}, erwartet {sichtbar}')
             b.js("setLanguage('en')")
@@ -119,7 +120,7 @@ def main():
             erwartet_fr = d['texte']['fr'].get('txt_tab_crew') or de['txt_tab_crew']
             if tab_fr != erwartet_fr:
                 fehler.append(f'?lang=fr: Reiter zeigt "{tab_fr}", erwartet "{erwartet_fr}" (Rückfall auf Deutsch)')
-            if b.js("[...document.querySelectorAll('#langSelect option')].map((o) => o.value)") != sichtbar + ['fr']:
+            if b.js("[...document.querySelectorAll('input[name=sprache]')].map((o) => o.value)") != sichtbar + ['fr']:
                 fehler.append('?lang=fr: Auswahl sollte die sichtbaren Sprachen plus FR (aktuell) zeigen')
             b.oeffnen(srv.basis + '/index.html')
             if b.js('currentLang') != 'en':

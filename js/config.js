@@ -1,4 +1,7 @@
-// Rollen je Schiedsrichter-System
+// Rollen je Schiedsrichter-System; Versionsnummer der App
+
+// Version der App (sichtbar unten in der Seitenleiste). Der „Stand“ daneben kommt automatisch aus ?v= in index.html.
+const APP_VERSION = "2.0";
 // (aus index.html ausgelagert, Etappe 1 – Code unverändert)
 
 const SYSTEM_CONFIGS = {

@@ -12,33 +12,85 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="css/app.css?v=12">
-<script src="js/club.js?v=12"></script>
-<script src="js/theme.js?v=12"></script>
+<link rel="stylesheet" href="css/app.css?v=13">
+<script src="js/club.js?v=13"></script>
+<script src="js/theme.js?v=13"></script>
 </head>
 <body>
 
-<div class="app-container">
-  <header>
-    <div class="header-brand">
-      <img id="clubLogo" alt="" onerror="this.style.display='none'">
-      <div class="header-titles">
-        <h1 data-i18n="app_title">Referee Supervision Hub</h1>
-        <p data-i18n="app_subtitle">Digitales Coaching- & Analyse-Tool für Schiedsrichter-Supervisoren</p>
+<div class="app">
+
+  <!-- SEITENLEISTE (unter 1000 px vorerst als Leiste oben; ab 2.5 eingeklappt) -->
+  <nav class="seitenleiste no-print" id="seitenleiste" data-i18n-aria-label="nav_label" aria-label="Navigation">
+    <div class="sl-kopf">
+      <img id="clubLogo" data-club-logo alt="" onerror="this.style.display='none'">
+      <div class="sl-kopf-text">
+        <strong data-i18n="app_name">Supervision</strong>
+        <span id="saisonText"></span>
       </div>
     </div>
-    <div class="header-controls no-print">
-      <select id="langSelect" class="lang-select" onchange="setLanguage(this.value)" aria-label="Sprache"></select>
-      <button type="button" class="btn-control" id="themeToggle" onclick="toggleTheme()">Darstellung: Auto</button>
-      <span class="badge badge-pwa" id="pwaBadge">● Offline bereit</span>
-      <span class="badge badge-status" id="saveStatus">Auto-Saved</span>
+    <div class="sl-gruppe">
+      <span class="sl-titel" data-i18n="nav_game">Spiel</span>
+      <button type="button" class="sl-eintrag" id="navSpiel" onclick="zeigeBewertung()">
+        <span class="sl-haupt" id="navSpielTitel"></span>
+        <span class="sl-neben" id="navSpielInfo"></span>
+      </button>
     </div>
-  </header>
+    <div class="sl-gruppe">
+      <span class="sl-titel" data-i18n="nav_overview">Übersicht</span>
+      <button type="button" class="sl-eintrag" id="navStats" onclick="selectStatsTab()">
+        <span class="sl-haupt" data-i18n="txt_tab_stats">Saison-Statistik</span>
+      </button>
+    </div>
+    <div class="sl-fuss">
+      <span data-i18n="footer_local">Daten bleiben auf diesem Gerät</span>
+      <span id="versionText"></span>
+      <span id="kaderText"></span>
+      <span class="badge badge-pwa" id="pwaBadge">● Offline bereit</span>
+      <span class="sl-gespeichert" id="saveStatus" aria-live="polite"></span>
+    </div>
+  </nav>
+
+  <main class="haupt">
+    <!-- WERKZEUGLEISTE: Reiter + Sichern, Drucken, Mehr -->
+    <div class="werkzeugleiste no-print">
+      <div class="reiter" id="tabsContainer" role="tablist" data-i18n-aria-label="tabs_label" aria-label="Schiedsrichter"></div>
+      <div class="aktionen">
+        <button type="button" class="knopf-sichern" id="btnSichern" onclick="exportSingleReviewJSON()"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><span data-i18n="btn_save">Sichern</span></button>
+        <button type="button" class="knopf-icon" id="btnDrucken" onclick="window.print()" data-i18n-aria-label="btn_print" aria-label="Drucken"><svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg></button>
+        <button type="button" class="knopf-icon" id="btnMehr" onclick="toggleMehr()" aria-haspopup="true" aria-expanded="false" aria-controls="mehrMenu" data-i18n-aria-label="btn_more" aria-label="Mehr"><svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+        <div class="mehr-menu" id="mehrMenu" role="dialog" data-i18n-aria-label="btn_more" aria-label="Mehr" hidden>
+          <button type="button" class="menu-eintrag" onclick="mehrAktion(exportCSV)" data-i18n="menu_csv">CSV-Export</button>
+          <button type="button" class="menu-eintrag" onclick="mehrAktion(kaderWaehlen)" data-i18n="kader_import">Kader importieren</button>
+          <div class="menu-gruppe">
+            <span class="feld-label" id="lbl_sprache" data-i18n="lang_label">Sprache</span>
+            <div data-seg="sprache" data-seg-label="lbl_sprache"></div>
+          </div>
+          <div class="menu-gruppe">
+            <span class="feld-label" id="lbl_darstellung" data-i18n="theme_label">Darstellung</span>
+            <div data-seg="darstellung" data-seg-label="lbl_darstellung"></div>
+          </div>
+          <hr class="menu-trenner">
+          <button type="button" class="menu-eintrag menu-gefahr" id="menuReset" onclick="mehrAktion(resetAll)" data-i18n="menu_reset">Spiel zurücksetzen</button>
+        </div>
+      </div>
+    </div>
+    <input type="file" id="kaderDatei" accept=".json,.txt" hidden onchange="handleKaderUpload(event)">
+
+  <div class="app-container">
+    <!-- Kopf nur im Druck -->
+    <div class="druck-kopf">
+      <img data-club-logo alt="">
+      <div>
+        <strong data-i18n="app_title">Referee Supervision Hub</strong>
+        <span id="druckVerein"></span>
+      </div>
+    </div>
 
   <!-- 1. METADATEN (GLOBAL) -->
   <div style="background: var(--bg-subtle); border-bottom: 1px solid var(--border); padding: 18px 30px;">
     <div class="grid-4" style="margin-bottom: 12px;">
-      <div>
+      <div class="feld-breit">
         <span class="feld-label" id="lbl_system_typ" data-i18n="lbl_system">Schiedsrichter-System</span>
         <div data-seg="system_typ" data-seg-label="lbl_system_typ"></div>
       </div>
@@ -117,14 +169,6 @@
     </div>
   </div>
 
-  <!-- DYNAMISCHE TABS OHNE DOPPELUNGEN -->
-  <div class="system-tabs-wrapper no-print">
-    <div class="referee-tabs" id="tabsContainer"></div>
-    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;" id="currentSystemInfo">
-      Aktiv: 4-Mann-System
-    </div>
-  </div>
-
   <!-- HAUPTINHALT -->
   <div class="content">
 
@@ -175,10 +219,7 @@
             <option value="">-- Name wählen oder eingeben --</option>
           </select>
           <input type="text" id="current_schiri_name_custom" placeholder="Anderer Name (Gast-Ref)" style="display: none; margin-top: 6px;" oninput="saveCurrentRefData()">
-          <label class="kader-import no-print" title="Kaderliste (JSON oder TXT) von deinem Gerät laden. Die Namen bleiben nur auf diesem Gerät gespeichert.">
-            <span id="kaderInfo">Kader importieren</span>
-            <input type="file" accept=".json,.txt" style="display:none" onchange="handleKaderUpload(event)">
-          </label>
+          <button type="button" class="knopf-klein no-print" id="btnKaderForm" onclick="kaderWaehlen()" data-i18n="kader_import" hidden>Kader importieren</button>
         </div>
         <div>
           <span class="feld-label" id="lbl_current_review_round" data-i18n="lbl_round">Supervision-Durchgang</span>
@@ -380,30 +421,21 @@
       </div>
     </div>
 
-    <!-- ACTIONS TOOLBAR AUFGERÄUMT -->
-    <div class="toolbar">
-      <div>
-        <button type="button" class="btn btn-danger" onclick="resetAll()" data-i18n="btn_reset">Gesamtes Spiel zurücksetzen</button>
-      </div>
-      <div class="btn-group">
-        <button type="button" class="btn btn-accent" onclick="exportSingleReviewJSON()">Review sichern</button>
-        <button type="button" class="btn btn-outline" onclick="exportCSV()">CSV-Export</button>
-        <button type="button" class="btn btn-primary" onclick="window.print()">Drucken / PDF</button>
-      </div>
-    </div>
-
   </div>
+  </div>
+  </main>
 </div>
 
-<script src="js/i18n.js?v=12"></script>
-<script src="js/dialog.js?v=12"></script>
-<script src="js/segment.js?v=12"></script>
-<script src="js/config.js?v=12"></script>
-<script src="js/scoring.js?v=12"></script>
-<script src="js/storage.js?v=12"></script>
-<script src="js/ui.js?v=12"></script>
-<script src="js/export.js?v=12"></script>
-<script src="js/stats.js?v=12"></script>
-<script src="js/app.js?v=12"></script>
+<script src="js/i18n.js?v=13"></script>
+<script src="js/dialog.js?v=13"></script>
+<script src="js/segment.js?v=13"></script>
+<script src="js/layout.js?v=13"></script>
+<script src="js/config.js?v=13"></script>
+<script src="js/scoring.js?v=13"></script>
+<script src="js/storage.js?v=13"></script>
+<script src="js/ui.js?v=13"></script>
+<script src="js/export.js?v=13"></script>
+<script src="js/stats.js?v=13"></script>
+<script src="js/app.js?v=13"></script>
 </body>
 </html>

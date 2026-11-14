@@ -13,7 +13,7 @@ python3 tests/tools/alle-tests.py            # alle Tests (ca. 5 Min.)
 python3 tests/tools/alle-tests.py --ohne-sw  # ohne Service-Worker-Test (ca. 1 Min.)
 ```
 
-Führt Daten-Test (Deutsch und Englisch), Texte-Test, Vereins-Test, Fenster-Test, Knopfreihen-Test und Service-Worker-Test aus und zeigt eine
+Führt Daten-Test (Deutsch und Englisch), Texte-, Vereins-, Fenster-, Knopfreihen-, Layout- und Service-Worker-Test aus und zeigt eine
 Zusammenfassung. Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
 
 ## Daten-Test – „gleiche Eingaben, gleiche Daten“
@@ -81,6 +81,19 @@ Radiogruppe mit Namen (VoiceOver), jedes Segment mindestens 44 × 44 px, nichts 
 Bildlaufleiste; Reihenfolge vom besten zum schlechtesten Wert (Trend mit „Erstbeobachtung“); Gesamteinschätzung
 ohne Vorwahl mit Hinweis, nach der Wahl mit Definition; jede Option speichert den bisherigen Wert (echter Klick),
 auch nach Neuladen; Pfeiltasten wechseln die Wahl.
+
+## Layout-Test – Seitenleiste, Werkzeugleiste, Menü „Mehr“
+
+```sh
+python3 tests/tools/layout-test.py
+```
+
+Auf 834, 1194 und 1440 px (DE/EN): Seitenleiste und Werkzeugleiste sichtbar, keine waagrechte Bildlaufleiste,
+Knöpfe mind. 44 px, Reiter vollständig sichtbar. Reiter-Kurzform bei 3/4-Mann („H1 · Frei“), Nachname = alles
+ausser dem letzten Wort („Von Rotz Peter“ → „Von Rotz“), Reiter folgen Namensänderungen sofort, Pfeiltasten.
+Seitenleiste (Spiel, Statistik, Fuss mit Version/Stand aus `?v=`, Kader, Offline-Status, Gespeichert-Zeit).
+Menü „Mehr“ mit echten Klicks: Esc / daneben tippen schliesst, CSV, Kader, Sprache, Darstellung, Zurücksetzen
+(rot, mit Abstand). Kader-Knopf beim Schiedsrichter-Feld nur ohne Kader. Druck ohne Seitenleiste/Werkzeugleiste.
 
 ## Service-Worker-Test – Updates, offline, langsames Netz
 

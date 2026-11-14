@@ -18,11 +18,11 @@ from werkzeug import REPO, Browser, server, daten_setzen, LEER  # noqa: E402
 
 GROESSEN = [(834, 1194), (1194, 834), (1440, 900)]
 
-PRUEFE_REIHEN = r"""(() => {
+PRUEFE_REIHEN = r"""((auswahl) => {
   const fehler = [];
   const vw = document.documentElement.clientWidth;
   if (document.documentElement.scrollWidth > vw + 1) fehler.push(`waagrechte Bildlaufleiste (${document.documentElement.scrollWidth} > ${vw})`);
-  document.querySelectorAll('fieldset.seg').forEach((fs) => {
+  document.querySelectorAll(auswahl).forEach((fs) => {
     const name = fs.id;
     const ref = fs.getAttribute('aria-labelledby');
     const titel = ref && document.getElementById(ref) ? document.getElementById(ref).textContent.trim() : '';
@@ -37,11 +37,21 @@ PRUEFE_REIHEN = r"""(() => {
       const b = l.getBoundingClientRect();
       if (b.height < 43.5 || b.width < 43.5) fehler.push(`${name}=${r.value}: nur ${Math.round(b.width)}×${Math.round(b.height)} px`);
       if (l.scrollWidth > l.clientWidth + 1 || l.scrollHeight > l.clientHeight + 1) fehler.push(`${name}=${r.value}: Text abgeschnitten`);
+      // Umbruch mitten im Wort: mehr Zeilen als Wörter (z. B. „1-Man / n“)
+      const sichtbar = [...l.childNodes].find((n) => n.nodeType === 3 || !n.classList.contains('sr-only'));
+      if (sichtbar) {
+        const range = document.createRange(); range.selectNodeContents(sichtbar);
+        const zeilen = new Set([...range.getClientRects()].map((q) => Math.round(q.top))).size;
+        const woerter = sichtbar.textContent.trim().split(/\s+/).length;
+        if (zeilen > woerter) fehler.push(`${name}=${r.value}: „${sichtbar.textContent.trim()}“ bricht mitten im Wort um`);
+      }
       if (b.right > fr.right + 1) fehler.push(`${name}=${r.value}: ragt aus der Reihe`);
     });
   });
   return fehler;
-})()"""
+})"""
+FORMULAR = "'.app-container fieldset.seg'"
+MENU = "'#mehrMenu fieldset.seg'"
 
 
 def main():
@@ -57,11 +67,18 @@ def main():
                     b.oeffnen(srv.basis + '/index.html')
                     for tab, rolle in ((0, 'Head'), (2, 'Linesperson')):
                         b.js(f'selectRefTab({tab})')
-                        for f in b.js(PRUEFE_REIHEN):
+                        for f in b.js(PRUEFE_REIHEN + f'({FORMULAR})'):
                             fehler.append(f'{w}px {sprache} {rolle}: {f}')
-                    anzahl = b.js("document.querySelectorAll('fieldset.seg').length")
+                    anzahl = b.js(f"document.querySelectorAll({FORMULAR}).length")
                     if anzahl != 13:
-                        fehler.append(f'{w}px {sprache}: {anzahl} Knopfreihen statt 13')
+                        fehler.append(f'{w}px {sprache}: {anzahl} Knopfreihen im Formular statt 13')
+                    # Menü „Mehr“: Sprache und Darstellung
+                    b.klick('#btnMehr')
+                    for f in b.js(PRUEFE_REIHEN + f'({MENU})'):
+                        fehler.append(f'{w}px {sprache} Menü: {f}')
+                    if b.js(f"document.querySelectorAll({MENU}).length") != 2:
+                        fehler.append(f'{w}px {sprache}: Menü ohne die 2 Knopfreihen Sprache/Darstellung')
+                    b.taste('Escape')
 
             b.fenster(1194, 834)
             daten_setzen(b, srv.basis)

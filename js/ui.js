@@ -15,7 +15,6 @@ let gameData = {
 
 function initApp() {
   loadLanguagePreference();
-  renderLanguageSelect();
   loadTheme();
   loadFullState();
   setupRefereeDropdown();
@@ -37,8 +36,10 @@ function setupRefereeDropdown() {
   leer.value = '';
   leer.textContent = KADER.length ? t('kader_choose') : t('kader_first');
   sel.appendChild(leer);
-  const info = document.getElementById('kaderInfo');
-  if (info) info.innerText = KADER.length ? t('kader_count', { n: KADER.length }) : t('kader_import');
+  // Ohne Kader: Knopf „Kader importieren“ beim Schiedsrichter-Feld (gleich wie im Menü „Mehr“)
+  const knopf = document.getElementById('btnKaderForm');
+  if (knopf) knopf.hidden = KADER.length > 0;
+  if (typeof aktualisiereSeitenleiste === 'function') aktualisiereSeitenleiste();
   KADER.forEach(name => {
     const opt = document.createElement('option');
     opt.value = name;
@@ -65,19 +66,13 @@ function handleRefSelectChange() {
   updatePartnerField();
 }
 
-// Darstellung umschalten: Auto -> Hell -> Dunkel -> Auto (Grundfunktionen in js/theme.js)
-function toggleTheme() {
-  const naechste = { auto: 'light', light: 'dark', dark: 'auto' }[getThemePref()];
-  if (naechste === 'auto') localStorage.removeItem(THEME_KEY);
-  else localStorage.setItem(THEME_KEY, naechste);
+// Darstellung wählen: 'auto' (folgt dem System), 'light', 'dark' (Grundfunktionen in js/theme.js)
+function setTheme(wahl) {
+  if (wahl === 'auto') localStorage.removeItem(THEME_KEY);
+  else localStorage.setItem(THEME_KEY, wahl);
   applyTheme();
-  updateThemeButton();
+  setzeSeg('darstellung', getThemePref());
   redrawCharts();
-}
-
-function updateThemeButton() {
-  const btn = document.getElementById('themeToggle');
-  if (btn) btn.innerText = t('theme_label') + ': ' + t('theme_' + getThemePref());
 }
 
 // Netzdiagramme neu zeichnen (Farben kommen aus den CSS-Variablen)
@@ -87,7 +82,6 @@ function redrawCharts() {
 }
 
 function loadTheme() {
-  updateThemeButton();
   // Wechselt das System zwischen hell und dunkel, Diagramme nachziehen
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
     if (getThemePref() === 'auto') redrawCharts();
@@ -103,38 +97,36 @@ function switchSystem(newSys) {
   loadRefereeForm(activeRefIndex);
 }
 
-// TABS RENDERN (OHNE BADGE-DOPPELUNG)
+// Reiter in der Werkzeugleiste (Tabs mit Pfeiltasten; Beschriftung siehe js/layout.js)
 function renderTabs() {
-  const tabsContainer = document.getElementById('tabsContainer');
-  tabsContainer.innerHTML = "";
+  const box = document.getElementById('tabsContainer');
+  box.innerHTML = "";
   const refs = SYSTEM_CONFIGS[currentSystem];
-  refs.forEach((ref, index) => {
-    const roleText = escapeHtml(rolle(ref));
+  const eintraege = refs.map((ref, index) => ({
+    text: reiterText(ref), schluessel: ref.id, steuert: 'singleRefView', klasse: '',
+    aktiv: activeTabType === "ref" && index === activeRefIndex, klick: () => selectRefTab(index)
+  }));
+  if (refs.length > 1) {
+    eintraege.push({ text: { sichtbar: t('txt_tab_crew'), voll: t('txt_tab_crew') }, schluessel: 'gespann', steuert: 'summaryView',
+      klasse: ' tab-summary', aktiv: activeTabType === "summary", klick: () => selectSummaryTab() });
+  }
+  const einerAktiv = eintraege.some((e) => e.aktiv);
+  eintraege.forEach((e, i) => {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'tab-btn' + (activeTabType === "ref" && index === activeRefIndex ? ' active' : '');
-    btn.innerHTML = `<span>${roleText}</span>`;
-    btn.onclick = () => selectRefTab(index);
-    tabsContainer.appendChild(btn);
+    btn.className = 'tab-btn' + e.klasse + (e.aktiv ? ' active' : '');
+    btn.setAttribute('role', 'tab');
+    btn.setAttribute('aria-selected', String(e.aktiv));
+    btn.setAttribute('aria-controls', e.steuert);
+    btn.dataset.reiter = e.schluessel;
+    btn.tabIndex = e.aktiv || (!einerAktiv && i === 0) ? 0 : -1;
+    btn.title = e.text.voll;
+    btn.textContent = e.text.sichtbar;
+    btn.onclick = e.klick;
+    btn.addEventListener('keydown', reiterTaste);
+    box.appendChild(btn);
   });
-
-  if (refs.length > 1) {
-    const sumBtn = document.createElement('button');
-    sumBtn.type = 'button';
-    sumBtn.className = 'tab-btn tab-summary' + (activeTabType === "summary" ? ' active' : '');
-    sumBtn.innerHTML = `<span>${escapeHtml(t('txt_tab_crew'))}</span>`;
-    sumBtn.onclick = () => selectSummaryTab();
-    tabsContainer.appendChild(sumBtn);
-  }
-
-  const statBtn = document.createElement('button');
-  statBtn.type = 'button';
-  statBtn.className = 'tab-btn tab-stats' + (activeTabType === "stats" ? ' active' : '');
-  statBtn.innerHTML = `<span>${escapeHtml(t('txt_tab_stats'))}</span>`;
-  statBtn.onclick = () => selectStatsTab();
-  tabsContainer.appendChild(statBtn);
-
-  document.getElementById('currentSystemInfo').innerText = t('system_info', { system: currentSystem, n: refs.length });
+  aktualisiereSeitenleiste();
 }
 
 function selectRefTab(index) {
@@ -337,6 +329,7 @@ function saveCurrentRefData() {
 
   gameData.referees[refKey] = data;
   saveToStorage();
+  aktualisiereReiter();   // Name im Reiter („H1 · Meier“) sofort nachführen
 }
 
 async function addTimestamp(targetId) {

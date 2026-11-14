@@ -15,6 +15,7 @@
   --seg: #E6E6EB;
   --seg-sel: #FFFFFF;
   --toolbar: #F7F7FA;
+  --sidebar: #E9E9EE;
   --input: #FBFBFD;
   --accent: #0A58CA;
   --accent-hover: #08469F;
@@ -62,7 +63,7 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
     --bg: #000000; --card: #1C1C1E; --text: #F5F5F7; --secondary: #A1A1A6; --sep: #38383A;
-    --seg: #2C2C2E; --seg-sel: #5A5A5E; --toolbar: #111113; --input: #111113;
+    --seg: #2C2C2E; --seg-sel: #5A5A5E; --toolbar: #111113; --sidebar: #161618; --input: #111113;
     --accent: #4C9AFF; --accent-hover: #7AB4FF; --accent-soft: rgba(76, 154, 255, 0.28); --on-accent: #000000; --card-shadow: none;
     --t-good: #7EE2A0; --t-good2: #B4F0C8; --t-warn: #FDBA74; --t-bad: #FF8A80; --danger-soft: #3A1714;
     --radar-grid: #48484A; --radar-axis: #38383A; --radar-point: #F5F5F7; --radar-na: #8E8E93;
@@ -71,7 +72,7 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
   --bg: #000000; --card: #1C1C1E; --text: #F5F5F7; --secondary: #A1A1A6; --sep: #38383A;
-  --seg: #2C2C2E; --seg-sel: #5A5A5E; --toolbar: #111113; --input: #111113;
+  --seg: #2C2C2E; --seg-sel: #5A5A5E; --toolbar: #111113; --sidebar: #161618; --input: #111113;
   --accent: #4C9AFF; --accent-hover: #7AB4FF; --accent-soft: rgba(76, 154, 255, 0.28); --on-accent: #000000; --card-shadow: none;
   --t-good: #7EE2A0; --t-good2: #B4F0C8; --t-warn: #FDBA74; --t-bad: #FF8A80; --danger-soft: #3A1714;
   --radar-grid: #48484A; --radar-axis: #38383A; --radar-point: #F5F5F7; --radar-na: #8E8E93;
@@ -84,11 +85,11 @@ body {
   background-color: var(--bg);
   color: var(--text);
   margin: 0;
-  padding: 24px 16px;
+  padding: 0;
 }
 .app-container {
-  max-width: 1060px;
-  margin: 0 auto;
+  max-width: 1100px;
+  margin: 24px auto;
   background: var(--card);
   border-radius: 12px;
   box-shadow: var(--card-shadow);
@@ -350,6 +351,102 @@ button.btn, label.btn {
 .summary-card .score { font-size: 24px; font-weight: 700; color: var(--accent); margin: 6px 0; font-variant-numeric: tabular-nums; }
 .summary-card .name { font-weight: 700; font-size: 13px; margin-bottom: 8px; }
 
+/* ---------- Gerüst (js/layout.js): Seitenleiste + Hauptbereich ---------- */
+.app { display: grid; grid-template-columns: 264px minmax(0, 1fr); min-height: 100vh; }
+.haupt { min-width: 0; padding: 0 24px 24px; }
+.druck-kopf { display: none; }
+
+.seitenleiste {
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 22px;
+  padding: 24px 14px 18px; background: var(--sidebar); border-right: 1px solid var(--sep);
+}
+.sl-kopf { display: flex; align-items: center; gap: 10px; padding: 0 8px; }
+.sl-kopf img { width: 36px; height: 36px; object-fit: contain; }
+.sl-kopf-text { display: flex; flex-direction: column; min-width: 0; }
+.sl-kopf-text strong { font-size: 15px; }
+.sl-kopf-text span { font-size: 12px; color: var(--secondary); }
+.sl-gruppe { display: flex; flex-direction: column; gap: 2px; }
+.sl-titel { font-size: 11px; font-weight: 600; color: var(--secondary); padding: 0 10px 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+.sl-eintrag {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 44px;
+  padding: 8px 10px; border: 0; border-radius: 8px; background: transparent; color: var(--text);
+  font: inherit; text-align: left; cursor: pointer;
+}
+.sl-eintrag:hover { background: var(--seg); }
+.sl-eintrag.aktiv { background: var(--accent); color: var(--on-accent); }
+.sl-haupt { font-size: 14px; font-weight: 600; }
+.sl-neben { font-size: 12px; opacity: 0.85; }
+.sl-eintrag:focus-visible, .knopf-icon:focus-visible, .knopf-sichern:focus-visible, .menu-eintrag:focus-visible, .tab-btn:focus-visible {
+  outline: 3px solid var(--accent); outline-offset: 2px;
+}
+.sl-fuss { margin-top: auto; display: flex; flex-direction: column; gap: 4px; padding: 0 10px; font-size: 12px; color: var(--secondary); }
+.sl-fuss .badge { align-self: flex-start; margin-top: 4px; }
+.sl-gespeichert:empty { display: none; }
+
+/* Werkzeugleiste */
+.werkzeugleiste {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin: 0 -24px; padding: 10px 24px; background: var(--toolbar); border-bottom: 1px solid var(--sep);
+}
+.reiter { display: flex; gap: 2px; padding: 3px; min-width: 0; overflow-x: auto; background: var(--seg); border-radius: 9px; scrollbar-width: none; }
+.reiter .tab-btn {
+  flex: 0 0 auto; min-height: 44px; padding: 0 14px; border: 0; border-radius: 7px;
+  background: transparent; color: var(--text); font: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer;
+  box-shadow: none;
+}
+.reiter .tab-btn.active { background: var(--seg-sel); color: var(--text); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14); }
+.aktionen { position: relative; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.knopf-sichern {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 0 16px; border: 0; border-radius: 10px;
+  background: var(--accent); color: var(--on-accent); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+.knopf-sichern:hover { background: var(--accent-hover); }
+.knopf-icon {
+  display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0;
+  border: 1px solid var(--sep); border-radius: 10px; background: var(--card); color: var(--text); cursor: pointer;
+}
+.knopf-icon:hover, .knopf-icon[aria-expanded="true"] { background: var(--seg); }
+.knopf-klein {
+  margin-top: 6px; min-height: 44px; padding: 0 14px; border: 1px solid var(--sep); border-radius: 8px;
+  background: var(--card); color: var(--accent); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+
+/* Menü „Mehr“ */
+.mehr-menu {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 60; width: 300px;
+  display: flex; flex-direction: column; gap: 4px; padding: 8px;
+  background: var(--card); border: 1px solid var(--sep); border-radius: 12px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+}
+.mehr-menu[hidden] { display: none; }
+.menu-eintrag {
+  min-height: 44px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: var(--text);
+  font: inherit; font-size: 15px; text-align: left; cursor: pointer;
+}
+.menu-eintrag:hover { background: var(--seg); }
+.menu-gruppe { padding: 6px 4px 4px; }
+.menu-gruppe .seg .seg-opt { font-size: 13px; }
+.menu-trenner { margin: 10px 4px 6px; border: 0; border-top: 1px solid var(--sep); }
+.menu-gefahr { color: var(--t-bad); font-weight: 600; }
+
+/* Übergang bis 2.5: unter 1000 px Seitenleiste als Leiste oben */
+@media screen and (max-width: 999px) {
+  .app { grid-template-columns: 1fr; }
+  .seitenleiste {
+    position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px 14px;
+    padding: 10px 16px; border-right: 0; border-bottom: 1px solid var(--sep);
+  }
+  .sl-titel { display: none; }
+  .sl-gruppe { flex: 0 1 auto; }
+  .sl-eintrag { width: auto; }
+  .sl-fuss { margin: 0 0 0 auto; padding: 0; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+  .sl-fuss .badge { margin: 0; }
+  .haupt { padding: 0 16px 16px; }
+  .werkzeugleiste { margin: 0 -16px; padding: 8px 16px; }
+  .app-container { margin: 16px auto; }
+}
+
 /* ---------- Knopfreihen (js/segment.js): echte Radiogruppen ---------- */
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -368,7 +465,7 @@ fieldset.seg {
   flex: 1 1 0; min-width: 44px; min-height: 44px; margin: 0; padding: 4px 8px;
   display: flex; align-items: center; justify-content: center; text-align: center;
   border-radius: 7px; font-size: 14px; font-weight: 600; line-height: 1.2; color: var(--text);
-  cursor: pointer; user-select: none; -webkit-user-select: none; overflow-wrap: anywhere;
+  cursor: pointer; user-select: none; -webkit-user-select: none; overflow-wrap: break-word; hyphens: manual;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 .seg .seg-opt:hover { background: color-mix(in srgb, var(--seg-sel) 50%, transparent); }
@@ -376,6 +473,9 @@ fieldset.seg {
 .seg input:checked + .seg-opt[data-farbe] { background: var(--farbe); color: #FFFFFF; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); }
 .seg input:focus-visible + .seg-opt { outline: 3px solid var(--accent); outline-offset: 1px; }
 .seg-legende { margin: -6px 0 8px; font-size: 12px; color: var(--secondary); }
+/* System in den Spieldaten: zwei Spalten breit, damit „1-Mann“ … nicht umbricht */
+.grid-4 > .feld-breit { grid-column: span 2; }
+#system_typ .seg-opt { white-space: nowrap; }
 .perf-table .seg .seg-opt { font-size: 16px; }
 
 /* Gesamteinschätzung: Knopfreihe + Definition der gewählten Stufe */
@@ -479,7 +579,15 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
   body { background: #FFF !important; color: #000 !important; padding: 0 !important; font-size: 11pt !important; }
   .app-container { box-shadow: none !important; border: none !important; max-width: 100% !important; }
   header { background: #FFF !important; color: #000 !important; padding: 0 0 8pt !important; border-bottom: 1.5pt solid #000 !important; }
-  .header-controls, .system-tabs-wrapper, .toolbar, .no-print, .stamp-btn, .toast-box, dialog { display: none !important; }
+  .header-controls, .system-tabs-wrapper, .toolbar, .no-print, .stamp-btn, .toast-box, dialog,
+  .seitenleiste, .werkzeugleiste, .mehr-menu { display: none !important; }
+  .app { display: block; }
+  .haupt { padding: 0 !important; }
+  .app-container { margin: 0 !important; }
+  .druck-kopf { display: flex !important; align-items: center; gap: 10pt; padding: 0 0 8pt; margin-bottom: 8pt; border-bottom: 1.5pt solid #000; }
+  .druck-kopf img { height: 36pt; width: auto; }
+  .druck-kopf strong { display: block; font-size: 15pt; }
+  .druck-kopf span { font-size: 10pt; }
   .content { padding: 12px 0 !important; }
   .section-title { color: #000 !important; border-bottom: 1pt solid #000 !important; font-size: 11pt !important; margin-top: 14pt !important; page-break-after: avoid; }
   .section-title span.num { background: #000 !important; color: #FFF !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }

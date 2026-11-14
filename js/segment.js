@@ -84,6 +84,18 @@ function baueAlleKnopfreihen() {
   baueSegmente('coach_trend', t('coach_trend_opts'), { standard: 'Konstant stabil', onChange: () => calcScores() });
   baueSegmente('coach_attitude', t('coach_att_opts'), { standard: 'Gut / Angemessen', onChange: () => calcScores() });
   baueSegmente('coach_feedback', t('coach_feed_opts'), { standard: 'Konstruktiv', onChange: () => calcScores() });
+
+  // Menü „Mehr“: Sprache (sichtbare Sprachen, plus eine über ?lang= gewählte) und Darstellung
+  baueSegmente('sprache', SPRACHEN.filter((s) => s.sichtbar || s.code === currentLang).map((s) => ({ val: s.code, kurz: s.name })),
+    { standard: currentLang, onChange: (v) => { setLanguage(v); fokusAufWahl('sprache'); } });
+  baueSegmente('darstellung', ['auto', 'light', 'dark'].map((p) => ({ val: p, kurz: t('theme_' + p) })),
+    { standard: getThemePref(), onChange: (v) => setTheme(v) });
+}
+
+// Fokus auf die gewählte Option (z. B. nachdem die Reihe neu beschriftet wurde)
+function fokusAufWahl(name) {
+  const r = document.querySelector(`input[name="${name}"]:checked`);
+  if (r) r.focus();
 }
 
 // Text unter der Gesamteinschätzung: Definition der gewählten Stufe oder Hinweis, bewusst zu wählen.

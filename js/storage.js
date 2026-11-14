@@ -69,13 +69,14 @@ function saveGlobalState() {
     crew_notes: document.getElementById('crew_notes') ? document.getElementById('crew_notes').value : ""
   };
   saveToStorage();
+  aktualisiereSeitenleiste();   // Spiel in der Seitenleiste
 }
 
 function saveToStorage() {
   localStorage.setItem('referee_multi_supervision_data', JSON.stringify(gameData));
   const status = document.getElementById('saveStatus');
   if (status) {
-    status.innerText = t('saved_status', { zeit: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'}) });
+    status.innerText = t('saved_status', { zeit: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
   }
 }
 

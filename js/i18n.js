@@ -58,7 +58,7 @@ const I18N = {
     sec_crew_obs: "Gemeinsame Gespann-Beobachtungen",
     lbl_crew_notes: "Zusammenarbeit, Teamwork & Spielcharakter",
     btn_reset: "Gesamtes Spiel zurücksetzen",
-    txt_tab_crew: "Gespann-Übersicht",
+    txt_tab_crew: "Gespann",
     txt_tab_stats: "Saison-Statistik",
     radar_labels: ["Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln"],
     round_options: [
@@ -108,7 +108,6 @@ const I18N = {
     theme_auto: "Auto",
     theme_light: "Hell",
     theme_dark: "Dunkel",
-    kader_count: "Kader: {n} (aktualisieren)",
     kader_import: "Kader importieren",
     kader_choose: "-- Schiedsrichter wählen --",
     kader_first: "-- Zuerst Kader importieren --",
@@ -119,7 +118,7 @@ const I18N = {
     partner_none: "Noch keine Partner in den anderen Reitern erfasst",
     stamp_prompt: "Drittel & Spielminute eingeben (z. B. 'P2 08:34'):",
     reset_confirm: "Möchten Sie das gesamte Spiel und alle Schiedsrichter-Reiter zurücksetzen?",
-    saved_status: "Auto-Gespeichert ({zeit})",
+    saved_status: "Gespeichert {zeit}",
     export_missing: "Review kann nicht gespeichert werden. Es fehlt:",
     missing_name: "Name Schiedsrichter",
     missing_date: "Spieldatum",
@@ -149,6 +148,21 @@ const I18N = {
     badge_blocked: "⚠ Update blockiert – Version nicht erhöht",
     badge_blocked_detail: "Auf dem Server gibt es geänderte Dateien mit gleicher Versionsnummer (?v=). Die bisherige Version bleibt aktiv. Betroffen: {dateien}",
     toast_blocked: "Update blockiert: Die Versionsnummer wurde nicht erhöht. Die bisherige Version bleibt aktiv.",
+    app_name: "Supervision",
+    season: "Saison {s}",
+    nav_label: "Navigation",
+    nav_game: "Spiel",
+    nav_overview: "Übersicht",
+    nav_no_game: "Neues Spiel",
+    footer_local: "Daten bleiben auf diesem Gerät",
+    footer_version: "Version {version} · Stand {stand}",
+    footer_kader: "Kader: {n}",
+    tabs_label: "Schiedsrichter",
+    btn_save: "Sichern",
+    btn_print: "Drucken",
+    btn_more: "Mehr",
+    menu_csv: "CSV-Export",
+    menu_reset: "Spiel zurücksetzen",
     csv_headers: ["Rolle", "Name", "Review", "Gesamtscore", "Gesamteinschätzung", "Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln", "Trend", "Einstellung", "Feedback", "Top Stärken", "Entwicklung", "Rapport"],
     crit_head: [{"t": "1. Eislaufen & Physis", "s": "Agilität, Mobilität, Rückwärtslaufen, Fitness"}, {"t": "2. Positionsspiel & Sichtachsen", "s": "Torlinie vor Spielzug, Net-Front-Position, Blickfeld"}, {"t": "3. Pfiff, Zeichengebung & Präsenz", "s": "Prägnanz, klare Signale, aufrechte Körpersprache"}, {"t": "4. Antizipation & Spielaufmerksamkeit", "s": "Spielzüge lesen, Off-Puck Play, Gefahren"}, {"t": "5. Deeskalation & Post-Whistle Management", "s": "Torraumabsicherung, Rudelbildungen unterbinden"}, {"t": "6. Teamwork & Kommunikation", "s": "Gespann-Abstimmung, Dialog mit Captains/Coaches"}, {"t": "7. Strafmassstab & Regelanwendung", "s": "Konstanz über 60 Min., Offizielles Regelbuch & Weisungen"}],
     crit_lines: [{"t": "1. Eislaufen & Physis", "s": "Agilität, Mobilität, Rückwärtslaufen, Fitness"}, {"t": "2. Positionsspiel & Linienkontrolle", "s": "Blaue Linie bei knappen Offsides, Icing-Beurteilung"}, {"t": "3. Pfiff, Bully-Präsenz & Signale", "s": "Korrektes Anspiel, Bully-Conduct, Zeichen Icing/Abseits"}, {"t": "4. Antizipation & Spielaufmerksamkeit", "s": "Spielzüge lesen, Off-Puck Play, Gefahren"}, {"t": "5. Deeskalation & Scrum-Intervention", "s": "Schnelles Trennen von Spielern, Torraumabsicherung"}, {"t": "6. Teamwork & Kommunikation", "s": "Gespann-Abstimmung, Dialog mit Captains/Coaches"}, {"t": "7. Regelanwendung (Abseits / Icing / Handpass)", "s": "Präzision bei Linienentscheiden & Puckkontakt"}],
@@ -207,7 +221,7 @@ const I18N = {
     sec_crew_obs: "Collective Crew Observations",
     lbl_crew_notes: "Teamwork, Communication & Game Management",
     btn_reset: "Reset Entire Game",
-    txt_tab_crew: "Crew Overview",
+    txt_tab_crew: "Crew",
     txt_tab_stats: "Season Stats",
     radar_labels: ["Skating", "Position", "Presence", "Anticipation", "De-escalation", "Teamwork", "Rules"],
     round_options: [
@@ -257,7 +271,6 @@ const I18N = {
     theme_auto: "Auto",
     theme_light: "Light",
     theme_dark: "Dark",
-    kader_count: "Roster: {n} (update)",
     kader_import: "Import roster",
     kader_choose: "-- Select official --",
     kader_first: "-- Import roster first --",
@@ -268,7 +281,7 @@ const I18N = {
     partner_none: "No partners entered in the other tabs yet",
     stamp_prompt: "Enter Period & Game Clock (e.g. 'P2 08:34'):",
     reset_confirm: "Reset the entire game evaluation and all officiating tabs?",
-    saved_status: "Auto-Saved ({zeit})",
+    saved_status: "Saved {zeit}",
     export_missing: "Cannot save review. Missing:",
     missing_name: "Official's name",
     missing_date: "Game date",
@@ -298,6 +311,21 @@ const I18N = {
     badge_blocked: "⚠ Update blocked – version not increased",
     badge_blocked_detail: "The server has changed files with the same version number (?v=). The current version stays active. Affected: {dateien}",
     toast_blocked: "Update blocked: the version number was not increased. The current version stays active.",
+    app_name: "Supervision",
+    season: "Season {s}",
+    nav_label: "Navigation",
+    nav_game: "Game",
+    nav_overview: "Overview",
+    nav_no_game: "New game",
+    footer_local: "Data stays on this device",
+    footer_version: "Version {version} · build {stand}",
+    footer_kader: "Roster: {n}",
+    tabs_label: "Officials",
+    btn_save: "Save",
+    btn_print: "Print",
+    btn_more: "More",
+    menu_csv: "CSV export",
+    menu_reset: "Reset game",
     csv_headers: ["Role", "Name", "Review", "Total Score", "Overall Grade", "Skating", "Positioning", "Presence", "Anticipation", "De-escalation", "Teamwork", "Rules", "Trend", "Attitude", "Feedback", "Top Strengths", "Work On", "Rapport"],
     crit_head: [{"t": "1. Skating & Physical Stamina", "s": "Speed, agility, backwards mobility over 60 min"}, {"t": "2. Positioning & Sightlines", "s": "Goal line ahead of play, net-front position, sightlines"}, {"t": "3. Whistle, Signals & Body Language", "s": "Sharp whistle, authoritative signals, upright posture"}, {"t": "4. Anticipation & Game Awareness", "s": "Reading plays, anticipating contact, awareness"}, {"t": "5. De-escalation & Post-Whistle Control", "s": "Protecting goalies, stopping scrums immediately"}, {"t": "6. Teamwork & Communication", "s": "Crew coordination, respectful bench dialogue"}, {"t": "7. Penalty Standard & Rulebook Adherence", "s": "60-min consistency, adherence to official rulebook"}],
     crit_lines: [{"t": "1. Skating & Physical Stamina", "s": "Mobility, agility, backwards acceleration"}, {"t": "2. Positioning & Line Judgment", "s": "Blue line tight offsides, icing assessment"}, {"t": "3. Whistle, Face-Offs & Signals", "s": "Puck drop technique, face-off conduct, signals"}, {"t": "4. Anticipation & Play Reading", "s": "Reading dump-ins, deflections, off-puck fouls"}, {"t": "5. Scrum Management & Intervention", "s": "Fast separation of players, net-front safety"}, {"t": "6. Teamwork & Communication", "s": "Partner eye contact, communication with benches"}, {"t": "7. Rule Application (Offside / Icing / Handpass)", "s": "Precision on lines & high-stick puck touches"}],
@@ -345,30 +373,14 @@ function loadLanguagePreference() {
   document.documentElement.lang = currentLang;
 }
 
-function renderLanguageSelect() {
-  const sel = document.getElementById('langSelect');
-  if (!sel) return;
-  sel.innerHTML = '';
-  SPRACHEN.filter((s) => s.sichtbar || s.code === currentLang).forEach((s) => {
-    const o = document.createElement('option');
-    o.value = s.code;
-    o.textContent = s.name;
-    o.selected = s.code === currentLang;
-    sel.appendChild(o);
-  });
-  sel.setAttribute('aria-label', t('lang_label'));
-}
-
 function setLanguage(code) {
   if (!I18N[code]) return;
   if (activeTabType === 'ref') saveCurrentRefData();
   currentLang = code;
   localStorage.setItem(LANG_KEY, code);
   document.documentElement.lang = code;
-  renderLanguageSelect();
   setupRefereeDropdown();
   applyTranslations();
-  updateThemeButton();
   renderTabs();
   if (activeTabType === 'ref') loadRefereeForm(activeRefIndex);
   else if (activeTabType === 'summary') renderSummaryView();
@@ -380,6 +392,9 @@ function applyTranslations() {
   });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
     el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+  });
+  document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+    el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria-label')));
   });
   applyClub();
   if (typeof zeigeBadge === 'function') zeigeBadge();   // Badge-Text je nach Status (js/app.js)
