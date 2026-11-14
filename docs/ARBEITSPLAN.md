@@ -53,6 +53,7 @@ Sprachen und Verein (seit 2.1b):
 - Sprachwahl als Liste: DE und EN sichtbar, FR und IT vorbereitet, aber versteckt (nur über `?lang=fr` / `?lang=it` zum Testen). Fehlt ein Text, wird der deutsche angezeigt. Die Wahl bleibt nach dem Neuladen. Ab 2.4 im Menü „Mehr“.
 - Jeder neue Text über `t()`, auf DE und EN. Bestehende rein deutsche Texte im HTML werden im jeweiligen Teilschritt umgestellt; Ende 2.9 läuft jeder Text über `t()`.
 - **2.9:** FR und IT übersetzen, wenn die Texte fertig sind; sie bleiben versteckt (Freigabe in Etappe 9). Ab dann `texte-test.py --streng`.
+- **2.9:** `manifest.json`-Farben (`theme_color`, `background_color`) an das neue Design anpassen, hell und dunkel.
 - Gespeicherte Werte (Coaching-Texte, R1/R2, Liga, Rollen, Partner) bleiben in jeder Sprache deutsch, damit Dateien austauschbar sind. Die CSV ist ein Bericht: Spaltentitel in der gewählten Sprache.
 - Verein zentral in `js/club.js` (Name, Kürzel, Logo, Beispiel-Halle, Wert für `club` im Export), ohne Knopf in der App. Kein „EVZ“ / „EV Zug“ fest im Code.
 
