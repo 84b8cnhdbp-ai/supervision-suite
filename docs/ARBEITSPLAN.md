@@ -159,6 +159,11 @@ Jedes Spiel bekommt beim ersten Import eine interne ID. Beim nächsten Import, i
 
 ---
 
+## Offene Entscheide
+- **Kriterien ohne Vorbelegung starten**, fehlende in „Bereit zum Sichern?“ anzeigen – ändert eine fachliche Regel (heute „+“ vorbelegt), nur nach Livios Go.
+
+---
+
 ## Laufend
 - Bei jeder Änderung an `css/` oder `js/` die Nummer `?v=` in `index.html` erhöhen (Hook prüft es).
 - Nach jeder Änderung `python3 tests/tools/alle-tests.py` laufen lassen.
