@@ -1,0 +1,30 @@
+{
+  "global": {
+    "system_typ": "4-Man",
+    "spiel_liga": "U16-Elit",
+    "spiel_paarung": "Team Blau vs. Team Rot",
+    "spiel_id": "90003",
+    "spiel_datum": "2026-11-07T17:30",
+    "spiel_ort": "Beispielhalle",
+    "supervisor_name": "Muster Peter",
+    "crew_notes": "Erfundene Gespann-Notiz."
+  },
+  "referees": {
+    "4-Man_h1": {
+      "role": "Head Referee 1", "name": "Frei Lea", "review_round": "R1", "overall_grade": "100",
+      "perf_1": "100", "perf_2": "100", "perf_3": "80", "perf_4": "100", "perf_5": "80", "perf_6": "100", "perf_7": "80",
+      "coach_trend": "Erstbeobachtung", "coach_attitude": "Vorbildlich / Professionell", "coach_feedback": "Sehr offen & reflektiert",
+      "note_1": "[P1 05:12] Erfundene Szene", "top_strengths": "1. Beispiel", "top_workon": "1. Beispiel"
+    },
+    "4-Man_h2": {
+      "role": "Head Referee 2", "name": "Gast Beispiel", "review_round": "R1", "overall_grade": "20",
+      "perf_1": "20", "perf_2": "50", "perf_3": "NA", "perf_4": "20", "perf_5": "50", "perf_6": "50", "perf_7": "20",
+      "coach_trend": "Rückschritt / Instabil", "coach_attitude": "Ausbaufähig", "coach_feedback": "Defensiv / Rechtfertigend"
+    },
+    "4-Man_l1": {
+      "role": "Linesperson 1", "name": "Brunner Jan", "review_round": "R2", "overall_grade": "",
+      "perf_1": "80", "perf_2": "80", "perf_3": "80", "perf_4": "80", "perf_5": "80", "perf_6": "80", "perf_7": "80",
+      "coach_trend": "Konstant stabil", "coach_attitude": "Gut / Angemessen", "coach_feedback": "Konstruktiv"
+    }
+  }
+}

@@ -8,11 +8,12 @@ Nach dem Vorschlag gibst du das Go. Erst wenn die Etappe getestet und committet 
 
 ## Etappe 1 – Code aufräumen (ohne sichtbare Änderung)
 **Ziel:** Die 2000 Zeilen in `index.html` aufteilen, damit das neue Design sauber umsetzbar ist.
-- CSS nach `css/app.css`, JavaScript nach `js/` (z. B. `i18n.js`, `scoring.js`, `storage.js`, `ui.js`, `export.js`, `stats.js`), als normale `<script>`-Dateien ohne Build.
-- Inline-Styles im HTML durch Klassen ersetzen.
+- CSS nach `css/app.css`, JavaScript nach `js/` (`i18n.js`, `config.js`, `scoring.js`, `storage.js`, `ui.js`, `export.js`, `stats.js`, `app.js`), als normale `<script>`-Dateien ohne Build. Code nur verschieben, nicht umschreiben; Inline-Handler (`onclick` …) bleiben.
 - Alle neuen Dateien in `sw.js` cachen, `CACHE_NAME` erhöhen.
+- Service Worker: CSS und JS wie die Seite zuerst aus dem Netz laden, offline aus dem Cache (damit Seite und Skripte nie verschiedene Versionen haben).
+- Beispieldateien mit erfundenen Namen unter `tests/fixtures/` (Version 1.0 und 1.1, ganzes Spiel, Kader).
 
-**Fertig, wenn:** Die App sieht exakt gleich aus und verhält sich gleich; alle Tests aus CLAUDE.md laufen; Offline-Start funktioniert.
+**Fertig, wenn:** Die App sieht exakt gleich aus und verhält sich gleich; alle Tests aus CLAUDE.md laufen; online ist eine neue Version sofort sichtbar; Offline-Start funktioniert vollständig.
 
 ---
 
@@ -28,6 +29,7 @@ Bedienelemente:
 - Gesamteinschätzung ohne Wahl: orange Rahmen + Hinweis „Bitte bewusst wählen …“.
 - „Szene“-Knopf pro Kriterium öffnet ein eigenes Fenster (Drittel 1/2/3/OT, Spielzeit mm:ss, Notiz). Szenen erscheinen als Chips unter dem Kriterium (Format bleibt `[P2 08:34] Text` in den Notizen, damit alte Dateien passen).
 - `alert`, `confirm`, `prompt` durch eigene Fenster und Hinweise (Toasts) ersetzen.
+- Inline-Styles (im HTML und in den HTML-Vorlagen im JS) durch Klassen ersetzen; Inline-Handler (`onclick` …) durch `addEventListener` ersetzen.
 - Weiche Übergänge beim Reiterwechsel, Score zählt animiert; `prefers-reduced-motion` respektieren.
 
 Stil:

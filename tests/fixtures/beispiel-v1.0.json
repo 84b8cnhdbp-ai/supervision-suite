@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "club": "EV Zug",
+  "schiedsrichter": "Meier Luca",
+  "reviewRunde": "R1",
+  "datum": "2026-10-03",
+  "spiel_liga": "U16-Elit",
+  "spiel_paarung": "Team Blau vs. Team Rot",
+  "scoreGesamt": 80,
+  "subScores": {
+    "teil2_overall": 80,
+    "teil3_matrix": 79,
+    "teil4_coach": 80
+  },
+  "evaluation": {
+    "role": "Head Referee 1",
+    "name": "Meier Luca",
+    "review_round": "R1",
+    "partner": "Keller Nina (Referee 2)",
+    "overall_grade": "80",
+    "perf_1": "80", "perf_2": "80", "perf_3": "100", "perf_4": "80",
+    "perf_5": "50", "perf_6": "80", "perf_7": "80",
+    "note_1": "",
+    "note_2": "",
+    "note_3": "",
+    "note_4": "",
+    "note_5": "[P2 08:34] Beispielszene, erfundener Text",
+    "note_6": "",
+    "note_7": "",
+    "coach_trend": "Konstant stabil",
+    "coach_attitude": "Gut / Angemessen",
+    "coach_feedback": "Konstruktiv",
+    "top_strengths": "1. Beispielstaerke",
+    "top_workon": "1. Beispielschwerpunkt",
+    "general_report": "Erfundener Beispieltext.",
+    "visum_ort_datum": "Beispielhalle, 03.10.2026",
+    "visum_name": "Muster Peter"
+  },
+  "supervisor": "Muster Peter"
+}

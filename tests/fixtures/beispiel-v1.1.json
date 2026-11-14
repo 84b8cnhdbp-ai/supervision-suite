@@ -1,0 +1,33 @@
+{
+  "version": "1.1",
+  "club": "EV Zug",
+  "schiedsrichter": "Meier Luca",
+  "reviewRunde": "R2",
+  "datum": "2027-01-16",
+  "spiel_id": "90002",
+  "spiel_liga": "U16-Elit",
+  "spiel_paarung": "Team Gelb vs. Team Gruen",
+  "spiel_ort": "Beispielhalle",
+  "system": "4-Man",
+  "scoreGesamt": 94,
+  "subScores": { "teil2_overall": 100, "teil3_matrix": 91, "teil4_coach": 93 },
+  "evaluation": {
+    "role": "Head Referee 1",
+    "name": "Meier Luca",
+    "review_round": "R2",
+    "partner": "Head Referee 2: Keller Nina",
+    "overall_grade": "100",
+    "perf_1": "100", "perf_2": "80", "perf_3": "100", "perf_4": "100",
+    "perf_5": "80", "perf_6": "80", "perf_7": "100",
+    "coach_trend": "Fortschritt erkennbar",
+    "coach_attitude": "Vorbildlich / Professionell",
+    "coach_feedback": "Konstruktiv",
+    "top_strengths": "1. Beispielstaerke",
+    "top_workon": "1. Beispielschwerpunkt",
+    "general_report": "Erfundener Beispieltext.",
+    "visum_ort_datum": "Beispielhalle, 16.01.2027",
+    "visum_name": "Muster Peter"
+  },
+  "supervisor": "Muster Peter",
+  "exportiertAm": "2027-01-16T21:00:00.000Z"
+}
