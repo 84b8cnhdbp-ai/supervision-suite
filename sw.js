@@ -1,8 +1,9 @@
 // Bei jedem Release die Version erhöhen (oder per Skript setzen).
-const CACHE_NAME = 'referee-supervision-v6';
+const CACHE_NAME = 'referee-supervision-v7';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './css/app.css',
   './manifest.json',
   './logo-evz.svg',
   './icons/icon.svg',
