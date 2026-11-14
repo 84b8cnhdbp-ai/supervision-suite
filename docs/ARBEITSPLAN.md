@@ -32,6 +32,14 @@ Bedienelemente:
 - Inline-Styles (im HTML und in den HTML-Vorlagen im JS) durch Klassen ersetzen; Inline-Handler (`onclick` …) durch `addEventListener` ersetzen.
 - Weiche Übergänge beim Reiterwechsel, Score zählt animiert; `prefers-reduced-motion` respektieren.
 
+Spieldaten:
+- **Fenster „Spiel bearbeiten“**: öffnet sich beim Tippen auf den Spieltitel oder über „Spiel bearbeiten“ in der Werkzeugleiste. Bei einem neuen Spiel öffnet es sich automatisch.
+  - Reihenfolge: **Spielnummer** (ganz oben, Zifferntastatur, vom Matchblatt) · Stufe · Gegner · Datum & Zeit · Halle · System (1/2/3/4-Mann als Knopfreihe) · Schiedsrichter je Rolle mit Durchgang (– / R1 / R2) · Supervisor.
+  - Spielnummer ist **kein Pflichtfeld**: fehlt sie, steht in „Bereit zum Sichern?“ ein oranger Hinweis „Spielnummer fehlt“, Sichern bleibt möglich. Sie wird als `spiel_id` exportiert.
+  - Felder, die der Supervisor von Hand geändert hat, bekommen eine kleine blaue Markierung („von dir geändert“). Hinweiszeile oben: „Übernommen aus Einteilung vom …“, sobald Etappe 4 da ist.
+- Die Spieldaten verschwinden damit aus dem grossen grauen Bereich oben; auf der Bewertungsseite steht nur noch der Titel (Stufe · Datum, Zeit · Halle · System + Begegnung).
+- Entwurf: Ansicht „Spiel bearbeiten“ im Design-Entwurf.
+
 Stil:
 - Schrift `-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif`.
 - Hell: Grund `#F2F2F7`, Karten `#FFFFFF`, Text `#1C1C1E`, Sekundär `#636366`, Linien `#D8D8DE`, Segment-Grund `#E6E6EB`.
@@ -55,14 +63,61 @@ Stil:
 
 ---
 
-## Etappe 4 – R1 → R2
+## Etappe 4 – Einteilung importieren und Änderungen abgleichen
+**Ziel:** Spiele, Zeiten, Hallen und eingeteilte Schiedsrichter nicht mehr von Hand eintippen. Bei jeder neuen Einteilung zeigt die App, was sich geändert hat und was das für die Supervisionsplanung bedeutet.
+
+### Quelle
+- **Jetzt:** Livios Excel-Einteilung (`.xlsx`), z. B. `Einsatzplan_Supervision_Stand_06-11-2026.xlsx`.
+  - Zeile 1 Titel, Zeile 2 Untertitel, **Zeile 3 Kopfzeile**. Spalten **über den Namen in der Kopfzeile** finden, nicht über die Position (ältere Dateien haben weniger Spalten, z. B. ohne „Status“ und „Bemerkung“).
+  - Spalten: `Date` (TT.MM.JJJJ) · `Time` (HH:MM) · `Home Team` = **Stufe** (z. B. „U14 Elit“, „JWLU16“, „U9 I“) · `Away Team` = **Gegner** · `Arena` · `Ref 1` · `Ref 2` · optional `Supervision für` · `Status` (Erledigt / Verpasst / Geplant) · `Bemerkung`.
+  - `Supervision für` hat das Format „Meier L. (R1), Keller N. (R2)“ oder „L. Meier (R1)“; auch „J. Brunner (1/1)“ aus älteren Dateien kommt vor → Rundenangabe tolerant lesen, unklare Werte nachfragen.
+  - EVZ ist immer stillschweigend das Heimteam.
+  - Zellen können Text oder Zahl sein (Datum als Excel-Seriennummer) → beides lesen.
+- **Später:** CSV vom Schiedsrichterobmann (angefragt). Der Import soll darum aus **austauschbaren Lesern** bestehen (xlsx, csv, evtl. später pdf), die alle dasselbe interne Format liefern.
+- **PDF-Export** („GAME SCHEDULE“, Spalten Date · Time · Home Team · Away Team · Arena · Type · Status · Ref 1–4): nur falls nötig und nach Rückfrage – bräuchte pdf.js lokal mitgeliefert. Besonderheiten: „Missing“ = unbesetzte Stelle, lange Gegnernamen über zwei Zeilen umbrochen.
+
+### Technik
+- `.xlsx` **ohne Fremdbibliothek** lesen: ZIP mit `DecompressionStream('deflate-raw')` entpacken, `xl/worksheets/sheet1.xml` (+ `sharedStrings.xml`, falls vorhanden; Livios Dateien nutzen Inline-Strings `<is><t>`) per `DOMParser` auslesen. Auf iPad (Safari ab 16.4) testen.
+- Namen aus der Einteilung („L. Meier“, „Meier L.“) dem Kader zuordnen: Nachname + Anfangsbuchstabe des Vornamens. Es gibt Namensgleichheiten (gleicher Nachname, anderer Vorname, z. B. Frei L. / Frei M.; im echten Kader mehrere solche Paare) → nur bei eindeutigem Treffer automatisch, sonst nachfragen und die Antwort merken.
+- Einteilung wie der Kader **nur lokal** speichern. Nie ins Repo.
+
+### Spiel wiedererkennen (ohne Spielnummer)
+Jedes Spiel bekommt beim ersten Import eine interne ID. Beim nächsten Import, in dieser Reihenfolge:
+1. Datum + Zeit + Stufe + Gegner gleich → gleiches Spiel.
+2. Datum + Stufe + Gegner gleich, Zeit anders → gleiches Spiel, Hinweis „Zeit geändert“.
+3. Stufe + Gegner gleich, Datum anders, altes Spiel fehlt → **Rückfrage „verschoben?“**; Antwort merken.
+4. Sonst: neues Spiel; ein nicht mehr vorhandenes Spiel wird als „abgesagt?“ markiert, **nicht gelöscht**.
+- Ist eine offizielle Spielnummer (vom Matchblatt) erfasst, ist sie das feste Merkmal.
+- Gleiche Halle + Zeit kommt bei U9/U12 doppelt vor (I/II) → Stufe inkl. „I/II“ und Gegner gehören immer zum Schlüssel.
+
+### Abgleich-Fenster „Einteilung aktualisiert“ (siehe Entwurf)
+- Oben: **Betrifft deine Supervision** – Schiri-Wechsel, Verschiebungen oder Absagen bei Spielen, an denen eine Supervision geplant ist.
+  - Bei Wegfall: **Ersatzvorschläge** – andere Spiele, an denen dieser Schiri eingeteilt ist, mit gleichem Durchgang (R1/R2), noch in der Zukunft.
+  - Ersatzvorschläge filtern nach Livios Regeln (einstellbar): keine U9/U12, ausgeschlossene Schiris, max. 2× pro Schiri.
+- Darunter: **weitere Änderungen** (Zeit, Halle, neue Spiele, besetzte Stellen „offen → Name“).
+- Nichts wird übernommen, bevor Livio „Übernehmen“ tippt. Offene Rückfragen müssen beantwortet sein.
+- **Nie verändert:** begonnene/gesicherte Bewertungen und Felder, die Livio von Hand geändert hat (ausser er bestätigt es).
+
+### Supervisionsplan in der App
+- Spiele mit geplanter Supervision erscheinen in der Seitenleiste unter „Geplant“, mit R1/R2 je Schiri vorbelegt. Beim Öffnen sind Begegnung, Stufe, Datum, Zeit, Halle, System und Schiris schon ausgefüllt.
+- Übersicht pro Schiri: wie oft gesehen, wie oft noch geplant, ob noch möglich.
+
+### Tests
+- Beispieldateien mit **erfundenen Namen** unter `tests/fixtures/`: `beispiel-einteilung-alt.xlsx`, `beispiel-einteilung-neu.xlsx` (mit Zeitänderung, Schiri-Wechsel bei geplanter Supervision, Verschiebung, neuem Spiel, besetzter offener Stelle) und eine ältere Variante ohne „Status“/„Bemerkung“. Erwartete Ergebnisse im Fixture-README.
+- Mehrfach importieren ohne Änderung → „keine Änderungen“.
+
+**Fertig, wenn:** Livios Excel-Einteilung sich importieren lässt; ein zweiter Stand alle Änderungen korrekt anzeigt; Bewertungen und eigene Korrekturen unangetastet bleiben; auf iPad und MacBook getestet.
+
+---
+
+## Etappe 5 – R1 → R2
 - Beim Erfassen von R2 die R1-Datei des gleichen Schiris laden (über „Bewertung öffnen“ oder die importierten Saisondateien).
 - R1-Entwicklungsschwerpunkte erscheinen als Checkliste („umgesetzt / teilweise / nicht umgesetzt“) mit Notiz.
 - Vergleich R1 ↔ R2 pro Kriterium (Pfeile ↑ ↓ →).
 
 ---
 
-## Etappe 5 – Neue Felder
+## Etappe 6 – Neue Felder
 - **Sicherheit & Ausrüstung:** Schalter „Auffälligkeit festgestellt“ + Textfeld; roter Rahmen; im Bericht und in der Statistik hervorgehoben.
 - **Empfehlung (nur R2 oder Saisonende):** Aufstieg empfohlen / Stufe halten / gezielte Förderung.
 - **Kurzbeschreibung pro Note und Kriterium:** Beim Antippen einer Note erscheint, was sie bei diesem Kriterium bedeutet (einheitlicher Massstab). Texte in einer eigenen Datei (`js/rubric.js`), damit Livio sie selbst anpassen kann.
@@ -70,14 +125,14 @@ Stil:
 
 ---
 
-## Etappe 6 – Berichte
+## Etappe 7 – Berichte
 - **Einzelbericht A4** (Drucken / PDF): Kopf mit Logo und Spieldaten, Score, Netzdiagramm, Kriterien mit Szenen, Stärken, Schwerpunkte, Sicherheit, Unterschriftsfeld. Eigenes Druck-CSS.
 - **Saisonbericht für den EVZ** (Drucken / PDF): wer wie oft gesehen wurde, Durchschnitt R1/R2, Entwicklung, häufigste Schwerpunkte im Team, Sicherheitsvorfälle, Empfehlungen.
 - Statistik-Ansicht: Kennzahlen oben, sortierbare Tabelle, Verlauf R1 → R2.
 
 ---
 
-## Etappe 7 – Datenschutz in der App
+## Etappe 8 – Datenschutz in der App
 - Info-Seite „Datenschutz“: was gespeichert wird, wo, wie lange.
 - Einstellbare Aufbewahrungsfrist (z. B. Saisonende + 1 Jahr) mit Erinnerung, alte Spiele zu löschen.
 - „Alle lokalen Daten löschen“ mit Bestätigung.
