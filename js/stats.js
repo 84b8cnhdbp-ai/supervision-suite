@@ -39,7 +39,7 @@ async function handleSeasonFilesUpload(e) {
   }
 
   renderSeasonStatsDashboard(stats);
-  if (skipped) alert(`${skipped} Datei(en) konnten nicht gelesen werden und wurden übersprungen.`);
+  if (skipped) zeigeToast(t('stats_skipped', { n: skipped }), 'fehler', 5000);
   e.target.value = '';
 }
 

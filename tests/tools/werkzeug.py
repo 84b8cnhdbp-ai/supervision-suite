@@ -61,7 +61,9 @@ def server(wurzel, routen=None):
         def log_message(s, *a):
             pass
 
-    srv = http.server.ThreadingHTTPServer(('127.0.0.1', 0), H)
+    class Srv(http.server.ThreadingHTTPServer):
+        request_queue_size = 64   # Standard 5 ist zu klein, wenn Browser und Service Worker parallel laden
+    srv = Srv(('127.0.0.1', 0), H)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     srv.basis = f'http://127.0.0.1:{srv.server_address[1]}'
     return srv
@@ -204,6 +206,28 @@ class Browser:
         if 'exceptionDetails' in r:
             raise RuntimeError('JS-Fehler: ' + r['exceptionDetails'].get('exception', {}).get('description', str(r['exceptionDetails'])))
         return r['result'].get('value')
+
+    TASTEN = {'Enter': ('Enter', 13, '\r'), 'Escape': ('Escape', 27, ''), 'Tab': ('Tab', 9, '')}
+
+    def taste(self, name):
+        """Echter Tastendruck (wie auf der Tastatur): 'Enter', 'Escape', 'Tab'."""
+        code, vk, text = self.TASTEN[name]
+        self.befehl('Input.dispatchKeyEvent', type='keyDown', key=name, code=code, windowsVirtualKeyCode=vk, text=text)
+        self.befehl('Input.dispatchKeyEvent', type='keyUp', key=name, code=code, windowsVirtualKeyCode=vk)
+        time.sleep(0.15)
+
+    def tippen(self, text):
+        self.befehl('Input.insertText', text=text)
+
+    def klick(self, selektor):
+        """Echter Mausklick in die Mitte des Elements."""
+        r = self.js(f"(() => {{ const e = document.querySelector({json.dumps(selektor)}); if (!e) return null;"
+                    f" e.scrollIntoView({{ block: 'center' }}); const r = e.getBoundingClientRect(); return [r.x + r.width / 2, r.y + r.height / 2]; }})()")
+        if not r:
+            raise RuntimeError('Element nicht gefunden: ' + selektor)
+        for typ in ('mousePressed', 'mouseReleased'):
+            self.befehl('Input.dispatchMouseEvent', type=typ, x=r[0], y=r[1], button='left', clickCount=1)
+        time.sleep(0.15)
 
     def bild(self, datei, ganze_seite=True):
         clip = None

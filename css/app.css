@@ -350,6 +350,69 @@ button.btn, label.btn {
 .summary-card .score { font-size: 24px; font-weight: 700; color: var(--accent); margin: 6px 0; font-variant-numeric: tabular-nums; }
 .summary-card .name { font-weight: 700; font-size: 13px; margin-bottom: 8px; }
 
+/* ---------- Eigene Fenster (js/dialog.js) ---------- */
+dialog.fenster {
+  width: min(420px, calc(100vw - 32px));
+  padding: 20px 20px 16px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--text);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+}
+dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
+.fenster-titel { margin: 0 0 6px; font-size: 17px; font-weight: 600; }
+.fenster-text { margin: 0 0 14px; font-size: 15px; line-height: 1.4; color: var(--secondary); }
+.fenster-liste { list-style: none; margin: 0 0 16px; padding: 0; border-radius: 10px; overflow: hidden; background: var(--toolbar); border: 1px solid var(--sep); }
+.fenster-liste li + li { border-top: 1px solid var(--sep); }
+.fenster-eintrag {
+  width: 100%; min-height: 44px; padding: 0 14px; border: 0; background: transparent; color: var(--accent);
+  font: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.fenster-eintrag::after { content: "›"; font-size: 20px; color: var(--secondary); }
+.fenster-eintrag:hover { background: var(--seg); }
+.fenster-eingabe { margin-bottom: 16px; font-size: 17px; font-variant-numeric: tabular-nums; }
+.fenster-knoepfe { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.fenster-knopf {
+  min-height: 44px; min-width: 96px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--sep);
+  background: var(--card); color: var(--accent); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+.fenster-knopf:hover { background: var(--seg); }
+.fenster-knopf-primaer { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.fenster-knopf-primaer:hover { background: var(--accent-hover); }
+.fenster-knopf-gefahr { background: var(--r-mm); border-color: var(--r-mm); color: #FFFFFF; }
+.fenster-knopf-gefahr:hover { filter: brightness(0.92); background: var(--r-mm); }
+.fenster-knopf:focus-visible, .fenster-eintrag:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2px; }
+
+/* ---------- Hinweise (Toasts) ---------- */
+.toast-box {
+  position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 1000; pointer-events: none;
+  width: min(520px, calc(100vw - 32px));
+}
+.toast {
+  padding: 12px 18px; border-radius: 12px; font-size: 15px; font-weight: 600; line-height: 1.35;
+  background: #1C1C1E; color: #FFFFFF; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  opacity: 0; transform: translateY(8px); transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.toast.sichtbar { opacity: 1; transform: none; }
+.toast-ok::before { content: "✓  "; color: #7EE2A0; }
+.toast-fehler { background: var(--r-mm); }
+:root[data-theme="dark"] .toast-info, :root[data-theme="dark"] .toast-ok { background: #3A3A3C; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .toast-info, :root:not([data-theme="light"]) .toast-ok { background: #3A3A3C; } }
+
+/* Feld nach einem Sprung kurz hervorheben */
+.feld-hervorheben { animation: hervorheben 2.4s ease-out; }
+@keyframes hervorheben {
+  0%, 60% { box-shadow: 0 0 0 4px var(--accent-soft), 0 0 0 2px var(--accent); }
+  100% { box-shadow: 0 0 0 4px transparent, 0 0 0 2px transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast { transition: none; transform: none; }
+  .feld-hervorheben { animation: none; box-shadow: 0 0 0 4px var(--accent-soft), 0 0 0 2px var(--accent); }
+}
+
 @media (max-width: 860px) {
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .analytics-card { grid-template-columns: 1fr; }
@@ -367,7 +430,7 @@ button.btn, label.btn {
   body { background: #FFF !important; color: #000 !important; padding: 0 !important; font-size: 11pt !important; }
   .app-container { box-shadow: none !important; border: none !important; max-width: 100% !important; }
   header { background: #FFF !important; color: #000 !important; padding: 0 0 8pt !important; border-bottom: 1.5pt solid #000 !important; }
-  .header-controls, .system-tabs-wrapper, .toolbar, .no-print, .stamp-btn { display: none !important; }
+  .header-controls, .system-tabs-wrapper, .toolbar, .no-print, .stamp-btn, .toast-box, dialog { display: none !important; }
   .content { padding: 12px 0 !important; }
   .section-title { color: #000 !important; border-bottom: 1pt solid #000 !important; font-size: 11pt !important; margin-top: 14pt !important; page-break-after: avoid; }
   .section-title span.num { background: #000 !important; color: #FFF !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }

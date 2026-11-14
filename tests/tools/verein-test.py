@@ -90,8 +90,11 @@ def main():
                                     window.downloadBlob = async (blob, name) => __downloads.push(name + '\\n' + await blob.text());
                                     exportSingleReviewJSON(); exportCSV(); addTimestamp('note_1'); resetAll();
                                     selectRefTab(2); exportSingleReviewJSON();""")
-                            b.js('new Promise((r) => setTimeout(r, 200))')
-                            export = '\n'.join(b.js('__downloads') + b.js('__meldungen'))
+                            b.js('new Promise((r) => setTimeout(r, 300))')
+                            # Meldungen: alte Popups (falls noch vorhanden) und eigene Fenster/Toasts im DOM
+                            export = '\n'.join(b.js('__downloads') + b.js('__meldungen') + [b.js(SAMMELN)])
+                            if not b.js("document.querySelectorAll('dialog.fenster').length"):
+                                fehler.append(f'{ort}: keine eigenen Fenster offen (Zurücksetzen/Szene/Fehlend erwartet)')
                             for m in sorted(set(VERBOTEN.findall(export))):
                                 fehler.append(f'{ort}: "{m}" in Export oder Meldung')
                             if f'"club": "{TESTVEREIN["exportName"]}"' not in export:

@@ -39,9 +39,9 @@ async function handleKaderUpload(e) {
     localStorage.setItem(KADER_STORAGE_KEY, JSON.stringify(KADER));
     setupRefereeDropdown();
     if (activeTabType === 'ref') loadRefereeForm(activeRefIndex);
-    alert(t('kader_imported', { n: KADER.length }));
+    zeigeToast(t('kader_imported', { n: KADER.length }), 'ok');
   } catch (err) {
-    alert(t('kader_error'));
+    melden({ titel: t('kader_error_title'), text: t('kader_error') });
   }
   e.target.value = '';
 }

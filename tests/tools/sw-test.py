@@ -60,12 +60,14 @@ fehler = 0
 for sc in (ARGS or (ALL + (['uebergang-v6'] if ALT else []))):
     M.clear(); M['done'] = threading.Event()
     if sc == 'uebergang-v6': M['dir'] = ALT
-    srv = http.server.ThreadingHTTPServer(('127.0.0.1', 0), H); port = srv.server_address[1]
+    class Srv(http.server.ThreadingHTTPServer):
+        request_queue_size = 64   # Standard 5 ist zu klein, wenn Browser und Service Worker parallel laden
+    srv = Srv(('127.0.0.1', 0), H); port = srv.server_address[1]
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     prof = tempfile.mkdtemp()
     p = subprocess.Popen([CHROME, '--headless=new', f'--user-data-dir={prof}', '--window-size=1300,1000', '--no-first-run',
         f'http://127.0.0.1:{port}/__sw-test?s={sc}'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    ok = M['done'].wait(150); p.kill(); p.wait(); srv.shutdown(); shutil.rmtree(prof, ignore_errors=True)
+    ok = M['done'].wait(240); p.kill(); p.wait(); srv.shutdown(); shutil.rmtree(prof, ignore_errors=True)
     print(f'\n== {sc} ' + ('' if ok else 'TIMEOUT'))
     for e in M.get('result', []):
         if 'error' in e: print('  FEHLER', e['error']); fehler += 1; continue
@@ -73,6 +75,8 @@ for sc in (ARGS or (ALL + (['uebergang-v6'] if ALT else []))):
         if not (e['einheitlich'] and e['vollstaendig']): probleme.append('Version')
         if e.get('sw') is False: probleme.append('nicht vom Service Worker geliefert')
         if '+5 s' in e['label'] and e['ms'] > 4500: probleme.append('zu langsam')
+        if 'erwartBlockiert' in e and (e.get('badgeStatus') == 'blockiert') != e['erwartBlockiert']:
+            probleme.append('Badge sollte ' + ('„blockiert“' if e['erwartBlockiert'] else 'normal') + ' zeigen')
         flag = 'XX ' if probleme else 'ok '
         if flag == 'XX ': fehler += 1
         print(f"  {flag}{e['label']:<38} {e['ms']:>5} ms | HTML {e['html']} CSS {e['css']} JS {e['js']} | {'einheitlich' if e['einheitlich'] else 'GEMISCHT'}, {'vollständig' if e['vollstaendig'] else 'UNVOLLSTÄNDIG'} | Badge: {e['badge']}" + (f"  <-- {', '.join(probleme)}" if probleme else ''))

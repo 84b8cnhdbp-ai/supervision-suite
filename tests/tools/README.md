@@ -9,11 +9,11 @@ Alle Befehle im Projektordner ausführen.
 ## Alles auf einmal – nach jedem Teilschritt
 
 ```sh
-python3 tests/tools/alle-tests.py            # alle Tests (ca. 4 Min.)
+python3 tests/tools/alle-tests.py            # alle Tests (ca. 5 Min.)
 python3 tests/tools/alle-tests.py --ohne-sw  # ohne Service-Worker-Test (ca. 1 Min.)
 ```
 
-Führt Daten-Test (Deutsch und Englisch), Texte-Test, Vereins-Test und Service-Worker-Test aus und zeigt eine
+Führt Daten-Test (Deutsch und Englisch), Texte-Test, Vereins-Test, Fenster-Test und Service-Worker-Test aus und zeigt eine
 Zusammenfassung. Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
 
 ## Daten-Test – „gleiche Eingaben, gleiche Daten“
@@ -59,16 +59,27 @@ Startet eine Kopie der App mit einem erfundenen Verein („HC Musterdorf“, eig
 Exporte: Nirgends darf „EVZ“, „EV Zug“ oder „Bossard“ erscheinen. Der Testverein muss im Titel, im Export
 (`club`) und als Logo erscheinen, und das Logo muss offline im Cache liegen.
 
+## Fenster-Test – eigene Fenster statt Browser-Popups
+
+```sh
+python3 tests/tools/fenster-test.py
+```
+
+Bedient die App mit echten Klicks und Tasten (Enter, Esc), auf Deutsch und Englisch: kein `alert`/`confirm`/`prompt`
+mehr (im Code und zur Laufzeit); Sichern mit fehlenden Feldern zeigt eine Liste, ein Tipp springt zum Feld;
+Zurücksetzen hat einen roten Knopf, „Abbrechen“ ist vorgewählt und Enter/Esc löschen nichts; Szene mit Spielzeit
+(Enter fügt hinzu, Esc bricht ab); Hinweise bei Kader-Import und übersprungenen Statistik-Dateien.
+
 ## Service-Worker-Test – Updates, offline, langsames Netz
 
 ```sh
-python3 tests/tools/sw-test.py                          # alle Szenarien (ca. 2 Min.)
+python3 tests/tools/sw-test.py                          # alle Szenarien (ca. 4 Min.)
 python3 tests/tools/sw-test.py langsam-alles offline    # einzelne Szenarien
 python3 tests/tools/sw-test.py --uebergang-von 67b77e9  # zusätzlich: Wechsel von einem alten Stand
 ```
 
 Simuliert ein neues Release (`?v=` + 1), Offline, langsames Netz (+5 s, alles oder nur CSS/JS) und ein Release
-ohne erhöhte Nummer. Prüft bei jedem Start: Seite, CSS und alle JS-Dateien aus **einer** Version, App vollständig,
+ohne erhöhte Nummer (Badge muss dann „Update blockiert“ zeigen). Prüft bei jedem Start: Seite, CSS und alle JS-Dateien aus **einer** Version, App vollständig,
 vom Service Worker geliefert, bei langsamem Netz Start nach ca. 3 s. Ergebnis „0 Fehler“ = bestanden.
 
 ## Bilder – Bildschirmfotos und Druck-PDF

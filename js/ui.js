@@ -339,9 +339,9 @@ function saveCurrentRefData() {
   saveToStorage();
 }
 
-function addTimestamp(targetId) {
+async function addTimestamp(targetId) {
   const field = document.getElementById(targetId);
-  const stamp = prompt(t('stamp_prompt'), "P1 00:00");
+  const stamp = await eingeben({ titel: t('stamp_title'), text: t('stamp_prompt'), wert: "P1 00:00", ok: t('stamp_add') });
   if (stamp) {
     field.value += (field.value.trim() ? "\n" : "") + "[" + stamp + "] ";
     field.focus();
@@ -516,8 +516,9 @@ function drawRadar(canvasId, scores) {
   }
 }
 
-function resetAll() {
-  if (confirm(t('reset_confirm'))) {
+async function resetAll() {
+  // „Abbrechen“ ist vorgewählt: Enter löscht nichts
+  if (await bestaetigen({ titel: t('reset_title'), text: t('reset_confirm'), ja: t('reset_button'), gefahr: true })) {
     localStorage.removeItem('referee_multi_supervision_data');
     location.reload();
   }

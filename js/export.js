@@ -23,12 +23,23 @@ function exportSingleReviewJSON() {
   const refData = gameData.referees[refKey] || {};
   const sc = computeRefScores(refData);
 
+  // Fehlt etwas, Fenster mit Liste; ein Tipp auf einen Eintrag springt zum Feld
   const missing = [];
-  if (!refData.name) missing.push(t('missing_name'));
-  if (!gameData.global.spiel_datum) missing.push(t('missing_date'));
-  if (sc.part2 === null) missing.push(t('missing_grade'));
+  if (!refData.name) missing.push({ text: t('missing_name'), aktion: () => {
+    const sel = document.getElementById('current_schiri_name');
+    const custom = document.getElementById('current_schiri_name_custom');
+    springeZuFeld(sel.value === '_CUSTOM_' ? custom : sel);
+  } });
+  if (!gameData.global.spiel_datum) missing.push({ text: t('missing_date'), aktion: () => springeZuFeld(document.getElementById('spiel_datum')) });
+  if (sc.part2 === null) missing.push({ text: t('missing_grade'), aktion: () => {
+    const erste = document.querySelector('input[name="overall_grade"]');
+    springeZuFeld(erste, erste.closest('table'));
+  } });
   if (missing.length) {
-    alert(t('export_missing') + "\n• " + missing.join("\n• "));
+    zeigeFenster({
+      titel: t('export_missing_title'), text: t('export_missing_hint'), liste: missing,
+      knoepfe: [{ text: t('dlg_ok'), wert: true, art: 'primaer', fokus: true }]
+    });
     return;
   }
 
