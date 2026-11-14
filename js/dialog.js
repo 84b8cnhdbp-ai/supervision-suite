@@ -95,7 +95,11 @@ function zeigeFenster({ titel, text, liste, eingabe, knoepfe = [], abbruchWert =
     });
 
     document.body.appendChild(dlg);
-    dlg.showModal();
+    if (typeof dlg.showModal === 'function') dlg.showModal();
+    else {   // sehr alte Browser: einfach anzeigen (siehe Hinweis „Gerät zu alt“)
+      dlg.setAttribute('open', '');
+      dlg.close = () => { dlg.removeAttribute('open'); dlg.dispatchEvent(new Event('close')); };
+    }
     if (fokus) {
       fokus.focus();
       if (fokus === feld) feld.select();

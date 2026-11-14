@@ -26,12 +26,23 @@ GEROEST = r"""(() => {
   if (document.documentElement.scrollWidth > vw + 1) f.push(`waagrechte Bildlaufleiste (${document.documentElement.scrollWidth} > ${vw})`);
   const sl = document.getElementById('seitenleiste').getBoundingClientRect();
   const wl = document.querySelector('.werkzeugleiste').getBoundingClientRect();
-  if (sl.width < 50 || sl.height < 40) f.push('Seitenleiste nicht sichtbar');
+  const spiele = document.getElementById('btnSpiele');
   if (wl.height < 44) f.push('Werkzeugleiste nicht sichtbar');
-  if (vw >= 1000 && !(sl.right <= wl.left + 1)) f.push('Seitenleiste nicht links neben dem Inhalt');
-  if (vw < 1000 && !(sl.bottom <= wl.top + 1)) f.push('Seitenleiste (schmal) nicht oben');
+  if (vw >= 1180) {
+    if (sl.width < 50 || sl.height < 40) f.push('Seitenleiste nicht sichtbar');
+    if (!(sl.right <= wl.left + 1)) f.push('Seitenleiste nicht links neben dem Inhalt');
+    if (spiele.offsetParent !== null) f.push('„Spiele“-Knopf sichtbar, obwohl die Seitenleiste fest steht');
+  } else {
+    if (getComputedStyle(document.getElementById('seitenleiste')).visibility !== 'hidden' || sl.right > 1) f.push('Seitenleiste (eingeklappt) sichtbar');
+    if (spiele.offsetParent === null) f.push('„Spiele“-Knopf fehlt');
+  }
+  const zwei = vw >= 1000;
+  const karte = document.querySelector('.score-karte').getBoundingClientRect();
+  const form = document.querySelector('#singleRefView .formular-spalte').getBoundingClientRect();
+  if (zwei && !(karte.left >= form.right)) f.push('zwei Spalten erwartet');
+  if (!zwei && !(karte.bottom <= form.top + 1 && karte.width > form.width - 2)) f.push('eine Spalte mit Score-Leiste oben erwartet');
   document.querySelectorAll('.seitenleiste button, .werkzeugleiste button').forEach((b) => {
-    if (b.closest('[hidden]')) return;
+    if (b.closest('[hidden]') || b.offsetParent === null) return;   // ausgeblendet (z. B. „Spiele“ ab 1180 px)
     const r = b.getBoundingClientRect();
     if (r.height < 43.5 || r.width < 43.5) f.push(`Knopf „${(b.innerText || b.getAttribute('aria-label') || '').trim()}“ nur ${Math.round(r.width)}×${Math.round(r.height)} px`);
     if (r.right > vw + 1) f.push(`Knopf „${b.innerText.trim()}“ ragt rechts hinaus`);
@@ -55,7 +66,7 @@ def main():
     try:
         with Browser() as b:
             # 1. Gerüst in allen Breiten und Sprachen, Bildschirm
-            for w, h in ((834, 1194), (1194, 834), (1440, 900)):
+            for w, h in ((768, 1024), (834, 1194), (1080, 810), (1194, 834), (1440, 900)):
                 for sprache in ('de', 'en'):
                     b.fenster(w, h)
                     daten_setzen(b, srv.basis, sprache=sprache)
@@ -162,7 +173,54 @@ def main():
             b.klick('#btnKaderForm')
             pruefe(b.js('__dateiwahl') == 1, 'Kader-Knopf öffnet keine Dateiauswahl')
 
-            # 7. Druck
+            # 7. Schublade (iPad hochkant und kleinere iPads quer)
+            for w, h in ((834, 1194), (1080, 810)):
+                b.fenster(w, h)
+                daten_setzen(b, srv.basis)
+                b.oeffnen(srv.basis + '/index.html')
+                offen = lambda: b.js("document.querySelector('.app').classList.contains('schublade-offen')")
+                sichtbar = lambda: b.js("(() => { const r = document.getElementById('seitenleiste').getBoundingClientRect(); return r.left >= -1 && r.right > 200 && getComputedStyle(document.getElementById('seitenleiste')).visibility === 'visible'; })()")
+                b.klick('#btnSpiele')
+                b.js('new Promise((r) => setTimeout(r, 350))')
+                pruefe(offen() and sichtbar(), f'{w}px: Schublade öffnet nicht')
+                pruefe(b.js("document.querySelector('.haupt').inert"), f'{w}px: Hintergrund nicht gesperrt')
+                pruefe(b.js("document.getElementById('seitenleiste').contains(document.activeElement)"), f'{w}px: Fokus nicht in der Schublade')
+                pruefe(b.js("document.getElementById('btnSpiele').getAttribute('aria-expanded')") == 'true', f'{w}px: aria-expanded nicht true')
+                b.taste('Escape')
+                pruefe(not offen() and b.js("document.activeElement.id") == 'btnSpiele' and not b.js("document.querySelector('.haupt').inert"),
+                       f'{w}px: Esc schliesst nicht / Fokus / Sperre')
+                b.klick('#btnSpiele'); b.js('new Promise((r) => setTimeout(r, 350))')
+                b.befehl('Input.dispatchMouseEvent', type='mousePressed', x=w - 20, y=h // 2, button='left', clickCount=1)
+                b.befehl('Input.dispatchMouseEvent', type='mouseReleased', x=w - 20, y=h // 2, button='left', clickCount=1)
+                b.js('new Promise((r) => setTimeout(r, 200))')
+                pruefe(not offen(), f'{w}px: Tippen daneben schliesst nicht')
+                b.klick('#btnSpiele'); b.js('new Promise((r) => setTimeout(r, 350))')
+                b.klick('#navStats')
+                pruefe(not offen() and b.js("getComputedStyle(document.getElementById('seasonStatsView')).display") != 'none',
+                       f'{w}px: Eintrag „Saison-Statistik“ schliesst nicht / öffnet Statistik nicht')
+                b.klick('#btnSpiele'); b.js('new Promise((r) => setTimeout(r, 350))')
+                b.fenster(1194, 834)   # auf quer gedreht
+                b.js('new Promise((r) => setTimeout(r, 300))')
+                pruefe(not offen() and not b.js("document.querySelector('.haupt').inert"), f'{w}px → 1194px: Schublade bleibt offen / gesperrt')
+                pruefe(b.js("getComputedStyle(document.getElementById('seitenleiste')).visibility") == 'visible', f'{w}px → 1194px: feste Seitenleiste fehlt')
+
+            # 8. Hinweis für zu alte Geräte (App bleibt bedienbar)
+            b.fenster(1194, 834)
+            daten_setzen(b, srv.basis)
+            pruefe(b.js("!!document.getElementById('altHinweis')") is False, 'Hinweis „zu alt“ ohne Grund')
+            kennung = b.vor_laden('delete window.DecompressionStream;')
+            b.oeffnen(srv.basis + '/index.html')
+            pruefe(b.js("document.getElementById('altHinweis') && document.getElementById('altHinweis').textContent") == b.js("t('old_device')"),
+                   'Hinweis „zu alt“ fehlt auf altem Gerät')
+            pruefe(b.js("document.querySelectorAll('#tabsContainer [role=tab]').length") == 5 and b.js("document.getElementById('scoreVal').textContent") == '94%',
+                   'App auf altem Gerät nicht bedienbar')
+            b.klick("label[for='sprache__1']") if False else b.js("setLanguage('en')")
+            pruefe(b.js("document.getElementById('altHinweis').textContent") == b.js("t('old_device')") and 'iPadOS' in b.js("t('old_device')"),
+                   'Hinweis „zu alt“ nicht übersetzt')
+            b.js("setLanguage('de')")
+            b.vor_laden_weg(kennung)
+
+            # 9. Druck
             b.fenster(794, 1123, druck=True)
             daten_setzen(b, srv.basis)
             b.oeffnen(srv.basis + '/index.html')
@@ -174,7 +232,7 @@ def main():
         srv.shutdown()
     for f in fehler:
         print('FEHLER: ', f)
-    print(f'Layout-Test: {len(fehler)} Fehler (Gerüst 3 Breiten × DE/EN, Reiter, Seitenleiste, Menü „Mehr“, Kader-Knopf, Druck)')
+    print(f'Layout-Test: {len(fehler)} Fehler (Gerüst 5 Breiten × DE/EN, Reiter, Seitenleiste, Schublade, Menü „Mehr“, Kader-Knopf, altes Gerät, Druck)')
     sys.exit(1 if fehler else 0)
 
 

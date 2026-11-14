@@ -12,9 +12,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="css/app.css?v=14">
-<script src="js/club.js?v=14"></script>
-<script src="js/theme.js?v=14"></script>
+<link rel="stylesheet" href="css/app.css?v=15">
+<script src="js/club.js?v=15"></script>
+<script src="js/theme.js?v=15"></script>
 </head>
 <body>
 
@@ -51,9 +51,12 @@
     </div>
   </nav>
 
+  <div class="schublade-hintergrund" id="schubladeHintergrund" hidden></div>
+
   <main class="haupt">
     <!-- WERKZEUGLEISTE: Reiter + Sichern, Drucken, Mehr -->
     <div class="werkzeugleiste no-print">
+      <button type="button" class="knopf-spiele" id="btnSpiele" aria-controls="seitenleiste" aria-expanded="false"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="nav_games">Spiele</span></button>
       <div class="reiter" id="tabsContainer" role="tablist" data-i18n-aria-label="tabs_label" aria-label="Schiedsrichter"></div>
       <div class="aktionen">
         <button type="button" class="knopf-sichern" id="btnSichern" onclick="exportSingleReviewJSON()"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><span data-i18n="btn_save">Sichern</span></button>
@@ -188,6 +191,7 @@
             </div>
             <strong class="score-status" id="scoreStatusText" aria-live="polite"></strong>
           </div>
+          <button type="button" class="bereit-chip" id="bereitChip"></button>
           <div class="score-teile">
             <div class="score-teil"><span data-i18n="sub_part2">Gesamt</span><span class="score-gewicht">30 %</span><strong id="subScorePart2">–</strong></div>
             <div class="score-teil"><span data-i18n="sub_part3">Checkliste</span><span class="score-gewicht">50 %</span><strong id="subScorePart3">–</strong></div>
@@ -423,16 +427,16 @@
   </main>
 </div>
 
-<script src="js/i18n.js?v=14"></script>
-<script src="js/dialog.js?v=14"></script>
-<script src="js/segment.js?v=14"></script>
-<script src="js/layout.js?v=14"></script>
-<script src="js/config.js?v=14"></script>
-<script src="js/scoring.js?v=14"></script>
-<script src="js/storage.js?v=14"></script>
-<script src="js/ui.js?v=14"></script>
-<script src="js/export.js?v=14"></script>
-<script src="js/stats.js?v=14"></script>
-<script src="js/app.js?v=14"></script>
+<script src="js/i18n.js?v=15"></script>
+<script src="js/dialog.js?v=15"></script>
+<script src="js/segment.js?v=15"></script>
+<script src="js/layout.js?v=15"></script>
+<script src="js/config.js?v=15"></script>
+<script src="js/scoring.js?v=15"></script>
+<script src="js/storage.js?v=15"></script>
+<script src="js/ui.js?v=15"></script>
+<script src="js/export.js?v=15"></script>
+<script src="js/stats.js?v=15"></script>
+<script src="js/app.js?v=15"></script>
 </body>
 </html>

@@ -174,6 +174,10 @@ const I18N = {
     grade_kurz_good: "Gut",
     grade_kurz_ni: "Verbesserungsbedürftig",
     grade_kurz_unsat: "Ungenügend",
+    nav_games: "Spiele",
+    ready_chip_ok: "✓ Bereit",
+    ready_chip_open: "! {n} offen",
+    old_device: "Dieses Gerät oder dieser Browser ist zu alt. Für alle Funktionen ist mindestens iPadOS / iOS 16.4 nötig. Die App bleibt bedienbar.",
     csv_headers: ["Rolle", "Name", "Review", "Gesamtscore", "Gesamteinschätzung", "Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln", "Trend", "Einstellung", "Feedback", "Top Stärken", "Entwicklung", "Rapport"],
     crit_head: [{"t": "1. Eislaufen & Physis", "s": "Agilität, Mobilität, Rückwärtslaufen, Fitness"}, {"t": "2. Positionsspiel & Sichtachsen", "s": "Torlinie vor Spielzug, Net-Front-Position, Blickfeld"}, {"t": "3. Pfiff, Zeichengebung & Präsenz", "s": "Prägnanz, klare Signale, aufrechte Körpersprache"}, {"t": "4. Antizipation & Spielaufmerksamkeit", "s": "Spielzüge lesen, Off-Puck Play, Gefahren"}, {"t": "5. Deeskalation & Post-Whistle Management", "s": "Torraumabsicherung, Rudelbildungen unterbinden"}, {"t": "6. Teamwork & Kommunikation", "s": "Gespann-Abstimmung, Dialog mit Captains/Coaches"}, {"t": "7. Strafmassstab & Regelanwendung", "s": "Konstanz über 60 Min., Offizielles Regelbuch & Weisungen"}],
     crit_lines: [{"t": "1. Eislaufen & Physis", "s": "Agilität, Mobilität, Rückwärtslaufen, Fitness"}, {"t": "2. Positionsspiel & Linienkontrolle", "s": "Blaue Linie bei knappen Offsides, Icing-Beurteilung"}, {"t": "3. Pfiff, Bully-Präsenz & Signale", "s": "Korrektes Anspiel, Bully-Conduct, Zeichen Icing/Abseits"}, {"t": "4. Antizipation & Spielaufmerksamkeit", "s": "Spielzüge lesen, Off-Puck Play, Gefahren"}, {"t": "5. Deeskalation & Scrum-Intervention", "s": "Schnelles Trennen von Spielern, Torraumabsicherung"}, {"t": "6. Teamwork & Kommunikation", "s": "Gespann-Abstimmung, Dialog mit Captains/Coaches"}, {"t": "7. Regelanwendung (Abseits / Icing / Handpass)", "s": "Präzision bei Linienentscheiden & Puckkontakt"}],
@@ -348,6 +352,10 @@ const I18N = {
     grade_kurz_good: "Good",
     grade_kurz_ni: "Needs improvement",
     grade_kurz_unsat: "Unsatisfactory",
+    nav_games: "Games",
+    ready_chip_ok: "✓ Ready",
+    ready_chip_open: "! {n} open",
+    old_device: "This device or browser is too old. All features need at least iPadOS / iOS 16.4. The app remains usable.",
     csv_headers: ["Role", "Name", "Review", "Total Score", "Overall Grade", "Skating", "Positioning", "Presence", "Anticipation", "De-escalation", "Teamwork", "Rules", "Trend", "Attitude", "Feedback", "Top Strengths", "Work On", "Rapport"],
     crit_head: [{"t": "1. Skating & Physical Stamina", "s": "Speed, agility, backwards mobility over 60 min"}, {"t": "2. Positioning & Sightlines", "s": "Goal line ahead of play, net-front position, sightlines"}, {"t": "3. Whistle, Signals & Body Language", "s": "Sharp whistle, authoritative signals, upright posture"}, {"t": "4. Anticipation & Game Awareness", "s": "Reading plays, anticipating contact, awareness"}, {"t": "5. De-escalation & Post-Whistle Control", "s": "Protecting goalies, stopping scrums immediately"}, {"t": "6. Teamwork & Communication", "s": "Crew coordination, respectful bench dialogue"}, {"t": "7. Penalty Standard & Rulebook Adherence", "s": "60-min consistency, adherence to official rulebook"}],
     crit_lines: [{"t": "1. Skating & Physical Stamina", "s": "Mobility, agility, backwards acceleration"}, {"t": "2. Positioning & Line Judgment", "s": "Blue line tight offsides, icing assessment"}, {"t": "3. Whistle, Face-Offs & Signals", "s": "Puck drop technique, face-off conduct, signals"}, {"t": "4. Anticipation & Play Reading", "s": "Reading dump-ins, deflections, off-puck fouls"}, {"t": "5. Scrum Management & Intervention", "s": "Fast separation of players, net-front safety"}, {"t": "6. Teamwork & Communication", "s": "Partner eye contact, communication with benches"}, {"t": "7. Rule Application (Offside / Icing / Handpass)", "s": "Precision on lines & high-stick puck touches"}],
@@ -420,6 +428,7 @@ function applyTranslations() {
   });
   applyClub();
   if (typeof zeigeBadge === 'function') zeigeBadge();   // Badge-Text je nach Status (js/app.js)
+  if (document.getElementById('altHinweis')) zeigeAltHinweis();
   // Knopfreihen (Notenstufen, Coaching, Durchgang, System) neu beschriften; gewählte Werte bleiben (js/segment.js)
   baueAlleKnopfreihen();
   zeigeStufenText();

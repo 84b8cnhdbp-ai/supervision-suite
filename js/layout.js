@@ -137,3 +137,93 @@ function mehrAktion(aktion) {
 function kaderWaehlen() {
   document.getElementById('kaderDatei').click();
 }
+
+// ---------- Schublade (Seitenleiste unter 1180 px) ----------
+
+const SCHUBLADE_MQ = window.matchMedia('(max-width: 1179px)');
+
+function schubladeOffen() {
+  return document.querySelector('.app').classList.contains('schublade-offen');
+}
+
+function oeffneSchublade() {
+  document.querySelector('.app').classList.add('schublade-offen');
+  document.getElementById('schubladeHintergrund').hidden = false;
+  document.querySelector('.haupt').inert = true;   // Rest der Seite gesperrt
+  document.getElementById('btnSpiele').setAttribute('aria-expanded', 'true');
+  document.addEventListener('keydown', schubladeTaste, true);
+  const ziel = document.querySelector('#seitenleiste .sl-eintrag.aktiv') || document.getElementById('navSpiel');
+  ziel.focus();
+}
+
+function schliesseSchublade(fokusZurueck = true) {
+  if (!schubladeOffen()) return;
+  document.querySelector('.app').classList.remove('schublade-offen');
+  document.getElementById('schubladeHintergrund').hidden = true;
+  document.querySelector('.haupt').inert = false;
+  document.getElementById('btnSpiele').setAttribute('aria-expanded', 'false');
+  document.removeEventListener('keydown', schubladeTaste, true);
+  if (fokusZurueck) document.getElementById('btnSpiele').focus();
+}
+
+function schubladeTaste(e) {
+  if (e.key === 'Escape') { e.preventDefault(); schliesseSchublade(); }
+}
+
+// ---------- Höhen messen: Werkzeugleiste und kompakte Score-Leiste ----------
+// Als CSS-Variablen, damit stehende Elemente und Sprünge zu Feldern den richtigen Abstand haben
+// (ändert sich beim Drehen, bei Sprachwechsel oder anderer Textgrösse).
+
+function messeHoehen() {
+  const wurzel = document.documentElement.style;
+  const leiste = document.querySelector('.werkzeugleiste');
+  if (leiste) wurzel.setProperty('--wl-hoehe', Math.ceil(leiste.getBoundingClientRect().height) + 'px');
+  const karte = document.querySelector('.score-karte');
+  const kompakt = window.matchMedia('(max-width: 999px)').matches;
+  wurzel.setProperty('--scoreleiste-hoehe', karte && kompakt ? Math.ceil(karte.getBoundingClientRect().height) + 'px' : '0px');
+}
+
+// ---------- Hinweis für zu alte Geräte (App bleibt bedienbar) ----------
+
+function geraetZuAlt() {
+  return typeof HTMLDialogElement !== 'function'
+    || !(window.CSS && CSS.supports('container-type: inline-size'))
+    || !('DecompressionStream' in window);   // ab iPadOS / iOS 16.4
+}
+
+function zeigeAltHinweis() {
+  let hinweis = document.getElementById('altHinweis');
+  if (!geraetZuAlt()) { if (hinweis) hinweis.remove(); return; }
+  if (!hinweis) {
+    hinweis = document.createElement('div');
+    hinweis.id = 'altHinweis';
+    hinweis.className = 'alt-hinweis no-print';
+    hinweis.setAttribute('role', 'status');
+    document.body.prepend(hinweis);
+  }
+  hinweis.textContent = t('old_device');
+}
+
+// ---------- Einrichten (einmal beim Start) ----------
+
+function initLayout() {
+  document.getElementById('btnSpiele').addEventListener('click', () => (schubladeOffen() ? schliesseSchublade() : oeffneSchublade()));
+  document.getElementById('schubladeHintergrund').addEventListener('click', () => schliesseSchublade());
+  // Eintrag in der Schublade gewählt: Schublade zu
+  document.querySelectorAll('#seitenleiste .sl-eintrag').forEach((e) => e.addEventListener('click', () => schliesseSchublade(false)));
+  // auf quer gedreht (ab 1180 px): Schublade schliessen, feste Seitenleiste erscheint
+  SCHUBLADE_MQ.addEventListener('change', (e) => { if (!e.matches) schliesseSchublade(false); messeHoehen(); });
+  document.getElementById('bereitChip').addEventListener('click', () => {
+    const erster = pruefeSicherbar({ name: getEffectiveRefName(), overall_grade: segWert('overall_grade') }).find((p) => !p.ok);
+    if (erster) erster.aktion();
+  });
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(messeHoehen);
+    // ganzer Rahmen (border-box): auch Höhenänderungen durch Innenabstand oder Zeilenumbruch zählen
+    ro.observe(document.querySelector('.werkzeugleiste'), { box: 'border-box' });
+    ro.observe(document.querySelector('.score-karte'), { box: 'border-box' });
+  }
+  window.addEventListener('resize', messeHoehen);
+  messeHoehen();
+  zeigeAltHinweis();
+}

@@ -76,9 +76,9 @@ Zurücksetzen hat einen roten Knopf, „Abbrechen“ ist vorgewählt und Enter/E
 python3 tests/tools/knopfreihen-test.py
 ```
 
-Auf 834, 1194 und 1440 px, Deutsch und Englisch, Head Referee und Linesperson: jede Knopfreihe ist eine echte
+Auf 768, 834, 1080, 1194 und 1440 px, Deutsch und Englisch, Head Referee und Linesperson: jede Knopfreihe ist eine echte
 Radiogruppe mit Namen (VoiceOver), jedes Segment mindestens 44 × 44 px, nichts abgeschnitten, keine waagrechte
-Bildlaufleiste; bei 1194 und 1440 px bricht in der Formularspalte nichts um; Reihenfolge vom besten zum schlechtesten Wert (Trend mit „Erstbeobachtung“); Gesamteinschätzung
+Bildlaufleiste; ab zwei Spalten (1080, 1194, 1440 px) bricht in der Formularspalte nichts um; Reihenfolge vom besten zum schlechtesten Wert (Trend mit „Erstbeobachtung“); Gesamteinschätzung
 ohne Vorwahl mit Hinweis, nach der Wahl mit Definition; jede Option speichert den bisherigen Wert (echter Klick),
 auch nach Neuladen; Pfeiltasten wechseln die Wahl.
 
@@ -88,7 +88,7 @@ auch nach Neuladen; Pfeiltasten wechseln die Wahl.
 python3 tests/tools/layout-test.py
 ```
 
-Auf 834, 1194 und 1440 px (DE/EN): Seitenleiste und Werkzeugleiste sichtbar, keine waagrechte Bildlaufleiste,
+Auf 768, 834, 1080, 1194 und 1440 px (DE/EN): feste Seitenleiste ab 1180 px, darunter Schublade „‹ Spiele“ (öffnen, Esc, daneben tippen, Eintrag, Drehen auf quer), Hinweis für zu alte Geräte; Werkzeugleiste sichtbar, keine waagrechte Bildlaufleiste,
 Knöpfe mind. 44 px, Reiter vollständig sichtbar. Reiter-Kurzform bei 3/4-Mann („H1 · Frei“), Nachname = alles
 ausser dem letzten Wort („Von Rotz Peter“ → „Von Rotz“), Reiter folgen Namensänderungen sofort, Pfeiltasten.
 Seitenleiste (Spiel, Statistik, Fuss mit Version/Stand aus `?v=`, Kader, Offline-Status, Gespeichert-Zeit).
@@ -101,8 +101,9 @@ Menü „Mehr“ mit echten Klicks: Esc / daneben tippen schliesst, CSV, Kader, 
 python3 tests/tools/score-test.py
 ```
 
-iPad quer und MacBook: zwei Spalten, die rechte bleibt beim Scrollen stehen und ist ganz sichtbar; iPad hochkant:
-Score oben. Angezeigte Werte = `computeRefScores` in allen Reitern, Ring passend, Statustexte und Schwellen,
+Ab 1000 px zwei Spalten, die rechte bleibt beim Scrollen stehen; darunter kompakte Score-Leiste (stehend) mit
+Bereit-Zeichen, Profil und Bereit am Formularende. Abstand oben = gemessene Höhe der Werkzeugleiste (Gegenprobe mit
+höherer Werkzeugleiste). Angezeigte Werte = `computeRefScores` in allen Reitern, Ring passend, Statustexte und Schwellen,
 kurze Begriffe bei der Gesamteinschätzung. Netzdiagramm mit 7 Punkten, N/A als hohler grauer Punkt mit „(N/A)“,
 im Druck sichtbar. „Bereit zum Sichern?“: fehlende Punkte springen zum Feld, gleiche Liste wie das Fenster beim
 Sichern, nicht im Druck.

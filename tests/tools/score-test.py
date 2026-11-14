@@ -29,26 +29,43 @@ def main():
     srv = server(REPO, {'/__leer': LEER})
     try:
         with Browser() as b:
-            # 1. Spalten und Stehenbleiben
-            for w, h in ((834, 1194), (1194, 834), (1440, 900)):
+            # 1. Spalten und Stehenbleiben (Abstand oben = tatsächliche Höhe der Werkzeugleiste)
+            def stehen(w, h, sel, abstand):
+                for y in (800, 1500, 2200, 2600):
+                    b.js(f'window.scrollTo(0, {y})')
+                    b.js('new Promise((r) => setTimeout(r, 120))')
+                    if b.js(f"({RECHTECK})('#singleRefView .formular-spalte')")['b'] < h:
+                        continue   # Formular zu Ende: rollt mit dem Formularende mit (normal)
+                    leiste = b.js(f"({RECHTECK})('.werkzeugleiste')")['b']
+                    a = b.js(f"({RECHTECK})('{sel}')")
+                    pruefe(abs(a['t'] - (leiste + abstand)) <= 1.5 and a['b'] <= h + 1,
+                           f'{w}px: {sel} steht beim Scrollen ({y}) nicht direkt unter der Werkzeugleiste (oben {a["t"]:.0f}, erwartet {leiste + abstand:.0f})')
+
+            for w, h in ((768, 1024), (834, 1194), (1080, 810), (1194, 834), (1440, 900)):
                 b.fenster(w, h)
                 daten_setzen(b, srv.basis)
                 b.oeffnen(srv.basis + '/index.html')
-                aside = b.js(f"({RECHTECK})('.score-spalte')")
                 form = b.js(f"({RECHTECK})('#singleRefView .formular-spalte')")
                 if w >= 1000:
+                    aside = b.js(f"({RECHTECK})('.score-spalte')")
                     pruefe(aside['l'] >= form['r'], f'{w}px: rechte Spalte nicht rechts vom Formular')
-                    leiste = b.js(f"({RECHTECK})('.werkzeugleiste')")['b']
-                    for y in (800, 1500, 2200, 2600):
-                        b.js(f'window.scrollTo(0, {y})')
-                        b.js('new Promise((r) => setTimeout(r, 100))')
-                        a = b.js(f"({RECHTECK})('.score-spalte')")
-                        if b.js(f"({RECHTECK})('#singleRefView .formular-spalte')")['b'] < h:
-                            continue   # Formular zu Ende: die Spalte rollt mit dem Formularende mit (normal)
-                        pruefe(leiste - 1 <= a['t'] <= leiste + 30 and a['b'] <= h + 1,
-                               f'{w}px: rechte Spalte bleibt beim Scrollen ({y}) nicht sichtbar stehen (oben {a["t"]:.0f}, unten {a["b"]:.0f})')
+                    stehen(w, h, '.score-spalte', 12)
                 else:
-                    pruefe(aside['b'] <= form['t'] + 1, f'{w}px: Score nicht über dem Formular')
+                    karte = b.js(f"({RECHTECK})('.score-karte')")
+                    pruefe(karte['b'] <= form['t'] + 1, f'{w}px: Score-Leiste nicht über dem Formular')
+                    pruefe(karte['b'] - karte['t'] <= 80, f'{w}px: Score-Leiste nicht kompakt ({karte["b"] - karte["t"]:.0f} px hoch)')
+                    for sel in ('.netz-karte', '.bereit-karte'):
+                        pruefe(b.js(f"({RECHTECK})('{sel}')")['t'] >= form['b'] - 1, f'{w}px: {sel} nicht am Ende des Formulars')
+                    stehen(w, h, '.score-karte', 0)
+
+            # 1b. Gegenprobe: höhere Werkzeugleiste -> stehende Elemente wandern mit (kein fester Abstand)
+            for w, h, sel, abstand in ((1194, 834, '.score-spalte', 12), (834, 1194, '.score-karte', 0)):
+                b.fenster(w, h)
+                daten_setzen(b, srv.basis)
+                b.oeffnen(srv.basis + '/index.html')
+                b.js("const s = document.createElement('style'); s.textContent = '.werkzeugleiste { padding-top: 40px !important; }'; document.head.appendChild(s);")
+                b.js('new Promise((r) => setTimeout(r, 200))')
+                stehen(w, h, sel, abstand)
 
             b.fenster(1194, 834)
             daten_setzen(b, srv.basis)
@@ -120,6 +137,19 @@ def main():
             pruefe(im_fenster == in_liste, f'Fenster beim Sichern ({im_fenster}) ≠ Bereit-Liste ({in_liste})')
             b.taste('Escape')
 
+            # 6b. Bereit-Zeichen in der kompakten Score-Leiste (iPad hochkant)
+            b.fenster(834, 1194)
+            daten_setzen(b, srv.basis)
+            b.oeffnen(srv.basis + '/index.html')
+            pruefe(b.js("document.getElementById('bereitChip').textContent") == b.js("t('ready_chip_ok')"), 'Bereit-Zeichen: nicht „Bereit“ bei vollständigem Reiter')
+            b.js('selectRefTab(2); window.scrollTo(0, 2500)')
+            pruefe(b.js("document.getElementById('bereitChip').textContent") == b.js("t('ready_chip_open', { n: 1 })"), 'Bereit-Zeichen: nicht „! 1 offen“')
+            b.klick('#bereitChip')
+            b.js('new Promise((r) => setTimeout(r, 700))')
+            pruefe(b.js("document.activeElement.name") == 'overall_grade', 'Bereit-Zeichen: springt nicht zum ersten fehlenden Feld')
+            r = b.js("(() => { const g = document.getElementById('gradeBox').getBoundingClientRect(); const k = document.querySelector('.score-karte').getBoundingClientRect(); return [g.top, k.bottom, innerHeight]; })()")
+            pruefe(r[0] >= r[1] - 1 and r[0] < r[2], f'Bereit-Zeichen: Feld nach dem Sprung von der Score-Leiste verdeckt ({r})')
+
             # 7. Druck: Netzdiagramm sichtbar, Bereit-Liste nicht
             b.fenster(794, 1123, druck=True)
             daten_setzen(b, srv.basis)
@@ -133,7 +163,7 @@ def main():
         srv.shutdown()
     for f in fehler:
         print('FEHLER: ', f)
-    print(f'Score-Test: {len(fehler)} Fehler (Spalten/Stehenbleiben, Werte, Schwellen, Netz mit N/A, Bereit zum Sichern, Druck)')
+    print(f'Score-Test: {len(fehler)} Fehler (5 Breiten, Stehenbleiben mit gemessenem Abstand, Werte, Schwellen, Netz mit N/A, Bereit, Druck)')
     sys.exit(1 if fehler else 0)
 
 

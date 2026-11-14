@@ -20,6 +20,7 @@ function initApp() {
   setupRefereeDropdown();
   applyTranslations();
   renderTabs();
+  initLayout();
   if (activeTabType === "summary") {
     renderSummaryView();
   } else if (activeTabType === "stats") {
@@ -395,6 +396,13 @@ function zeigeBereit() {
     liste.appendChild(li);
   });
   const fehlen = punkte.filter((p) => !p.ok).length;
+  const chip = document.getElementById('bereitChip');
+  if (chip) {
+    chip.textContent = fehlen ? t('ready_chip_open', { n: fehlen }) : t('ready_chip_ok');
+    chip.classList.toggle('bereit-chip-ok', !fehlen);
+    chip.disabled = !fehlen;
+    chip.setAttribute('aria-label', fehlen ? t('ready_no', { n: fehlen }) : t('ready_yes'));
+  }
   const status = document.getElementById('bereitStatus');
   status.textContent = fehlen ? t('ready_no', { n: fehlen }) : t('ready_yes');
   status.classList.toggle('bereit-ja', !fehlen);

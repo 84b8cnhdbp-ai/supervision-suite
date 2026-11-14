@@ -200,6 +200,13 @@ class Browser:
             time.sleep(0.05)
         time.sleep(warten)
 
+    def vor_laden(self, js):
+        """JavaScript, das bei jedem Seitenaufruf vor allen anderen Skripten läuft. Gibt eine Kennung zurück."""
+        return self.befehl('Page.addScriptToEvaluateOnNewDocument', source=js)['identifier']
+
+    def vor_laden_weg(self, kennung):
+        self.befehl('Page.removeScriptToEvaluateOnNewDocument', identifier=kennung)
+
     def js(self, ausdruck):
         """Wertet JavaScript aus (Promises werden abgewartet) und gibt den Wert als Python-Objekt zurück."""
         r = self.befehl('Runtime.evaluate', expression=ausdruck, awaitPromise=True, returnByValue=True)

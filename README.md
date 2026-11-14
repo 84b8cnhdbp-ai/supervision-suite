@@ -2,9 +2,14 @@
 
 Offline-fähige Web-App (PWA) für die Supervision von Eishockey-Schiedsrichtern: Bewertung pro Schiedsrichter, Gespann-Übersicht, JSON-/CSV-Export, PDF-Druck und Saison-Statistik.
 
+## Voraussetzungen
+- **iPadOS / iOS 16.4 oder neuer** (Safari), auf dem Mac ein aktueller Safari, Chrome oder Edge.
+  Nötig für die eigenen Fenster (`<dialog>`), die Spaltenlogik (Container Queries) und ab Etappe 4 den
+  Excel-Import (`DecompressionStream`). Auf älteren Geräten erscheint oben ein Hinweis; die App bleibt bedienbar.
+
 ## Datenschutz
 Im Code stehen keine Namen und keine Bewertungen.
-- **Kader:** Über «📋 Kader importieren» eine JSON-Datei (`{"schiedsrichter": ["Nachname Vorname", …]}` oder `[…]`) oder eine TXT-Datei (ein Name pro Zeile) laden. Die Liste wird nur lokal im Browser gespeichert.
+- **Kader:** Über „Mehr“ (⋯) → „Kader importieren“ eine JSON-Datei (`{"schiedsrichter": ["Nachname Vorname", …]}` oder `[…]`) oder eine TXT-Datei (ein Name pro Zeile) laden. Die Liste wird nur lokal im Browser gespeichert.
 - **Bewertungen:** werden nur lokal gespeichert und als Datei exportiert (`JJJJ-MM-TT_R1_Nachname Vorname.json`).
 
 ## Release

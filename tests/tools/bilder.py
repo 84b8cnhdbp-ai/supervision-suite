@@ -14,7 +14,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from werkzeug import REPO, ERGEBNISSE, Browser, server, git_stand, daten_setzen, LEER  # noqa: E402
 
-GROESSEN = [('ipad-hoch', 834, 1194), ('ipad-quer', 1194, 834), ('macbook', 1440, 900)]
+GROESSEN = [('ipad-hoch-768', 768, 1024), ('ipad-hoch', 834, 1194), ('ipad-quer-1080', 1080, 810), ('ipad-quer', 1194, 834), ('macbook', 1440, 900)]
 SCHEMEN = ['light', 'dark']
 ANSICHTEN = [
     ('head-referee', 'selectRefTab(0)'),

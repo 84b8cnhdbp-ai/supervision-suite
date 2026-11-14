@@ -16,7 +16,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from werkzeug import REPO, Browser, server, daten_setzen, LEER  # noqa: E402
 
-GROESSEN = [(834, 1194), (1194, 834), (1440, 900)]
+GROESSEN = [(768, 1024), (834, 1194), (1080, 810), (1194, 834), (1440, 900)]
 
 PRUEFE_REIHEN = r"""((auswahl) => {
   const fehler = [];
@@ -97,7 +97,7 @@ def main():
                         b.js(f'selectRefTab({tab})')
                         for f in b.js(PRUEFE_REIHEN + f'({FORMULAR})'):
                             fehler.append(f'{w}px {sprache} {rolle}: {f}')
-                        if w >= 1194:
+                        if w >= 1000:   # zwei Spalten: in der Formularspalte bricht nichts um
                             for f in b.js(EINZEILIG):
                                 fehler.append(f'{w}px {sprache} {rolle}: {f}')
                     anzahl = b.js(f"document.querySelectorAll({FORMULAR}).length")
@@ -186,7 +186,7 @@ def main():
         srv.shutdown()
     for f in fehler:
         print('FEHLER: ', f)
-    print(f'Knopfreihen-Test: {len(fehler)} Fehler (3 Breiten × DE/EN × Head/Linesperson, Reihenfolge, Speicherwerte, Tastatur)')
+    print(f'Knopfreihen-Test: {len(fehler)} Fehler (5 Breiten × DE/EN × Head/Linesperson, Reihenfolge, Speicherwerte, Tastatur)')
     sys.exit(1 if fehler else 0)
 
 
