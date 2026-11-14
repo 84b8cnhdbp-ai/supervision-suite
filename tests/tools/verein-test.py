@@ -99,6 +99,22 @@ def main():
                                 fehler.append(f'{ort}: "{m}" in Export oder Meldung')
                             if f'"club": "{TESTVEREIN["exportName"]}"' not in export:
                                 fehler.append(f'{ort}: Export enthält nicht "club": "{TESTVEREIN["exportName"]}"')
+            # Fenster „Spiel bearbeiten“: Kürzel vor dem Gegner aus der Vereins-Einstellung
+            b.fenster(1194, 834)
+            daten_setzen(b, srv.basis)
+            b.oeffnen(srv.basis + '/index.html')
+            b.klick('#spielTitel')
+            text = b.js(SAMMELN)
+            for m in sorted(set(VERBOTEN.findall(text))):
+                fehler.append(f'Spiel-Fenster: "{m}" gefunden')
+            b.js("(() => { const g = document.getElementById('spiel_gegner'); g.value = 'Gastteam'; g.dispatchEvent(new Event('input')); })()")
+            if b.js("document.getElementById('sfPraefix').textContent") != f"{TESTVEREIN['kurz']} – ":
+                fehler.append('Spiel-Fenster: Kürzel vor dem Gegner nicht aus der Vereins-Einstellung')
+            b.klick('#sfFertig')
+            paarung = b.js("JSON.parse(localStorage.getItem('referee_multi_supervision_data')).global.spiel_paarung")
+            if paarung != f"{TESTVEREIN['kurz']} – Gastteam":
+                fehler.append(f'Begegnung gespeichert als {paarung!r} statt „{TESTVEREIN["kurz"]} – Gastteam“')
+
             # Logo offline verfügbar (Service Worker lädt js/club.js)
             for _ in range(50):
                 if b.js("caches.keys().then((k) => k.length)"):

@@ -129,7 +129,9 @@ def main():
             pruefe(b.js('document.activeElement.id') == 'current_schiri_name', f"Bereit: Sprung zum Namen landet bei {b.js('document.activeElement.id')}")
             b.klick("#bereitListe .bereit-fehlt[data-punkt=datum]")
             b.js('new Promise((r) => setTimeout(r, 600))')
-            pruefe(b.js('document.activeElement.id') == 'spiel_datum', f"Bereit: Sprung zum Datum landet bei {b.js('document.activeElement.id')}")
+            pruefe(b.js('document.activeElement.id') == 'spiel_datum' and b.js("document.getElementById('spielDialog').open"),
+                   f"Bereit: Sprung zum Datum landet bei {b.js('document.activeElement.id')} (Fenster „Spiel bearbeiten“ erwartet)")
+            b.taste('Escape')
             # gleiche Prüfung wie das Fenster beim Sichern
             b.klick('#btnSichern')
             im_fenster = b.js("[...document.querySelectorAll('dialog.fenster[open] .fenster-eintrag')].map((e) => e.textContent.replace('›', '').trim())")

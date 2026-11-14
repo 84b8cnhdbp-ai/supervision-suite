@@ -101,8 +101,15 @@ def main():
                             for f in b.js(EINZEILIG):
                                 fehler.append(f'{w}px {sprache} {rolle}: {f}')
                     anzahl = b.js(f"document.querySelectorAll({FORMULAR}).length")
-                    if anzahl != 13:
-                        fehler.append(f'{w}px {sprache}: {anzahl} Knopfreihen im Formular statt 13')
+                    if anzahl != 12:   # System steht seit 2.6 im Fenster „Spiel bearbeiten“
+                        fehler.append(f'{w}px {sprache}: {anzahl} Knopfreihen im Formular statt 12')
+                    # Fenster „Spiel bearbeiten“: System + Durchgang je Rolle
+                    b.klick('#spielTitel')
+                    for f in b.js(PRUEFE_REIHEN + "('#spielDialog fieldset.seg')"):
+                        fehler.append(f'{w}px {sprache} Spiel-Fenster: {f}')
+                    if b.js("document.querySelectorAll('#spielDialog fieldset.seg').length") != 5:
+                        fehler.append(f'{w}px {sprache}: Spiel-Fenster ohne System + 4 Durchgänge')
+                    b.taste('Escape')
                     # Menü „Mehr“: Sprache und Darstellung
                     b.klick('#btnMehr')
                     for f in b.js(PRUEFE_REIHEN + f'({MENU})'):
@@ -165,11 +172,12 @@ def main():
             for name, wert in letzte.items():
                 if b.js(f"segWert('{name}')") != wert:
                     fehler.append(f"{name}: nach Neuladen gewählt {b.js(f'segWert({name!r})')!r} statt {wert!r}")
-            # System
-            b.klick("label[for='system_typ__1']")
+            # System (im Fenster „Spiel bearbeiten“, mit Rückfrage, weil im 4-Mann-System Bewertungen stehen)
+            b.klick('#spielTitel'); b.klick("label[for='system_typ__1']"); b.klick('#sfFertig')
+            b.klick('dialog.fenster[open] .fenster-knopf-primaer')
             if b.js('currentSystem') != '2-Man' or b.js("JSON.parse(localStorage.getItem('referee_multi_supervision_data')).global.system_typ") != '2-Man':
                 fehler.append('System: Klick auf „2-Mann“ wechselt/speichert nicht')
-            b.klick("label[for='system_typ__3']")
+            b.js("switchSystem('4-Man')")
 
             # 5. Tastatur: Pfeiltasten in einer Reihe
             b.js("setzeSeg('perf_3', '80'); saveCurrentRefData(); document.querySelector('input[name=perf_3]:checked').focus()")

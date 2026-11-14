@@ -28,6 +28,7 @@ function initApp() {
   } else {
     loadRefereeForm(activeRefIndex);
   }
+  initSpiel();
 }
 
 function setupRefereeDropdown() {
@@ -395,14 +396,40 @@ function zeigeBereit() {
     }
     liste.appendChild(li);
   });
+  // Hinweise (kein Pflichtpunkt, Sichern bleibt möglich), getrennt unter „Hinweise“
+  const hinweise = spielHinweise().filter((h) => !h.ok);
+  if (hinweise.length) {
+    const kopf = document.createElement('li');
+    kopf.className = 'bereit-gruppe';
+    kopf.textContent = t('ready_hints');
+    liste.appendChild(kopf);
+    hinweise.forEach((h) => {
+      const li = document.createElement('li');
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'bereit-hinweis';
+      b.dataset.punkt = h.schluessel;
+      const zeichen = document.createElement('span');
+      zeichen.className = 'bereit-zeichen hinweis';
+      zeichen.setAttribute('aria-hidden', 'true');
+      zeichen.textContent = 'i';
+      b.append(zeichen, document.createTextNode(h.text));
+      b.addEventListener('click', h.aktion);
+      li.appendChild(b);
+      liste.appendChild(li);
+    });
+  }
   const fehlen = punkte.filter((p) => !p.ok).length;
   const chip = document.getElementById('bereitChip');
   if (chip) {
-    chip.textContent = fehlen ? t('ready_chip_open', { n: fehlen }) : t('ready_chip_ok');
+    chip.textContent = fehlen ? t('ready_chip_open', { n: fehlen })
+      : (hinweise.length ? t('ready_chip_hint', { n: hinweise.length }) : t('ready_chip_ok'));
     chip.classList.toggle('bereit-chip-ok', !fehlen);
-    chip.disabled = !fehlen;
-    chip.setAttribute('aria-label', fehlen ? t('ready_no', { n: fehlen }) : t('ready_yes'));
+    chip.classList.toggle('bereit-chip-hinweis', !fehlen && hinweise.length > 0);
+    chip.disabled = !fehlen && !hinweise.length;
+    chip.setAttribute('aria-label', fehlen ? t('ready_no', { n: fehlen }) : t('ready_yes') + (hinweise.length ? ' ' + hinweise[0].text : ''));
   }
+  if (typeof aktualisiereSpielTitel === 'function' && document.getElementById('spielTitelName')) aktualisiereSpielTitel();
   const status = document.getElementById('bereitStatus');
   status.textContent = fehlen ? t('ready_no', { n: fehlen }) : t('ready_yes');
   status.classList.toggle('bereit-ja', !fehlen);

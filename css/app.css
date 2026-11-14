@@ -510,6 +510,79 @@ fieldset.seg {
 
 @media (prefers-reduced-motion: reduce) { .seg .seg-opt { transition: none; } }
 
+/* ---------- Titel des Spiels und Fenster „Spiel bearbeiten“ (js/spiel.js) ---------- */
+.spiel-kopf { margin: 0 0 18px; }
+.spiel-kopf[hidden] { display: none; }
+.spiel-info { margin: 0 0 4px; font-size: 13px; color: var(--secondary); }
+.spiel-name { margin: 0; font-size: 26px; font-weight: 700; line-height: 1.2; }
+.spiel-titel {
+  display: inline-flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; padding: 0; border: 0; background: none;
+  color: var(--text); font: inherit; text-align: left; cursor: pointer; min-height: 44px;
+}
+.spiel-bearbeiten { display: inline-flex; align-items: center; gap: 5px; font-size: 14px; font-weight: 600; color: var(--accent); }
+.spiel-titel:hover .spiel-bearbeiten { text-decoration: underline; }
+.spiel-titel:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+
+dialog.spiel-fenster {
+  width: min(620px, calc(100vw - 24px)); max-height: calc(100vh - 48px); padding: 0; border: 0; border-radius: 16px;
+  background: var(--bg); color: var(--text); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3); overflow: hidden;
+}
+dialog.spiel-fenster[open] { display: flex; flex-direction: column; }
+dialog.spiel-fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
+.sf-kopf {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; padding: 6px 12px;
+  background: var(--card); border-bottom: 1px solid var(--sep);
+}
+.sf-kopf h2 { margin: 0; font-size: 16px; font-weight: 600; text-align: center; }
+.sf-knopf { justify-self: start; min-height: 44px; padding: 0 8px; border: 0; background: transparent; color: var(--accent); font: inherit; font-size: 16px; cursor: pointer; }
+.sf-fertig { justify-self: end; font-weight: 700; }
+.sf-knopf:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; border-radius: 8px; }
+.sf-inhalt { overflow-y: auto; padding: 16px 16px 22px; display: flex; flex-direction: column; gap: 16px; }
+.sf-gruppe { display: flex; flex-direction: column; gap: 6px; }
+.sf-titel { margin: 0 0 0 4px; font-size: 13px; font-weight: 600; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.4px; }
+.sf-karte { background: var(--card); border-radius: 12px; padding: 0 14px; }
+.sf-karte-block { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.sf-zeile {
+  display: grid; grid-template-columns: 140px minmax(0, 1fr); align-items: center; gap: 12px; min-height: 52px; margin: 0;
+  font-size: 15px; font-weight: 400; color: var(--text); border-bottom: 1px solid var(--sep);
+}
+.sf-karte .sf-zeile:last-child { border-bottom: 0; }
+.sf-label { color: var(--text); }
+.sf-zeile input, .sf-zeile select { border: 0; background: transparent; padding: 0 4px; font-size: 16px; font-weight: 600; box-shadow: none; }
+.sf-zeile input:focus, .sf-zeile select:focus { box-shadow: 0 0 0 3px var(--accent-soft); border-radius: 8px; }
+.sf-gegner { display: flex; align-items: center; min-width: 0; }
+.sf-praefix { flex-shrink: 0; font-size: 16px; font-weight: 600; color: var(--secondary); white-space: nowrap; }
+.sf-praefix[hidden] { display: none; }
+.sf-gegner input { flex: 1; min-width: 0; }
+.sf-hinweis { margin: 0 0 0 4px; font-size: 13px; color: var(--t-warn); }
+.sf-hinweis-info { color: var(--secondary); }
+.sf-hinweis[hidden] { display: none; }
+.sf-rollen { display: flex; flex-direction: column; }
+.sf-rolle {
+  display: grid; grid-template-columns: 130px minmax(0, 1fr) auto; grid-template-areas: "rolle name runde" ". eigen eigen";
+  align-items: center; gap: 6px 10px; padding: 10px 0; border-top: 1px solid var(--sep);
+}
+.sf-rolle-name { grid-area: rolle; font-size: 14px; color: var(--secondary); }
+.sf-rolle select { grid-area: name; min-width: 0; }
+.sf-rolle input { grid-area: eigen; }
+.sf-rolle input[hidden] { display: none; }
+.sf-rolle [data-seg] { grid-area: runde; }
+@media screen and (max-width: 640px) {
+  .sf-zeile { grid-template-columns: 1fr; gap: 2px; padding: 8px 0; }
+  .sf-rolle { grid-template-columns: 1fr; grid-template-areas: "rolle" "name" "eigen" "runde"; }
+}
+
+/* Bereit: Hinweise (kein Pflichtpunkt) getrennt und orange umrandet */
+.bereit-gruppe { margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.4px; }
+.bereit-hinweis {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 0 8px; margin: 0 -8px;
+  border: 0; border-radius: 8px; background: transparent; color: var(--t-warn); font: inherit; font-size: 14px; text-align: left; cursor: pointer;
+}
+.bereit-hinweis::after { content: "›"; margin-left: auto; font-size: 18px; color: var(--secondary); }
+.bereit-hinweis:hover { background: var(--seg); }
+.bereit-hinweis:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+.bereit-zeichen.hinweis { background: transparent; color: var(--t-warn); border: 2px solid var(--t-warn); font-style: italic; }
+
 /* ---------- Eigene Fenster (js/dialog.js) ---------- */
 dialog.fenster {
   width: min(420px, calc(100vw - 32px));
@@ -652,6 +725,7 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
     background: var(--r-m); color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; white-space: nowrap; cursor: pointer;
   }
   .bereit-chip.bereit-chip-ok { background: var(--r-p); cursor: default; }
+  .bereit-chip.bereit-chip-hinweis { cursor: pointer; box-shadow: inset 0 0 0 3px var(--r-m); }
   .bereit-chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   .formular-spalte { order: 1; }
   .netz-karte { order: 2; margin-top: 20px; }
@@ -712,6 +786,9 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
   .karte { box-shadow: none !important; border: 1pt solid #C7C7CC !important; padding: 8pt !important; break-inside: avoid; }
   .ring-wert, .ring-grund { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .netz { max-height: 190pt; }
+  .spiel-kopf { margin-bottom: 8pt; }
+  .spiel-name { font-size: 15pt; }
+  .spiel-info { font-size: 10pt; color: #000; }
   .druck-kopf { display: flex !important; align-items: center; gap: 10pt; padding: 0 0 8pt; margin-bottom: 8pt; border-bottom: 1.5pt solid #000; }
   .druck-kopf img { height: 36pt; width: auto; }
   .druck-kopf strong { display: block; font-size: 15pt; }

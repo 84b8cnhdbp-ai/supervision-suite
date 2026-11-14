@@ -12,9 +12,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="css/app.css?v=15">
-<script src="js/club.js?v=15"></script>
-<script src="js/theme.js?v=15"></script>
+<link rel="stylesheet" href="css/app.css?v=16">
+<script src="js/club.js?v=16"></script>
+<script src="js/theme.js?v=16"></script>
 </head>
 <body>
 
@@ -63,6 +63,7 @@
         <button type="button" class="knopf-icon" id="btnDrucken" onclick="window.print()" data-i18n-aria-label="btn_print" aria-label="Drucken"><svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg></button>
         <button type="button" class="knopf-icon" id="btnMehr" onclick="toggleMehr()" aria-haspopup="true" aria-expanded="false" aria-controls="mehrMenu" data-i18n-aria-label="btn_more" aria-label="Mehr"><svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
         <div class="mehr-menu" id="mehrMenu" role="dialog" data-i18n-aria-label="btn_more" aria-label="Mehr" hidden>
+          <button type="button" class="menu-eintrag" id="menuSpiel" onclick="mehrAktion(() => oeffneSpielDialog())" data-i18n="game_edit">Spiel bearbeiten</button>
           <button type="button" class="menu-eintrag" onclick="mehrAktion(exportCSV)" data-i18n="menu_csv">CSV-Export</button>
           <button type="button" class="menu-eintrag" onclick="mehrAktion(kaderWaehlen)" data-i18n="kader_import">Kader importieren</button>
           <div class="menu-gruppe">
@@ -90,90 +91,14 @@
       </div>
     </div>
 
-  <!-- 1. METADATEN (GLOBAL) -->
-  <div style="background: var(--bg-subtle); border-bottom: 1px solid var(--border); padding: 18px 30px;">
-    <div class="grid-4" style="margin-bottom: 12px;">
-      <div class="feld-breit">
-        <span class="feld-label" id="lbl_system_typ" data-i18n="lbl_system">Schiedsrichter-System</span>
-        <div data-seg="system_typ" data-seg-label="lbl_system_typ"></div>
-      </div>
-      <div>
-        <label for="spiel_liga" data-i18n="lbl_league">Liga / Stufe</label>
-        <select id="spiel_liga" onchange="saveGlobalState()">
-          <optgroup label="Profisport" data-i18n-group="group_pro">
-            <option value="National League">National League (NL)</option>
-            <option value="Swiss League">Swiss League (SL)</option>
-          </optgroup>
-          <optgroup label="Amateursport Herren (Regio League)" data-i18n-group="group_men">
-            <option value="MyHockey League">MyHockey League (MHL)</option>
-            <option value="1. Liga">1. Liga</option>
-            <option value="2. Liga">2. Liga</option>
-            <option value="3. Liga">3. Liga</option>
-            <option value="4. Liga">4. Liga</option>
-          </optgroup>
-          <optgroup label="Fraueneishockey (Women's Leagues)" data-i18n-group="group_women">
-            <option value="PostFinance Women's League">PostFinance Women's League (PFWL)</option>
-            <option value="SWHL B">SWHL B</option>
-            <option value="SWHL C">SWHL C</option>
-            <option value="SWHL D">SWHL D</option>
-            <option value="JWL U16">Junior Women's League U16 (JWL U16)</option>
-          </optgroup>
-          <optgroup label="Nachwuchs Leistungssport (U21 / U18)" data-i18n-group="group_junior_pro">
-            <option value="U21-Elit">U21-Elit</option>
-            <option value="U21-Top">U21-Top</option>
-            <option value="U21-A">U21-A</option>
-            <option value="U18-Elit">U18-Elit</option>
-            <option value="U18-Top">U18-Top</option>
-            <option value="U18-A">U18-A</option>
-          </optgroup>
-          <optgroup label="Nachwuchs Breitensport (U16 / U14)" data-i18n-group="group_junior_ambition">
-            <option value="U16-Elit">U16-Elit</option>
-            <option value="U16-Top">U16-Top</option>
-            <option value="U16-A">U16-A</option>
-            <option value="U14-Elit">U14-Elit</option>
-            <option value="U14-Top">U14-Top</option>
-            <option value="U14-A">U14-A</option>
-          </optgroup>
-          <optgroup label="Nachwuchs Erfassungsstufen (U12 / U9)" data-i18n-group="group_junior_grass">
-            <option value="U12">U12 (Piccolo)</option>
-            <option value="U9">U9 (Bambini)</option>
-          </optgroup>
-          <optgroup label="Cup- & Sonderwettbewerbe" data-i18n-group="group_cup">
-            <option value="National Cup Herren">National Cup (Herren)</option>
-            <option value="National Cup Frauen">National Cup (Frauen)</option>
-            <option value="Kantonal- / Regionalcup">Kantonal- / Regionalcup</option>
-            <option value="Vorbereitungsspiel / Testspiel">Vorbereitungsspiel / Testspiel</option>
-            <option value="Senioren / Veteranen">Senioren / Veteranen</option>
-          </optgroup>
-        </select>
-      </div>
-      <div>
-        <label for="spiel_paarung" data-i18n="lbl_game">Begegnung (Heim vs. Gast)</label>
-        <input type="text" id="spiel_paarung" data-i18n-placeholder="ph_game" placeholder="" oninput="saveGlobalState()">
-      </div>
-      <div>
-        <label for="spiel_id" data-i18n="lbl_game_id">Spiel-Nr. / ID</label>
-        <input type="text" id="spiel_id" placeholder="z. B. 10452" oninput="saveGlobalState()">
-      </div>
-    </div>
-    <div class="grid-3">
-      <div>
-        <label for="spiel_datum" data-i18n="lbl_datetime">Datum & Zeit</label>
-        <input type="datetime-local" id="spiel_datum" oninput="handleGlobalDateTimeChange()">
-      </div>
-      <div>
-        <label for="spiel_ort" data-i18n="lbl_arena">Spielort / Arena</label>
-        <input type="text" id="spiel_ort" data-i18n-placeholder="ph_arena" placeholder="" oninput="handleGlobalArenaChange()">
-      </div>
-      <div>
-        <label for="supervisor_name" data-i18n="lbl_supervisor">Supervisor / Coach</label>
-        <input type="text" id="supervisor_name" placeholder="Name Supervisor" oninput="handleGlobalSupervisorChange()">
-      </div>
-    </div>
-  </div>
-
   <!-- HAUPTINHALT -->
   <div class="content">
+
+    <!-- Titel des Spiels (Tippen öffnet „Spiel bearbeiten“) -->
+    <div class="spiel-kopf" id="spielKopf">
+      <p class="spiel-info" id="spielTitelInfo"></p>
+      <h1 class="spiel-name"><button type="button" class="spiel-titel" id="spielTitel"><span id="spielTitelName"></span><span class="spiel-bearbeiten no-print"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span data-i18n="game_edit">Spiel bearbeiten</span></span></button></h1>
+    </div>
 
     <!-- ANSICHT 1: EINZEL-SCHIEDSRICHTER -->
     <div id="singleRefView" class="bewertung">
@@ -427,16 +352,110 @@
   </main>
 </div>
 
-<script src="js/i18n.js?v=15"></script>
-<script src="js/dialog.js?v=15"></script>
-<script src="js/segment.js?v=15"></script>
-<script src="js/layout.js?v=15"></script>
-<script src="js/config.js?v=15"></script>
-<script src="js/scoring.js?v=15"></script>
-<script src="js/storage.js?v=15"></script>
-<script src="js/ui.js?v=15"></script>
-<script src="js/export.js?v=15"></script>
-<script src="js/stats.js?v=15"></script>
-<script src="js/app.js?v=15"></script>
+<!-- FENSTER „SPIEL BEARBEITEN“ (Felder behalten ihre IDs; gespeichert wird erst mit „Fertig“) -->
+<dialog class="spiel-fenster" id="spielDialog" aria-labelledby="spielDialogTitel">
+  <div class="sf-kopf">
+    <button type="button" class="sf-knopf" id="sfAbbrechen" data-i18n="dlg_cancel">Abbrechen</button>
+    <h2 id="spielDialogTitel" data-i18n="game_edit">Spiel bearbeiten</h2>
+    <button type="button" class="sf-knopf sf-fertig" id="sfFertig" data-i18n="dlg_done">Fertig</button>
+  </div>
+  <div class="sf-inhalt">
+    <section class="sf-gruppe">
+      <h3 class="sf-titel" data-i18n="sec_matchsheet">Matchblatt</h3>
+      <div class="sf-karte">
+        <label class="sf-zeile" for="spiel_id"><span class="sf-label" data-i18n="lbl_game_nr">Spielnummer</span>
+          <input type="text" id="spiel_id" inputmode="numeric" autocomplete="off" data-i18n-placeholder="ph_game_nr" placeholder=""></label>
+      </div>
+      <p class="sf-hinweis" id="sfNrHinweis" data-i18n="hint_game_nr">Spielnummer fehlt – Sichern trotzdem möglich</p>
+    </section>
+    <section class="sf-gruppe">
+      <h3 class="sf-titel" data-i18n="sec_game">Spiel</h3>
+      <div class="sf-karte">
+        <label class="sf-zeile" for="spiel_liga"><span class="sf-label" data-i18n="lbl_league">Liga / Stufe</span>
+              <select id="spiel_liga">
+                <optgroup label="Profisport" data-i18n-group="group_pro">
+                  <option value="National League">National League (NL)</option>
+                  <option value="Swiss League">Swiss League (SL)</option>
+                </optgroup>
+                <optgroup label="Amateursport Herren (Regio League)" data-i18n-group="group_men">
+                  <option value="MyHockey League">MyHockey League (MHL)</option>
+                  <option value="1. Liga">1. Liga</option>
+                  <option value="2. Liga">2. Liga</option>
+                  <option value="3. Liga">3. Liga</option>
+                  <option value="4. Liga">4. Liga</option>
+                </optgroup>
+                <optgroup label="Fraueneishockey (Women's Leagues)" data-i18n-group="group_women">
+                  <option value="PostFinance Women's League">PostFinance Women's League (PFWL)</option>
+                  <option value="SWHL B">SWHL B</option>
+                  <option value="SWHL C">SWHL C</option>
+                  <option value="SWHL D">SWHL D</option>
+                  <option value="JWL U16">Junior Women's League U16 (JWL U16)</option>
+                </optgroup>
+                <optgroup label="Nachwuchs Leistungssport (U21 / U18)" data-i18n-group="group_junior_pro">
+                  <option value="U21-Elit">U21-Elit</option>
+                  <option value="U21-Top">U21-Top</option>
+                  <option value="U21-A">U21-A</option>
+                  <option value="U18-Elit">U18-Elit</option>
+                  <option value="U18-Top">U18-Top</option>
+                  <option value="U18-A">U18-A</option>
+                </optgroup>
+                <optgroup label="Nachwuchs Breitensport (U16 / U14)" data-i18n-group="group_junior_ambition">
+                  <option value="U16-Elit">U16-Elit</option>
+                  <option value="U16-Top">U16-Top</option>
+                  <option value="U16-A">U16-A</option>
+                  <option value="U14-Elit">U14-Elit</option>
+                  <option value="U14-Top">U14-Top</option>
+                  <option value="U14-A">U14-A</option>
+                </optgroup>
+                <optgroup label="Nachwuchs Erfassungsstufen (U12 / U9)" data-i18n-group="group_junior_grass">
+                  <option value="U12">U12 (Piccolo)</option>
+                  <option value="U9">U9 (Bambini)</option>
+                </optgroup>
+                <optgroup label="Cup- & Sonderwettbewerbe" data-i18n-group="group_cup">
+                  <option value="National Cup Herren">National Cup (Herren)</option>
+                  <option value="National Cup Frauen">National Cup (Frauen)</option>
+                  <option value="Kantonal- / Regionalcup">Kantonal- / Regionalcup</option>
+                  <option value="Vorbereitungsspiel / Testspiel">Vorbereitungsspiel / Testspiel</option>
+                  <option value="Senioren / Veteranen">Senioren / Veteranen</option>
+                </optgroup>
+              </select>
+        </label>
+        <label class="sf-zeile" for="spiel_gegner"><span class="sf-label" data-i18n="lbl_opponent">Gegner</span>
+          <span class="sf-gegner"><span class="sf-praefix" id="sfPraefix"></span><input type="text" id="spiel_gegner" autocomplete="off" data-i18n-placeholder="ph_opponent" placeholder=""></span></label>
+        <label class="sf-zeile" for="spiel_datum"><span class="sf-label" data-i18n="lbl_datetime">Datum &amp; Zeit</span>
+          <input type="datetime-local" id="spiel_datum"></label>
+        <label class="sf-zeile" for="spiel_ort"><span class="sf-label" data-i18n="lbl_arena">Spielort / Arena</span>
+          <input type="text" id="spiel_ort" data-i18n-placeholder="ph_arena" placeholder=""></label>
+      </div>
+      <p class="sf-hinweis sf-hinweis-info" id="sfAltHinweis" hidden></p>
+      <input type="hidden" id="spiel_paarung">
+    </section>
+    <section class="sf-gruppe">
+      <h3 class="sf-titel" data-i18n="sec_refs">Schiedsrichter &amp; Supervision</h3>
+      <div class="sf-karte sf-karte-block">
+        <span class="feld-label" id="lbl_system_typ" data-i18n="lbl_system">Schiedsrichter-System</span>
+        <div data-seg="system_typ" data-seg-label="lbl_system_typ"></div>
+        <div id="sfRollen" class="sf-rollen"></div>
+      </div>
+      <div class="sf-karte">
+        <label class="sf-zeile" for="supervisor_name"><span class="sf-label" data-i18n="lbl_supervisor">Supervisor / Coach</span>
+          <input type="text" id="supervisor_name" autocomplete="name"></label>
+      </div>
+    </section>
+  </div>
+</dialog>
+
+<script src="js/i18n.js?v=16"></script>
+<script src="js/dialog.js?v=16"></script>
+<script src="js/segment.js?v=16"></script>
+<script src="js/layout.js?v=16"></script>
+<script src="js/spiel.js?v=16"></script>
+<script src="js/config.js?v=16"></script>
+<script src="js/scoring.js?v=16"></script>
+<script src="js/storage.js?v=16"></script>
+<script src="js/ui.js?v=16"></script>
+<script src="js/export.js?v=16"></script>
+<script src="js/stats.js?v=16"></script>
+<script src="js/app.js?v=16"></script>
 </body>
 </html>

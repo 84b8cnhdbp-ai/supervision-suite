@@ -13,7 +13,7 @@ python3 tests/tools/alle-tests.py            # alle Tests (ca. 5 Min.)
 python3 tests/tools/alle-tests.py --ohne-sw  # ohne Service-Worker-Test (ca. 1 Min.)
 ```
 
-Führt Daten-Test (Deutsch und Englisch), Texte-, Vereins-, Fenster-, Knopfreihen-, Layout-, Score- und Service-Worker-Test aus und zeigt eine
+Führt Daten-Test (Deutsch und Englisch), Texte-, Vereins-, Fenster-, Knopfreihen-, Layout-, Score-, Spiel- und Service-Worker-Test aus und zeigt eine
 Zusammenfassung. Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
 
 ## Daten-Test – „gleiche Eingaben, gleiche Daten“
@@ -107,6 +107,19 @@ höherer Werkzeugleiste). Angezeigte Werte = `computeRefScores` in allen Reitern
 kurze Begriffe bei der Gesamteinschätzung. Netzdiagramm mit 7 Punkten, N/A als hohler grauer Punkt mit „(N/A)“,
 im Druck sichtbar. „Bereit zum Sichern?“: fehlende Punkte springen zum Feld, gleiche Liste wie das Fenster beim
 Sichern, nicht im Druck.
+
+## Spiel-Test – Fenster „Spiel bearbeiten“
+
+```sh
+python3 tests/tools/spiel-test.py
+```
+
+Mit echten Klicks und Tasten: Zugang über Titel und „Mehr“, Reihenfolge der Felder, Spielnummer mit
+Zifferntastatur (ohne Einschränkung auf Ziffern); „Abbrechen“/Esc verwerfen (auch ein späteres Speichern übernimmt
+nichts Verworfenes), „Fertig“ speichert; Begegnung „CLUB.kurz – Gegner“, alte Begegnung bleibt, solange sie nicht
+geändert wird; Visum wie früher; Namen und Durchgang je Rolle; Systemwechsel mit Rückfrage („Abbrechen“ vorgewählt)
+nur bei vorhandenen Bewertungen; Spielnummer als Hinweis getrennt von den Pflichtpunkten, Sichern bleibt möglich;
+automatisch öffnen nur ohne Spiel; Grössen 768/834/1194 px, DE/EN.
 
 ## Service-Worker-Test – Updates, offline, langsames Netz
 

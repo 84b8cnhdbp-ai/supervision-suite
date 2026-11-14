@@ -26,7 +26,7 @@ function pruefeSicherbar(d) {
       springeZuFeld(sel.value === '_CUSTOM_' ? custom : sel);
     } },
     { schluessel: 'datum', text: t('missing_date'), ok: !!(gameData.global && gameData.global.spiel_datum),
-      aktion: () => springeZuFeld(document.getElementById('spiel_datum')) },
+      aktion: () => oeffneSpielDialog('spiel_datum') },   // Datum steht im Fenster „Spiel bearbeiten“
     { schluessel: 'note', text: t('missing_grade'), ok: computeRefScores(d).part2 !== null, aktion: () => {
       const erste = document.querySelector('input[name="overall_grade"]');
       springeZuFeld(erste, document.getElementById('gradeBox'));

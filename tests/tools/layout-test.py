@@ -88,11 +88,11 @@ def main():
                  "const c = document.getElementById('current_schiri_name_custom'); c.value = 'Von Rotz Peter'; c.dispatchEvent(new Event('input'));")
             pruefe(b.js(REITER)[3] == 'L2 · Von Rotz', f'Reiter nach Namenseingabe: {b.js(REITER)[3]!r}')
             pruefe('Linesperson 2' in b.js("document.querySelector('#tabsContainer [data-reiter=l2]').title"), 'Reiter ohne vollen Namen als Tooltip')
-            b.klick("label[for='system_typ__1']")   # 2-Mann
+            b.js("switchSystem('2-Man')")   # (System steht seit 2.6 im Fenster „Spiel bearbeiten“)
             pruefe(b.js(REITER) == ['Referee 1', 'Referee 2', 'Gespann'], f'Reiter 2-Mann: {b.js(REITER)}')
-            b.klick("label[for='system_typ__0']")   # 1-Mann
+            b.js("switchSystem('1-Man')")
             pruefe(b.js(REITER) == ['Einzel-Schiedsrichter'], f'Reiter 1-Mann: {b.js(REITER)}')
-            b.klick("label[for='system_typ__3']")   # zurück zu 4-Mann
+            b.js("switchSystem('4-Man')")
 
             # 3. Reiter mit Tastatur
             b.js("document.querySelector('#tabsContainer [aria-selected=true]').focus()")
@@ -129,7 +129,7 @@ def main():
             pruefe(b.js("document.getElementById('btnMehr').getAttribute('aria-expanded')") == 'true', 'Mehr: aria-expanded nicht true')
             pruefe(b.js("document.getElementById('mehrMenu').contains(document.activeElement)"), 'Mehr: Fokus nicht im Menü')
             eintraege = b.js("[...document.querySelectorAll('#mehrMenu .menu-eintrag')].map((e) => e.innerText.trim())")
-            pruefe(eintraege == [b.js("t('menu_csv')"), b.js("t('kader_import')"), b.js("t('menu_reset')")], f'Mehr: Einträge {eintraege}')
+            pruefe(eintraege == [b.js("t('game_edit')"), b.js("t('menu_csv')"), b.js("t('kader_import')"), b.js("t('menu_reset')")], f'Mehr: Einträge {eintraege}')
             rot = b.js("getComputedStyle(document.getElementById('menuReset')).color")
             pruefe(rot == 'rgb(180, 35, 24)', f'Mehr: Zurücksetzen nicht rot ({rot})')
             abstand = b.js("document.getElementById('menuReset').getBoundingClientRect().top - document.querySelector('.menu-gruppe:last-of-type').getBoundingClientRect().bottom")
@@ -140,11 +140,11 @@ def main():
             pruefe(b.js("document.getElementById('mehrMenu').hidden"), 'Mehr: Tippen daneben schliesst nicht')
             # CSV
             b.js("window.__dl = []; window.downloadBlob = (blob, name) => __dl.push(name);")
-            b.klick('#btnMehr'); b.klick("#mehrMenu .menu-eintrag:nth-of-type(1)")
+            b.klick('#btnMehr'); b.klick("#mehrMenu .menu-eintrag:nth-of-type(2)")
             pruefe(b.js('__dl.length') == 1 and b.js('__dl[0]').endswith('.csv'), 'Mehr: CSV-Export lädt keine CSV herunter')
             # Kader: Dateiauswahl wird geöffnet
             b.js("window.__dateiwahl = 0; HTMLInputElement.prototype.click = function () { if (this.type === 'file') __dateiwahl++; };")
-            b.klick('#btnMehr'); b.klick("#mehrMenu .menu-eintrag:nth-of-type(2)")
+            b.klick('#btnMehr'); b.klick("#mehrMenu .menu-eintrag:nth-of-type(3)")
             pruefe(b.js('__dateiwahl') == 1, 'Mehr: Kader importieren öffnet keine Dateiauswahl')
             # Sprache
             b.klick('#btnMehr'); b.klick("label[for='sprache__1']")

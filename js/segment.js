@@ -68,7 +68,8 @@ function setzeSeg(name, wert) {
 function baueAlleKnopfreihen() {
   const farben = { '100': '--r-pp', '80': '--r-p', '50': '--r-m', '20': '--r-mm', 'NA': '--r-na' };
 
-  baueSegmente('system_typ', t('system_options'), { standard: currentSystem, onChange: (v) => switchSystem(v) });
+  // System im Fenster „Spiel bearbeiten“: Rollen sofort zeigen, gewechselt wird erst mit „Fertig“
+  baueSegmente('system_typ', t('system_options'), { standard: currentSystem, onChange: (v) => baueSfRollen(v) });
   baueSegmente('current_review_round', t('round_options'), { standard: 'R1', onChange: () => saveCurrentRefData() });
 
   baueSegmente('overall_grade', [

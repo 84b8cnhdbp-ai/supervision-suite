@@ -71,6 +71,7 @@ function aktualisiereSeitenleiste() {
   const g = (gameData && gameData.global) || {};
   const setze = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
   setze('navSpielTitel', g.spiel_paarung || t('nav_no_game'));
+  if (typeof aktualisiereSpielTitel === 'function' && document.getElementById('spielTitelName')) aktualisiereSpielTitel();
   setze('navSpielInfo', [g.spiel_liga, datumZeitText(g.spiel_datum), g.spiel_ort].filter(Boolean).join(' · '));
   setze('saisonText', saisonText());
   setze('versionText', t('footer_version', { version: APP_VERSION, stand: appStand() }));
@@ -214,7 +215,8 @@ function initLayout() {
   // auf quer gedreht (ab 1180 px): Schublade schliessen, feste Seitenleiste erscheint
   SCHUBLADE_MQ.addEventListener('change', (e) => { if (!e.matches) schliesseSchublade(false); messeHoehen(); });
   document.getElementById('bereitChip').addEventListener('click', () => {
-    const erster = pruefeSicherbar({ name: getEffectiveRefName(), overall_grade: segWert('overall_grade') }).find((p) => !p.ok);
+    const erster = pruefeSicherbar({ name: getEffectiveRefName(), overall_grade: segWert('overall_grade') }).find((p) => !p.ok)
+      || spielHinweise().find((h) => !h.ok);   // erst Pflichtpunkte, dann Hinweise
     if (erster) erster.aktion();
   });
   if (window.ResizeObserver) {
