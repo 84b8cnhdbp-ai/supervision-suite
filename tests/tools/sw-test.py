@@ -42,7 +42,7 @@ class H(http.server.SimpleHTTPRequestHandler):
         fp = os.path.join(M.get('dir', REPO), 'index.html' if p == '/' else p.lstrip('/'))
         data = open(fp, 'rb').read(); lab = M.get('label', 'alt')
         if p.endswith('.css'): data += f'\n:root{{--sw-test:{lab}}}\n'.encode(); ct = 'text/css'
-        elif p.endswith('.js'): data += f'\n;(window.__swv=window.__swv||[]).push("{lab}:{p}");\n'.encode(); ct = 'text/javascript'
+        elif p.endswith('.js'): data += f'\n;(self.__swv=self.__swv||[]).push("{lab}:{p}");\n'.encode(); ct = 'text/javascript'
         else:
             data = data.replace(b'</head>', f'<meta name="sw-test" content="{lab}"></head>'.encode()); ct = 'text/html'
             if M.get('bump'): data = re.sub(rb'\?v=(\d+)"', lambda m: b'?v=%d"' % (int(m.group(1)) + 1), data)

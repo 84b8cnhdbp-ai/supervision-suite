@@ -8,6 +8,9 @@
 // Ein neues Paket wird nur vollständig übernommen, darum bekommt eine Seite nie
 // CSS/JS einer anderen Version.
 const CACHE_NAME = 'referee-supervision-sw1';
+
+// Vereins-Einstellung (Logo-Datei); Änderungen an js/club.js lösen ein Update des Service Workers aus.
+importScripts('js/club.js');
 const NETWORK_TIMEOUT_MS = 3000;
 
 const SCOPE = self.registration.scope;
@@ -17,7 +20,7 @@ const STATUS_KEY = new URL('__sw-status', SCOPE).href;
 // Dateien ohne Versionsnummer: aus dem Cache, im Hintergrund aktualisiert.
 const STATIC_ASSETS = [
   'manifest.json',
-  'logo-evz.svg',
+  CLUB.logo,
   'icons/icon.svg',
   'icons/icon-192.png',
   'icons/icon-512.png',

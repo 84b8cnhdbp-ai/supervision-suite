@@ -6,6 +6,16 @@ steht in `.gitignore` und kommt **nie** ins Repo.
 
 Alle Befehle im Projektordner ausführen.
 
+## Alles auf einmal – nach jedem Teilschritt
+
+```sh
+python3 tests/tools/alle-tests.py            # alle Tests (ca. 4 Min.)
+python3 tests/tools/alle-tests.py --ohne-sw  # ohne Service-Worker-Test (ca. 1 Min.)
+```
+
+Führt Daten-Test (Deutsch und Englisch), Texte-Test, Vereins-Test und Service-Worker-Test aus und zeigt eine
+Zusammenfassung. Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
+
 ## Daten-Test – „gleiche Eingaben, gleiche Daten“
 
 ```sh
@@ -37,6 +47,17 @@ Prüft: jeder verwendete Schlüssel (`t('…')`, `data-i18n`) existiert; Englisc
 Platzhaltern und gleich langen Listen; gespeicherte Werte (`val`) sind in allen Sprachen gleich; jede Rolle hat
 eine englische Bezeichnung; die Sprachwahl bleibt nach Neuladen; `?lang=fr` wird nicht gespeichert und zeigt
 fehlende Texte auf Deutsch; versteckte Sprachen stehen nicht in der Auswahl.
+
+## Vereins-Test – kein „EVZ“ fest im Code
+
+```sh
+python3 tests/tools/verein-test.py
+```
+
+Startet eine Kopie der App mit einem erfundenen Verein („HC Musterdorf“, eigenes Logo) statt der Werte in
+`js/club.js` und prüft alle Ansichten auf Deutsch und Englisch, am Bildschirm und im Druck, dazu Meldungen und
+Exporte: Nirgends darf „EVZ“, „EV Zug“ oder „Bossard“ erscheinen. Der Testverein muss im Titel, im Export
+(`club`) und als Logo erscheinen, und das Logo muss offline im Cache liegen.
 
 ## Service-Worker-Test – Updates, offline, langsames Netz
 

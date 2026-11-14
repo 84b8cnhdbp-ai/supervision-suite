@@ -38,7 +38,7 @@ function exportSingleReviewJSON() {
 
   const payload = {
     version: "1.1",
-    club: "EV Zug",
+    club: CLUB.exportName,
     schiedsrichter: name,
     reviewRunde: round,
     datum: dateStr,

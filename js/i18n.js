@@ -20,7 +20,10 @@ const I18N = {
     sub_part3: "Teil 3: Matrix (50%)",
     sub_part4: "Teil 4: Coach (20%)",
     sec1_title: "Angaben zur Person & Funktion",
-    lbl_ref_name: "Schiedsrichter (EVZ Kader)",
+    lbl_ref_name: "Schiedsrichter ({kurz} Kader)",
+    ph_game: "z. B. {verein} vs. Gastteam",
+    ph_arena: "z. B. {halle}",
+    stats_title: "{kurz} Schiedsrichter-Supervision — Gesamtstatistik",
     lbl_partner: "Gespann-Partner (Automatisch)",
     sec2_title: "Gesamteinschätzung (Standard)",
     th_choice: "Wahl",
@@ -138,7 +141,10 @@ const I18N = {
     sub_part3: "Part 3: Matrix (50%)",
     sub_part4: "Part 4: Coach (20%)",
     sec1_title: "Official's Information & Assignment",
-    lbl_ref_name: "Referee (EVZ Roster)",
+    lbl_ref_name: "Referee ({kurz} Roster)",
+    ph_game: "e.g. {verein} vs. Visitors",
+    ph_arena: "e.g. {halle}",
+    stats_title: "{kurz} Referee Supervision — Overall Statistics",
     lbl_partner: "Crew Partner(s) (Auto)",
     sec2_title: "Overall Performance Rating (Standard)",
     th_choice: "Select",
@@ -254,12 +260,14 @@ const SPRACHEN = [
 const LANG_KEY = 'referee_lang_preference';
 let currentLang = "de";
 
-// Text in der aktuellen Sprache, sonst deutsch. Platzhalter {name} werden aus `werte` ersetzt.
+// Text in der aktuellen Sprache, sonst deutsch. Platzhalter {name} werden aus `werte` ersetzt;
+// {verein}, {kurz} und {halle} kommen aus der Vereins-Einstellung (js/club.js).
 function t(key, werte) {
   let text = I18N[currentLang] && I18N[currentLang][key] !== undefined ? I18N[currentLang][key] : I18N.de[key];
   if (text === undefined) return key;
-  if (typeof text === 'string' && werte) {
-    text = text.replace(/\{(\w+)\}/g, (m, k) => (werte[k] !== undefined ? werte[k] : m));
+  if (typeof text === 'string' && text.includes('{')) {
+    const alle = { verein: CLUB.name, kurz: CLUB.kurz, halle: CLUB.halle, ...(werte || {}) };
+    text = text.replace(/\{(\w+)\}/g, (m, k) => (alle[k] !== undefined ? alle[k] : m));
   }
   return text;
 }
@@ -314,6 +322,10 @@ function applyTranslations() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     el.innerText = t(el.getAttribute('data-i18n'));
   });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+  });
+  applyClub();
   // Listen (Notenstufen, Coaching) mit Rückfall auf Deutsch
   const dict = {
     perf_options: t('perf_options'), coach_trend_opts: t('coach_trend_opts'),
