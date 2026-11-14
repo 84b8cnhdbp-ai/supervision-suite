@@ -49,7 +49,16 @@ Stil:
 - Schlichte Linien-Icons (inline SVG), keine Emojis. Kontrast mind. 4.5:1.
 - Dark Mode automatisch über `prefers-color-scheme`, Umschalter bleibt (Auto / Hell / Dunkel).
 
-**Fertig, wenn:** Alle Funktionen von vorher gehen; auf iPad hoch/quer und MacBook gut bedienbar; Dark Mode sauber; Drucken nicht schlechter als vorher.
+Sprachen und Verein (seit 2.1b):
+- Sprachwahl als Liste: DE und EN sichtbar, FR und IT vorbereitet, aber versteckt (nur über `?lang=fr` / `?lang=it` zum Testen). Fehlt ein Text, wird der deutsche angezeigt. Die Wahl bleibt nach dem Neuladen. Ab 2.4 im Menü „Mehr“.
+- Jeder neue Text über `t()`, auf DE und EN. Bestehende rein deutsche Texte im HTML werden im jeweiligen Teilschritt umgestellt; Ende 2.9 läuft jeder Text über `t()`.
+- **2.9:** FR und IT übersetzen, wenn die Texte fertig sind; sie bleiben versteckt (Freigabe in Etappe 9). Ab dann `texte-test.py --streng`.
+- Gespeicherte Werte (Coaching-Texte, R1/R2, Liga, Rollen, Partner) bleiben in jeder Sprache deutsch, damit Dateien austauschbar sind. Die CSV ist ein Bericht: Spaltentitel in der gewählten Sprache.
+- Verein zentral in `js/club.js` (Name, Kürzel, Logo, Beispiel-Halle, Wert für `club` im Export), ohne Knopf in der App. Kein „EVZ“ / „EV Zug“ fest im Code.
+
+Tests nach jedem Teilschritt: `python3 tests/tools/alle-tests.py` (Daten DE/EN, Texte, Verein, Service Worker), bei sichtbaren Änderungen zusätzlich `bilder.py --gegen main`.
+
+**Fertig, wenn:** Alle Funktionen von vorher gehen; auf iPad hoch/quer und MacBook gut bedienbar; Dark Mode sauber; Drucken nicht schlechter als vorher; alle Texte über `t()` auf DE und EN.
 
 ---
 
@@ -139,7 +148,18 @@ Jedes Spiel bekommt beim ersten Import eine interne ID. Beim nächsten Import, i
 
 ---
 
+## Etappe 9 – Für andere Vereine (nicht umsetzen, nur vormerken)
+- **Verein in der App einstellbar** (Name, Kürzel, Logo …). Die Grundlage aus Etappe 2 ist vorhanden (`js/club.js`, kein „EVZ“ fest im Code, Vereins-Test).
+- **FR und IT freigeben.** Vorher die Fachbegriffe von Schiedsrichtern aus der Romandie bzw. dem Tessin prüfen lassen.
+- **Eventuell eigene Kriterien, Notenstufen und Gewichtung** – erst nach Rückmeldung anderer Vereine bzw. des SIHF.
+- **Lizenz** und **Datenschutz-Seite** für die Weitergabe.
+- **Sichtbare Versionsnummer** und **Änderungsliste** in der App.
+- **Einteilungs-Import** für eine Quelle, die alle Vereine haben (abklären, welche).
+
+---
+
 ## Laufend
 - Bei jeder Änderung an `css/` oder `js/` die Nummer `?v=` in `index.html` erhöhen (Hook prüft es).
+- Nach jeder Änderung `python3 tests/tools/alle-tests.py` laufen lassen.
 - Versionsnummer in der Fusszeile nachführen.
 - README aktuell halten.
