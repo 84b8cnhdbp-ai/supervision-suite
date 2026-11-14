@@ -1,0 +1,59 @@
+<!doctype html><meta charset="utf-8"><title>SW-Test</title>
+<body><iframe id="f" style="width:1194px;height:900px;border:0"></iframe>
+<script>
+const f = document.getElementById('f'), sleep = ms => new Promise(r => setTimeout(r, ms));
+const SC = new URLSearchParams(location.search).get('s');
+const mode = m => fetch('/__mode', { method: 'POST', body: JSON.stringify(m) });
+const ONLINE = { online: true, label: 'alt', bump: false, delayAll: 0, delayAssets: 0 };
+async function nav() {
+  const t0 = performance.now();
+  await new Promise(res => { f.onload = res; f.src = '/index.html?t=' + Math.random(); });
+  const ms = Math.round(performance.now() - t0);
+  await sleep(700);
+  return ms;
+}
+function probe(label, ms) {
+  const w = f.contentWindow, d = w.document, cs = w.getComputedStyle(d.body);
+  const meta = d.querySelector('meta[name=sw-test]');
+  const js = (w.__swv || []).map(s => s.split(':')[0]);
+  const html = meta ? meta.content : '?', css = cs.getPropertyValue('--sw-test').trim() || '?';
+  const all = [html, css, ...js];
+  return { label, ms, html, css, js: [...new Set(js)].join(',') + ` (${js.length}/8)`,
+    einheitlich: js.length === 8 && all.every(v => v === html),
+    vollstaendig: js.length === 8 && css !== '?' && d.querySelectorAll('#tabsContainer button').length > 0 && typeof w.computeRefScores === 'function',
+    badge: (d.getElementById('pwaBadge') || {}).innerText,
+    sw: !!w.navigator.serviceWorker.controller };
+}
+async function install() {
+  await mode(ONLINE); await nav();
+  for (let i = 0; i < 100; i++) {
+    if (f.contentWindow.navigator.serviceWorker.controller && await caches.match('/index.html')) { await sleep(300); return; }
+    await sleep(200);
+  }
+  throw new Error('Service Worker hat die Seite nach 20 s nicht übernommen');
+}
+const step = async (out, label, m) => { if (m) await mode(m); out.push(probe(label, await nav())); };
+const NEU = { ...ONLINE, label: 'neu', bump: true };
+const SCEN = {
+  'uebergang-v6': async o => {
+      await install(); const w = f.contentWindow;
+      o.push({ label: 'alter Stand installiert', ms: 0, html: '-', css: '-', js: '-', einheitlich: true,
+               vollstaendig: typeof w.computeRefScores === 'function' && !!w.navigator.serviceWorker.controller, badge: (await caches.keys()).join(',') });
+      await step(o, 'neue Version auf Server, 1. Start', { ...ONLINE, neu: true });
+      await sleep(3000);
+      await step(o, '2. Start'); await step(o, 'offline', { online: false });
+      o.push({ label: 'Caches danach', ms: 0, html: '-', css: '-', js: '-', einheitlich: true, vollstaendig: true, badge: (await caches.keys()).join(',') }); },
+  'online-update': async o => { await install(); await step(o, 'online, alter Stand'); await step(o, 'neue Version auf Server (schnell)', NEU); await step(o, 'offline', { online: false }); },
+  'offline': async o => { await install(); await step(o, 'offline', { online: false }); await step(o, 'offline, nochmals', null); },
+  'langsam-alles': async o => { await install(); await step(o, 'neue Version, alles +5 s', { ...NEU, delayAll: 5 });
+      await sleep(12000); await step(o, 'neue Version, alles +5 s, nächster Start'); await step(o, 'offline', { online: false }); },
+  'langsam-css-js': async o => { await install(); await step(o, 'neue Version, Seite schnell, CSS/JS +5 s', { ...NEU, delayAssets: 5 });
+      await sleep(8000); await step(o, 'neue Version, CSS/JS +5 s, nächster Start'); await step(o, 'offline', { online: false }); },
+  'langsam-gleich': async o => { await install(); await step(o, 'alter Stand, alles +5 s (nichts neu)', { ...ONLINE, delayAll: 5 }); },
+  'ohne-erhoehung': async o => { await install(); await step(o, 'neue Version OHNE ?v=-Erhöhung', { ...NEU, bump: false });
+      await step(o, 'nochmals'); await step(o, 'offline', { online: false });
+      await step(o, 'danach ?v= korrekt erhöht', NEU); },
+};
+(async () => { const out = []; try { await SCEN[SC](out); } catch (e) { out.push({ error: String(e.stack || e) }); }
+  await mode(ONLINE); await fetch('/__result', { method: 'POST', body: JSON.stringify(out) }); })();
+</script>

@@ -5,3 +5,7 @@ Bewertungen/
 *_R2_*.json
 *.csv
 .DS_Store
+
+# Testergebnisse und Python-Zwischendateien (nie ins Repo)
+tests/tools/ergebnisse/
+__pycache__/
