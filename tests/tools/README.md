@@ -9,7 +9,8 @@ Alle Befehle im Projektordner ausführen.
 ## Daten-Test – „gleiche Eingaben, gleiche Daten“
 
 ```sh
-python3 tests/tools/daten-test.py              # aktueller Stand gegen main
+python3 tests/tools/daten-test.py                  # aktueller Stand gegen main, Deutsch
+python3 tests/tools/daten-test.py --sprache en     # beide Stände auf Englisch
 python3 tests/tools/daten-test.py --gegen 7c48820
 ```
 
@@ -17,11 +18,25 @@ Lädt das Beispielspiel in den aktuellen Stand **und** in den Vergleichsstand un
 Scores der Beispieldateien, Export-JSON jedes Reiters (Laden → Anzeigen → Speichern), CSV, Saison-Statistik,
 CSV je Schiedsrichter-System, Kader-Import (JSON und TXT) und den `localStorage`.
 Das Aussehen darf sich unterscheiden, die Daten nicht. Ergebnis „0 Unterschiede“ = bestanden.
+Gewollte Abweichungen sind im Test ausdrücklich aufgeführt und werden als „gewollt“ angezeigt
+(seit 2.1b: gespeicherte Rolle/Partner immer deutsch, z. B. „Einzel-Schiedsrichter“ statt „Solo Referee“).
 
 **Test-Schnittstelle** – diese globalen Namen ruft der Test auf; sie bleiben bestehen (oder der Test wird mitgeändert):
 `selectRefTab(i)`, `selectSummaryTab()`, `selectStatsTab()`, `switchSystem(s)`, `exportSingleReviewJSON()`,
 `exportCSV()`, `downloadBlob(blob, name)`, `handleSeasonFilesUpload(e)`, `renderSeasonStatsDashboard(stats)`,
-`handleKaderUpload(e)`, `computeRefScores(d)`, `SYSTEM_CONFIGS`, `currentSystem`.
+`handleKaderUpload(e)`, `computeRefScores(d)`, `saveCurrentRefData()`, `SYSTEM_CONFIGS`, `currentSystem`.
+
+## Texte-Test – Sprachen vollständig?
+
+```sh
+python3 tests/tools/texte-test.py            # FR/IT fehlend = Hinweis
+python3 tests/tools/texte-test.py --streng   # ab Etappe 2.9: FR/IT fehlend = Fehler
+```
+
+Prüft: jeder verwendete Schlüssel (`t('…')`, `data-i18n`) existiert; Englisch hat alle Texte mit gleichen
+Platzhaltern und gleich langen Listen; gespeicherte Werte (`val`) sind in allen Sprachen gleich; jede Rolle hat
+eine englische Bezeichnung; die Sprachwahl bleibt nach Neuladen; `?lang=fr` wird nicht gespeichert und zeigt
+fehlende Texte auf Deutsch; versteckte Sprachen stehen nicht in der Auswahl.
 
 ## Service-Worker-Test – Updates, offline, langsames Netz
 

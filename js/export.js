@@ -18,18 +18,17 @@ function downloadBlob(blob, filename) {
 
 function exportSingleReviewJSON() {
   saveCurrentRefData();
-  const isEn = currentLang === 'en';
   const refConfig = SYSTEM_CONFIGS[currentSystem][activeRefIndex];
   const refKey = `${currentSystem}_${refConfig.id}`;
   const refData = gameData.referees[refKey] || {};
   const sc = computeRefScores(refData);
 
   const missing = [];
-  if (!refData.name) missing.push(isEn ? "Official's name" : "Name Schiedsrichter");
-  if (!gameData.global.spiel_datum) missing.push(isEn ? "Game date" : "Spieldatum");
-  if (sc.part2 === null) missing.push(isEn ? "Overall assessment (Part 2)" : "Gesamteinschätzung (Teil 2)");
+  if (!refData.name) missing.push(t('missing_name'));
+  if (!gameData.global.spiel_datum) missing.push(t('missing_date'));
+  if (sc.part2 === null) missing.push(t('missing_grade'));
   if (missing.length) {
-    alert((isEn ? "Cannot save review. Missing:\n• " : "Review kann nicht gespeichert werden. Es fehlt:\n• ") + missing.join("\n• "));
+    alert(t('export_missing') + "\n• " + missing.join("\n• "));
     return;
   }
 
@@ -65,26 +64,24 @@ function exportSingleReviewJSON() {
 
 function exportCSV() {
   if (activeTabType === "ref") saveCurrentRefData();
-  const isEn = currentLang === 'en';
+  // CSV ist ein Bericht: Spaltentitel und Rollen in der gewählten Sprache, Werte deutsch
   const rows = [
-    [isEn ? "Game-ID" : "Spiel-ID", gameData.global.spiel_id || ""],
-    [isEn ? "League" : "Liga", gameData.global.spiel_liga || ""],
-    [isEn ? "Matchup" : "Begegnung", gameData.global.spiel_paarung || ""],
-    [isEn ? "Date" : "Datum", gameData.global.spiel_datum || ""],
-    [isEn ? "Arena" : "Ort", gameData.global.spiel_ort || ""],
-    [isEn ? "Supervisor" : "Supervisor", gameData.global.supervisor_name || ""],
-    [isEn ? "System" : "System", currentSystem],
-    [isEn ? "Crew Notes" : "Gespann-Notizen", (gameData.global.crew_notes || "").replace(/\n/g, ' ')],
+    [t('csv_game_id'), gameData.global.spiel_id || ""],
+    [t('csv_league'), gameData.global.spiel_liga || ""],
+    [t('csv_matchup'), gameData.global.spiel_paarung || ""],
+    [t('csv_date'), gameData.global.spiel_datum || ""],
+    [t('csv_arena'), gameData.global.spiel_ort || ""],
+    [t('csv_supervisor'), gameData.global.supervisor_name || ""],
+    [t('csv_system'), currentSystem],
+    [t('csv_crew_notes'), (gameData.global.crew_notes || "").replace(/\n/g, ' ')],
     [],
-    isEn
-      ? ["Role", "Name", "Review", "Total Score", "Overall Grade", "Skating", "Positioning", "Presence", "Anticipation", "De-escalation", "Teamwork", "Rules", "Trend", "Attitude", "Feedback", "Top Strengths", "Work On", "Rapport"]
-      : ["Rolle", "Name", "Review", "Gesamtscore", "Gesamteinschätzung", "Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln", "Trend", "Einstellung", "Feedback", "Top Stärken", "Entwicklung", "Rapport"]
+    t('csv_headers')
   ];
 
   const refs = SYSTEM_CONFIGS[currentSystem];
   refs.forEach(ref => {
     const d = gameData.referees[`${currentSystem}_${ref.id}`] || {};
-    const roleText = isEn ? ref.role_en : ref.role_de;
+    const roleText = rolle(ref);
     rows.push([
       roleText,
       d.name || "",

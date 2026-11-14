@@ -1,7 +1,6 @@
 // Darstellung: 'auto' (folgt dem System), 'light' oder 'dark'.
 // Wird im <head> geladen, damit beim Start nichts kurz hell aufblitzt.
 const THEME_KEY = 'referee_theme_preference';
-const THEME_NAMEN = { auto: 'Auto', light: 'Hell', dark: 'Dunkel' };
 
 function getThemePref() {
   try {

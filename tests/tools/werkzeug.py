@@ -224,7 +224,7 @@ class Browser:
 LEER = ('text/html', b'<!doctype html><meta charset="utf-8"><title>leer</title>')
 
 
-def daten_setzen(b, basis, spiel=True, theme=None):
+def daten_setzen(b, basis, spiel=True, theme=None, sprache=None):
     """Setzt Kader und (optional) das Beispielspiel im localStorage, bevor die App lädt."""
     b.oeffnen(basis + '/__leer', warten=0)
     b.js("""(async () => {
@@ -233,6 +233,8 @@ def daten_setzen(b, basis, spiel=True, theme=None):
       localStorage.setItem('referee_kader', JSON.stringify(kader.schiedsrichter));
       %s
       %s
+      %s
     })()""" % (
         "localStorage.setItem('referee_multi_supervision_data', JSON.stringify(await (await fetch('/tests/fixtures/beispiel-spiel.json')).json()));" if spiel else '',
-        f"localStorage.setItem('referee_theme_preference', {json.dumps(theme)});" if theme else ''))
+        f"localStorage.setItem('referee_theme_preference', {json.dumps(theme)});" if theme else '',
+        f"localStorage.setItem('referee_lang_preference', {json.dumps(sprache)});" if sprache else ''))

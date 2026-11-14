@@ -15,6 +15,7 @@ let gameData = {
 
 function initApp() {
   loadLanguagePreference();
+  renderLanguageSelect();
   loadTheme();
   loadFullState();
   setupRefereeDropdown();
@@ -31,14 +32,13 @@ function initApp() {
 
 function setupRefereeDropdown() {
   const sel = document.getElementById('current_schiri_name');
-  sel.innerHTML = '<option value="">-- Schiedsrichter wählen --</option>';
-  if (!KADER.length) {
-    sel.innerHTML = '<option value="">-- Zuerst Kader importieren --</option>';
-  }
+  sel.innerHTML = '';
+  const leer = document.createElement('option');
+  leer.value = '';
+  leer.textContent = KADER.length ? t('kader_choose') : t('kader_first');
+  sel.appendChild(leer);
   const info = document.getElementById('kaderInfo');
-  if (info) info.innerText = KADER.length
-    ? (currentLang === 'en' ? `Roster: ${KADER.length} (update)` : `Kader: ${KADER.length} (aktualisieren)`)
-    : (currentLang === 'en' ? 'Import roster' : 'Kader importieren');
+  if (info) info.innerText = KADER.length ? t('kader_count', { n: KADER.length }) : t('kader_import');
   KADER.forEach(name => {
     const opt = document.createElement('option');
     opt.value = name;
@@ -47,7 +47,7 @@ function setupRefereeDropdown() {
   });
   const optOther = document.createElement('option');
   optOther.value = "_CUSTOM_";
-  optOther.textContent = "✎ Anderer / Externer Schiedsrichter...";
+  optOther.textContent = t('kader_other');
   sel.appendChild(optOther);
 }
 
@@ -77,7 +77,7 @@ function toggleTheme() {
 
 function updateThemeButton() {
   const btn = document.getElementById('themeToggle');
-  if (btn) btn.innerText = 'Darstellung: ' + THEME_NAMEN[getThemePref()];
+  if (btn) btn.innerText = t('theme_label') + ': ' + t('theme_' + getThemePref());
 }
 
 // Netzdiagramme neu zeichnen (Farben kommen aus den CSS-Variablen)
@@ -108,10 +108,8 @@ function renderTabs() {
   const tabsContainer = document.getElementById('tabsContainer');
   tabsContainer.innerHTML = "";
   const refs = SYSTEM_CONFIGS[currentSystem];
-  const dict = I18N[currentLang];
-
   refs.forEach((ref, index) => {
-    const roleText = currentLang === "en" ? ref.role_en : ref.role_de;
+    const roleText = escapeHtml(rolle(ref));
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'tab-btn' + (activeTabType === "ref" && index === activeRefIndex ? ' active' : '');
@@ -124,7 +122,7 @@ function renderTabs() {
     const sumBtn = document.createElement('button');
     sumBtn.type = 'button';
     sumBtn.className = 'tab-btn tab-summary' + (activeTabType === "summary" ? ' active' : '');
-    sumBtn.innerHTML = `<span>${dict.txt_tab_crew}</span>`;
+    sumBtn.innerHTML = `<span>${escapeHtml(t('txt_tab_crew'))}</span>`;
     sumBtn.onclick = () => selectSummaryTab();
     tabsContainer.appendChild(sumBtn);
   }
@@ -132,11 +130,11 @@ function renderTabs() {
   const statBtn = document.createElement('button');
   statBtn.type = 'button';
   statBtn.className = 'tab-btn tab-stats' + (activeTabType === "stats" ? ' active' : '');
-  statBtn.innerHTML = `<span>${dict.txt_tab_stats}</span>`;
+  statBtn.innerHTML = `<span>${escapeHtml(t('txt_tab_stats'))}</span>`;
   statBtn.onclick = () => selectStatsTab();
   tabsContainer.appendChild(statBtn);
 
-  document.getElementById('currentSystemInfo').innerText = `${currentSystem} (${refs.length} ${currentLang === 'en' ? 'Officials' : 'Schiedsrichter'})`;
+  document.getElementById('currentSystemInfo').innerText = t('system_info', { system: currentSystem, n: refs.length });
 }
 
 function selectRefTab(index) {
@@ -170,54 +168,12 @@ function selectStatsTab() {
 }
 
 function adjustLabelsForRole(refConfig) {
-  const isLines = refConfig.type === 'lines';
-  const isEn = currentLang === 'en';
-
-  if (isLines) {
-    document.getElementById('lbl_perf_1').innerHTML = isEn
-      ? `<strong>1. Skating & Physical Stamina</strong><br><small style="color:var(--text-muted);">Mobility, agility, backwards acceleration</small>`
-      : `<strong>1. Eislaufen & Physis</strong><br><small style="color:var(--text-muted);">Agilität, Mobilität, Rückwärtslaufen, Fitness</small>`;
-    document.getElementById('lbl_perf_2').innerHTML = isEn 
-      ? `<strong>2. Positioning & Line Judgment</strong><br><small style="color:var(--text-muted);">Blue line tight offsides, icing assessment</small>`
-      : `<strong>2. Positionsspiel & Linienkontrolle</strong><br><small style="color:var(--text-muted);">Blaue Linie bei knappen Offsides, Icing-Beurteilung</small>`;
-    document.getElementById('lbl_perf_3').innerHTML = isEn
-      ? `<strong>3. Whistle, Face-Offs & Signals</strong><br><small style="color:var(--text-muted);">Puck drop technique, face-off conduct, signals</small>`
-      : `<strong>3. Pfiff, Bully-Präsenz & Signale</strong><br><small style="color:var(--text-muted);">Korrektes Anspiel, Bully-Conduct, Zeichen Icing/Abseits</small>`;
-    document.getElementById('lbl_perf_4').innerHTML = isEn
-      ? `<strong>4. Anticipation & Play Reading</strong><br><small style="color:var(--text-muted);">Reading dump-ins, deflections, off-puck fouls</small>`
-      : `<strong>4. Antizipation & Spielaufmerksamkeit</strong><br><small style="color:var(--text-muted);">Spielzüge lesen, Off-Puck Play, Gefahren</small>`;
-    document.getElementById('lbl_perf_5').innerHTML = isEn
-      ? `<strong>5. Scrum Management & Intervention</strong><br><small style="color:var(--text-muted);">Fast separation of players, net-front safety</small>`
-      : `<strong>5. Deeskalation & Scrum-Intervention</strong><br><small style="color:var(--text-muted);">Schnelles Trennen von Spielern, Torraumabsicherung</small>`;
-    document.getElementById('lbl_perf_6').innerHTML = isEn
-      ? `<strong>6. Teamwork & Communication</strong><br><small style="color:var(--text-muted);">Partner eye contact, communication with benches</small>`
-      : `<strong>6. Teamwork & Kommunikation</strong><br><small style="color:var(--text-muted);">Gespann-Abstimmung, Dialog mit Captains/Coaches</small>`;
-    document.getElementById('lbl_perf_7').innerHTML = isEn
-      ? `<strong>7. Rule Application (Offside / Icing / Handpass)</strong><br><small style="color:var(--text-muted);">Precision on lines & high-stick puck touches</small>`
-      : `<strong>7. Regelanwendung (Abseits / Icing / Handpass)</strong><br><small style="color:var(--text-muted);">Präzision bei Linienentscheiden & Puckkontakt</small>`;
-  } else {
-    document.getElementById('lbl_perf_1').innerHTML = isEn
-      ? `<strong>1. Skating & Physical Stamina</strong><br><small style="color:var(--text-muted);">Speed, agility, backwards mobility over 60 min</small>`
-      : `<strong>1. Eislaufen & Physis</strong><br><small style="color:var(--text-muted);">Agilität, Mobilität, Rückwärtslaufen, Fitness</small>`;
-    document.getElementById('lbl_perf_2').innerHTML = isEn
-      ? `<strong>2. Positioning & Sightlines</strong><br><small style="color:var(--text-muted);">Goal line ahead of play, net-front position, sightlines</small>`
-      : `<strong>2. Positionsspiel & Sichtachsen</strong><br><small style="color:var(--text-muted);">Torlinie vor Spielzug, Net-Front-Position, Blickfeld</small>`;
-    document.getElementById('lbl_perf_3').innerHTML = isEn
-      ? `<strong>3. Whistle, Signals & Body Language</strong><br><small style="color:var(--text-muted);">Sharp whistle, authoritative signals, upright posture</small>`
-      : `<strong>3. Pfiff, Zeichengebung & Präsenz</strong><br><small style="color:var(--text-muted);">Prägnanz, klare Signale, aufrechte Körpersprache</small>`;
-    document.getElementById('lbl_perf_4').innerHTML = isEn
-      ? `<strong>4. Anticipation & Game Awareness</strong><br><small style="color:var(--text-muted);">Reading plays, anticipating contact, awareness</small>`
-      : `<strong>4. Antizipation & Spielaufmerksamkeit</strong><br><small style="color:var(--text-muted);">Spielzüge lesen, Off-Puck Play, Gefahren</small>`;
-    document.getElementById('lbl_perf_5').innerHTML = isEn
-      ? `<strong>5. De-escalation & Post-Whistle Control</strong><br><small style="color:var(--text-muted);">Protecting goalies, stopping scrums immediately</small>`
-      : `<strong>5. Deeskalation & Post-Whistle Management</strong><br><small style="color:var(--text-muted);">Torraumabsicherung, Rudelbildungen unterbinden</small>`;
-    document.getElementById('lbl_perf_6').innerHTML = isEn
-      ? `<strong>6. Teamwork & Communication</strong><br><small style="color:var(--text-muted);">Crew coordination, respectful bench dialogue</small>`
-      : `<strong>6. Teamwork & Kommunikation</strong><br><small style="color:var(--text-muted);">Gespann-Abstimmung, Dialog mit Captains/Coaches</small>`;
-    document.getElementById('lbl_perf_7').innerHTML = isEn
-      ? `<strong>7. Penalty Standard & Rulebook Adherence</strong><br><small style="color:var(--text-muted);">60-min consistency, adherence to official rulebook</small>`
-      : `<strong>7. Strafmassstab & Regelanwendung</strong><br><small style="color:var(--text-muted);">Konstanz über 60 Min., Offizielles Regelbuch & Weisungen</small>`;
-  }
+  // Kriterien-Texte je Rolle (Linesperson hat eigene Texte)
+  const kriterien = t(refConfig.type === 'lines' ? 'crit_lines' : 'crit_head');
+  kriterien.forEach((k, i) => {
+    document.getElementById(`lbl_perf_${i + 1}`).innerHTML =
+      `<strong>${escapeHtml(k.t)}</strong><br><small style="color:var(--text-muted);">${escapeHtml(k.s)}</small>`;
+  });
 }
 
 function getEffectiveRefName() {
@@ -234,26 +190,23 @@ function updatePartnerField() {
   const currentRefConfig = SYSTEM_CONFIGS[currentSystem][activeRefIndex];
   if (!currentRefConfig) return;
 
-  const partners = [];
-  const refs = SYSTEM_CONFIGS[currentSystem];
+  // Anzeige in der gewählten Sprache; gespeichert wird partnerText(true) (immer deutsch)
+  document.getElementById('current_schiri_partner').value = partnerText(false);
+}
 
-  refs.forEach((ref, idx) => {
+// Partner des aktiven Reiters als Text. deutsch=true: Wert zum Speichern (sprachunabhängig).
+function partnerText(deutsch) {
+  const partners = [];
+  SYSTEM_CONFIGS[currentSystem].forEach((ref, idx) => {
     if (idx !== activeRefIndex) {
-      const partnerKey = `${currentSystem}_${ref.id}`;
-      const pData = gameData.referees[partnerKey];
+      const pData = gameData.referees[`${currentSystem}_${ref.id}`];
       if (pData && pData.name && pData.name.trim()) {
-        const roleText = currentLang === 'en' ? ref.role_en : ref.role_de;
-        partners.push(`${pData.name} (${roleText})`);
+        partners.push(`${pData.name} (${deutsch ? ref.role_de : rolle(ref)})`);
       }
     }
   });
-
-  const partnerField = document.getElementById('current_schiri_partner');
-  if (partners.length > 0) {
-    partnerField.value = partners.join(", ");
-  } else {
-    partnerField.value = "Noch keine Partner in den anderen Reitern erfasst";
-  }
+  if (partners.length > 0) return partners.join(", ");
+  return deutsch ? I18N.de.partner_none : t('partner_none');
 }
 
 // AUTOMATISCHES SPIEGELN VON ORT & DATUM
@@ -299,7 +252,7 @@ function handleGlobalSupervisorChange() {
 
 function loadRefereeForm(index) {
   const refConfig = SYSTEM_CONFIGS[currentSystem][index];
-  const roleName = currentLang === 'en' ? refConfig.role_en : refConfig.role_de;
+  const roleName = rolle(refConfig);
   document.getElementById('activeRefLabel').innerText = roleName;
   adjustLabelsForRole(refConfig);
 
@@ -362,10 +315,10 @@ function saveCurrentRefData() {
   const selectedGrade = document.querySelector('input[name="overall_grade"]:checked');
 
   const data = {
-    role: currentLang === 'en' ? refConfig.role_en : refConfig.role_de,
+    role: refConfig.role_de,              // gespeicherte Werte immer deutsch
     name: getEffectiveRefName(),
     review_round: document.getElementById('current_review_round').value,
-    partner: document.getElementById('current_schiri_partner').value,
+    partner: partnerText(true),
     overall_grade: selectedGrade ? selectedGrade.value : "",
     coach_trend: document.getElementById('coach_trend').value,
     coach_attitude: document.getElementById('coach_attitude').value,
@@ -388,10 +341,7 @@ function saveCurrentRefData() {
 
 function addTimestamp(targetId) {
   const field = document.getElementById(targetId);
-  const promptMsg = currentLang === 'en' 
-    ? "Enter Period & Game Clock (e.g. 'P2 08:34'):"
-    : "Drittel & Spielminute eingeben (z. B. 'P2 08:34'):";
-  const stamp = prompt(promptMsg, "P1 00:00");
+  const stamp = prompt(t('stamp_prompt'), "P1 00:00");
   if (stamp) {
     field.value += (field.value.trim() ? "\n" : "") + "[" + stamp + "] ";
     field.focus();
@@ -412,7 +362,8 @@ function readFormData() {
 }
 
 function calcScores(shouldSave = true) {
-  const dict = I18N[currentLang];
+  const dict = { status_missing: t('status_missing'), status_exc: t('status_exc'), status_good: t('status_good'),
+    status_sat: t('status_sat'), status_ni: t('status_ni'), status_unsat: t('status_unsat') };
   const sc = computeRefScores(readFormData());
   const fmt = v => v === null ? "–" : v + "%";
 
@@ -432,12 +383,12 @@ function calcScores(shouldSave = true) {
     ampelDot.style.boxShadow = `0 0 0 3px var(--accent-soft)`;
   };
   // Schwellen unverändert; Farben = Bewertungsfarben aus css/app.css
-  const t = sc.total;
-  if (t === null) setAmpel(dict.status_missing, '--r-none');
-  else if (t > 80) setAmpel(dict.status_exc, '--r-pp');
-  else if (t >= 75) setAmpel(dict.status_good, '--r-p');
-  else if (t >= 60) setAmpel(dict.status_sat, '--r-solid');
-  else if (t >= 45) setAmpel(dict.status_ni, '--r-m');
+  const total = sc.total;
+  if (total === null) setAmpel(dict.status_missing, '--r-none');
+  else if (total > 80) setAmpel(dict.status_exc, '--r-pp');
+  else if (total >= 75) setAmpel(dict.status_good, '--r-p');
+  else if (total >= 60) setAmpel(dict.status_sat, '--r-solid');
+  else if (total >= 45) setAmpel(dict.status_ni, '--r-m');
   else setAmpel(dict.status_unsat, '--r-mm');
 
   drawRadar('radarChart', sc.radar);
@@ -456,8 +407,8 @@ function renderSummaryView() {
 
   refs.forEach((ref, idx) => {
     const d = gameData.referees[`${currentSystem}_${ref.id}`] || getDefaultRefData();
-    const roleText = currentLang === 'en' ? ref.role_en : ref.role_de;
-    
+    const roleText = rolle(ref);
+
     const sc = computeRefScores(d);
     sc.radar.forEach((v, i) => { if (v !== null) { avgScores7[i] += v; radarCounts[i]++; } });
     const p2 = sc.part2, p3 = sc.part3, p4 = sc.part4, refScore = sc.total;
@@ -467,9 +418,9 @@ function renderSummaryView() {
     card.className = "summary-card";
     card.innerHTML = `
       <h3>${escapeHtml(roleText)}</h3>
-      <div class="name">${d.name ? escapeHtml(d.name) : (currentLang === 'en' ? "<i>Unnamed Official</i>" : "<i>Kein Name</i>")}</div>
+      <div class="name">${d.name ? escapeHtml(d.name) : `<i>${escapeHtml(t('summary_no_name'))}</i>`}</div>
       <div class="score">${fmt(refScore)}</div>
-      <div style="font-size: 11px; color: var(--text-muted);">${currentLang === 'en' ? 'Grade' : 'Note'}: ${fmt(p2)} | Matrix: ${fmt(p3)} | Coach: ${fmt(p4)}</div>
+      <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(t('summary_grade'))}: ${fmt(p2)} | Matrix: ${fmt(p3)} | Coach: ${fmt(p4)}</div>
     `;
     container.appendChild(card);
   });
@@ -490,7 +441,7 @@ function drawRadar(canvasId, scores) {
   const cx = w / 2;
   const cy = h / 2;
   const radius = Math.min(cx, cy) - 16;
-  const labels = I18N[currentLang].radar_labels;
+  const labels = t('radar_labels');
   const total = labels.length;
 
   // Farben aus den CSS-Variablen (hell/dunkel)
@@ -566,10 +517,7 @@ function drawRadar(canvasId, scores) {
 }
 
 function resetAll() {
-  const confirmMsg = currentLang === 'en'
-    ? "Reset the entire game evaluation and all officiating tabs?"
-    : "Möchten Sie das gesamte Spiel und alle Schiedsrichter-Reiter zurücksetzen?";
-  if (confirm(confirmMsg)) {
+  if (confirm(t('reset_confirm'))) {
     localStorage.removeItem('referee_multi_supervision_data');
     location.reload();
   }

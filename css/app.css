@@ -144,6 +144,7 @@ header {
   cursor: pointer;
 }
 .btn-control:hover { background: var(--seg); }
+.lang-select { width: auto; min-width: 120px; font-size: 13px; font-weight: 600; }
 
 .kader-import { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; color: var(--accent); cursor: pointer; font-weight: 600; text-transform: none; letter-spacing: 0; }
 .kader-import:hover { text-decoration: underline; }

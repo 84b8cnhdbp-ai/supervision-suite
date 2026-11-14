@@ -15,13 +15,13 @@ function loadKader() {
 }
 
 function parseKaderFile(text) {
-  const t = text.trim();
+  const inhalt = text.trim();
   let names = [];
-  if (t.startsWith('{') || t.startsWith('[')) {
-    const json = JSON.parse(t);
+  if (inhalt.startsWith('{') || inhalt.startsWith('[')) {
+    const json = JSON.parse(inhalt);
     names = Array.isArray(json) ? json : (json.schiedsrichter || json.referees || json.kader || []);
   } else {
-    names = t.split(/\r?\n/);
+    names = inhalt.split(/\r?\n/);
   }
   return Array.from(new Set(names
     .map(n => String(n).normalize('NFC').trim())
@@ -39,11 +39,9 @@ async function handleKaderUpload(e) {
     localStorage.setItem(KADER_STORAGE_KEY, JSON.stringify(KADER));
     setupRefereeDropdown();
     if (activeTabType === 'ref') loadRefereeForm(activeRefIndex);
-    alert((currentLang === 'en' ? 'Roster imported: ' : 'Kader importiert: ') + KADER.length + (currentLang === 'en' ? ' officials' : ' Schiedsrichter'));
+    alert(t('kader_imported', { n: KADER.length }));
   } catch (err) {
-    alert(currentLang === 'en'
-      ? 'Could not read roster file. Expected JSON ({"schiedsrichter": [...]} or [...]) or one name per line.'
-      : 'Kaderdatei konnte nicht gelesen werden. Erwartet: JSON ({"schiedsrichter": [...]} oder [...]) oder ein Name pro Zeile.');
+    alert(t('kader_error'));
   }
   e.target.value = '';
 }
@@ -77,7 +75,7 @@ function saveToStorage() {
   localStorage.setItem('referee_multi_supervision_data', JSON.stringify(gameData));
   const status = document.getElementById('saveStatus');
   if (status) {
-    status.innerText = (currentLang === 'en' ? "Auto-Saved (" : "Auto-Gespeichert (") + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'}) + ")";
+    status.innerText = t('saved_status', { zeit: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'}) });
   }
 }
 
