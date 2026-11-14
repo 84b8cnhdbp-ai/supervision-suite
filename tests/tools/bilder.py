@@ -44,9 +44,12 @@ def fotografieren(wurzel, ziel):
                         b.js(aktion)
                         b.js('new Promise((r) => setTimeout(r, 300))')
                         b.bild(os.path.join(ziel, f'{aname}_{gname}_{schema}.png'))
-            b.fenster(1194, 834, 'light', druck=True)
-            daten_setzen(b, srv.basis, spiel=True)
-            b.oeffnen(srv.basis + '/index.html')
+            # Druck: als PDF und als Bild der Druckansicht (A4-Breite); auch bei Darstellung "Dunkel" muss er hell sein
+            for schema in SCHEMEN:
+                b.fenster(794, 1123, schema, druck=True)
+                daten_setzen(b, srv.basis, spiel=True, theme='dark' if schema == 'dark' else None)
+                b.oeffnen(srv.basis + '/index.html')
+                b.bild(os.path.join(ziel, f'druck_a4_{schema}.png'))
             b.pdf(os.path.join(ziel, 'druck_head-referee.pdf'))
             fehler = [f for f in b.fehler if 'Update nicht möglich' not in f]
     finally:
@@ -61,6 +64,12 @@ def uebersicht(ordner, staende):
               'figcaption{font-weight:600;margin-bottom:6px}img{max-width:560px;border:1px solid #ccc;display:block}</style>',
               '<h1>Bildschirmfotos</h1><p>Druck-PDF: ' +
               ' · '.join(f'<a href="{s}/druck_head-referee.pdf">{html.escape(s)}</a>' for s in staende) + '</p>']
+    for schema in SCHEMEN:
+        datei = f'druck_a4_{schema}.png'
+        zeilen.append(f'<h2>Druckansicht A4 · Darstellung {"dunkel" if schema == "dark" else "hell"}</h2><div class="reihe">')
+        for s in staende:
+            zeilen.append(f'<figure><figcaption>{html.escape(s)}</figcaption><a href="{s}/{datei}"><img src="{s}/{datei}" loading="lazy"></a></figure>')
+        zeilen.append('</div>')
     for aname, _ in ANSICHTEN:
         for gname, w, h in GROESSEN:
             for schema in SCHEMEN:
@@ -91,7 +100,7 @@ def main():
     for f in fehler:
         print('JS-Fehler/Warnung:', f)
     n = len(GROESSEN) * len(SCHEMEN) * len(ANSICHTEN)
-    print(f'{n} Bilder je Stand + Druck-PDF → {os.path.join(ordner, "uebersicht.html")}')
+    print(f'{n} Bilder + 2 Druckansichten je Stand + Druck-PDF → {os.path.join(ordner, "uebersicht.html")}')
 
 
 if __name__ == '__main__':

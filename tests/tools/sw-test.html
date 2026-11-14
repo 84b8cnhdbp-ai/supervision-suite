@@ -16,11 +16,12 @@ function probe(label, ms) {
   const w = f.contentWindow, d = w.document, cs = w.getComputedStyle(d.body);
   const meta = d.querySelector('meta[name=sw-test]');
   const js = (w.__swv || []).map(s => s.split(':')[0]);
+  const erwartet = d.querySelectorAll('script[src]').length;   // alle eingebundenen JS-Dateien
   const html = meta ? meta.content : '?', css = cs.getPropertyValue('--sw-test').trim() || '?';
   const all = [html, css, ...js];
-  return { label, ms, html, css, js: [...new Set(js)].join(',') + ` (${js.length}/8)`,
-    einheitlich: js.length === 8 && all.every(v => v === html),
-    vollstaendig: js.length === 8 && css !== '?' && d.querySelectorAll('#tabsContainer button').length > 0 && typeof w.computeRefScores === 'function',
+  return { label, ms, html, css, js: [...new Set(js)].join(',') + ` (${js.length}/${erwartet})`,
+    einheitlich: js.length === erwartet && all.every(v => v === html),
+    vollstaendig: js.length === erwartet && css !== '?' && d.querySelectorAll('#tabsContainer button').length > 0 && typeof w.computeRefScores === 'function',
     badge: (d.getElementById('pwaBadge') || {}).innerText,
     sw: !!w.navigator.serviceWorker.controller };
 }
