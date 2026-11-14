@@ -275,7 +275,7 @@ function loadRefereeForm(index) {
     custom.value = "";
   }
 
-  document.getElementById('current_review_round').value = data.review_round || "R1";
+  setzeSeg('current_review_round', data.review_round || "R1");
 
   const radios = document.querySelectorAll('input[name="overall_grade"]');
   radios.forEach(r => {
@@ -283,13 +283,13 @@ function loadRefereeForm(index) {
   });
 
   for (let i = 1; i <= 7; i++) {
-    document.getElementById(`perf_${i}`).value = data[`perf_${i}`] || "80";
+    setzeSeg(`perf_${i}`, data[`perf_${i}`] || "80");
     document.getElementById(`note_${i}`).value = data[`note_${i}`] || "";
   }
 
-  if (data.coach_trend) document.getElementById('coach_trend').value = data.coach_trend;
-  if (data.coach_attitude) document.getElementById('coach_attitude').value = data.coach_attitude;
-  if (data.coach_feedback) document.getElementById('coach_feedback').value = data.coach_feedback;
+  if (data.coach_trend) setzeSeg('coach_trend', data.coach_trend);
+  if (data.coach_attitude) setzeSeg('coach_attitude', data.coach_attitude);
+  if (data.coach_feedback) setzeSeg('coach_feedback', data.coach_feedback);
 
   document.getElementById('top_strengths').value = data.top_strengths || "";
   document.getElementById('top_workon').value = data.top_workon || "";
@@ -317,12 +317,12 @@ function saveCurrentRefData() {
   const data = {
     role: refConfig.role_de,              // gespeicherte Werte immer deutsch
     name: getEffectiveRefName(),
-    review_round: document.getElementById('current_review_round').value,
+    review_round: segWert('current_review_round'),
     partner: partnerText(true),
     overall_grade: selectedGrade ? selectedGrade.value : "",
-    coach_trend: document.getElementById('coach_trend').value,
-    coach_attitude: document.getElementById('coach_attitude').value,
-    coach_feedback: document.getElementById('coach_feedback').value,
+    coach_trend: segWert('coach_trend'),
+    coach_attitude: segWert('coach_attitude'),
+    coach_feedback: segWert('coach_feedback'),
     top_strengths: document.getElementById('top_strengths').value,
     top_workon: document.getElementById('top_workon').value,
     general_report: document.getElementById('general_report').value,
@@ -331,7 +331,7 @@ function saveCurrentRefData() {
   };
 
   for (let i = 1; i <= 7; i++) {
-    data[`perf_${i}`] = document.getElementById(`perf_${i}`).value;
+    data[`perf_${i}`] = segWert(`perf_${i}`);
     data[`note_${i}`] = document.getElementById(`note_${i}`).value;
   }
 
@@ -353,11 +353,11 @@ function readFormData() {
   const selectedGrade = document.querySelector('input[name="overall_grade"]:checked');
   const d = {
     overall_grade: selectedGrade ? selectedGrade.value : "",
-    coach_trend: document.getElementById('coach_trend').value,
-    coach_attitude: document.getElementById('coach_attitude').value,
-    coach_feedback: document.getElementById('coach_feedback').value
+    coach_trend: segWert('coach_trend'),
+    coach_attitude: segWert('coach_attitude'),
+    coach_feedback: segWert('coach_feedback')
   };
-  for (let i = 1; i <= 7; i++) d[`perf_${i}`] = document.getElementById(`perf_${i}`).value;
+  for (let i = 1; i <= 7; i++) d[`perf_${i}`] = segWert(`perf_${i}`);
   return d;
 }
 
@@ -372,8 +372,7 @@ function calcScores(shouldSave = true) {
   document.getElementById('subScorePart3').innerText = fmt(sc.part3);
   document.getElementById('subScorePart4').innerText = fmt(sc.part4);
 
-  const gradeTable = document.querySelector('input[name="overall_grade"]').closest('table');
-  if (gradeTable) gradeTable.classList.toggle('grade-missing', sc.part2 === null);
+  zeigeStufenText();   // Definition der gewählten Stufe bzw. Hinweis (oranger Rahmen)
 
   const statusText = document.getElementById('scoreStatusText');
   const ampelDot = document.getElementById('ampelDot');

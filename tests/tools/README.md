@@ -13,7 +13,7 @@ python3 tests/tools/alle-tests.py            # alle Tests (ca. 5 Min.)
 python3 tests/tools/alle-tests.py --ohne-sw  # ohne Service-Worker-Test (ca. 1 Min.)
 ```
 
-Führt Daten-Test (Deutsch und Englisch), Texte-Test, Vereins-Test, Fenster-Test und Service-Worker-Test aus und zeigt eine
+Führt Daten-Test (Deutsch und Englisch), Texte-Test, Vereins-Test, Fenster-Test, Knopfreihen-Test und Service-Worker-Test aus und zeigt eine
 Zusammenfassung. Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
 
 ## Daten-Test – „gleiche Eingaben, gleiche Daten“
@@ -69,6 +69,18 @@ Bedient die App mit echten Klicks und Tasten (Enter, Esc), auf Deutsch und Engli
 mehr (im Code und zur Laufzeit); Sichern mit fehlenden Feldern zeigt eine Liste, ein Tipp springt zum Feld;
 Zurücksetzen hat einen roten Knopf, „Abbrechen“ ist vorgewählt und Enter/Esc löschen nichts; Szene mit Spielzeit
 (Enter fügt hinzu, Esc bricht ab); Hinweise bei Kader-Import und übersprungenen Statistik-Dateien.
+
+## Knopfreihen-Test – Segmented Controls
+
+```sh
+python3 tests/tools/knopfreihen-test.py
+```
+
+Auf 834, 1194 und 1440 px, Deutsch und Englisch, Head Referee und Linesperson: jede Knopfreihe ist eine echte
+Radiogruppe mit Namen (VoiceOver), jedes Segment mindestens 44 × 44 px, nichts abgeschnitten, keine waagrechte
+Bildlaufleiste; Reihenfolge vom besten zum schlechtesten Wert (Trend mit „Erstbeobachtung“); Gesamteinschätzung
+ohne Vorwahl mit Hinweis, nach der Wahl mit Definition; jede Option speichert den bisherigen Wert (echter Klick),
+auch nach Neuladen; Pfeiltasten wechseln die Wahl.
 
 ## Service-Worker-Test – Updates, offline, langsames Netz
 

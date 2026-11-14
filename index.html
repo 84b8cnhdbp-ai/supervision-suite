@@ -12,9 +12,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="css/app.css?v=11">
-<script src="js/club.js?v=11"></script>
-<script src="js/theme.js?v=11"></script>
+<link rel="stylesheet" href="css/app.css?v=12">
+<script src="js/club.js?v=12"></script>
+<script src="js/theme.js?v=12"></script>
 </head>
 <body>
 
@@ -39,13 +39,8 @@
   <div style="background: var(--bg-subtle); border-bottom: 1px solid var(--border); padding: 18px 30px;">
     <div class="grid-4" style="margin-bottom: 12px;">
       <div>
-        <label for="system_typ" data-i18n="lbl_system">Schiedsrichter-System</label>
-        <select id="system_typ" onchange="switchSystem(this.value)" style="font-weight: bold; border-color: var(--accent);">
-          <option value="4-Man">4-Mann-System (2 Heads / 2 Lines)</option>
-          <option value="3-Man">3-Mann-System (1 Head / 2 Lines)</option>
-          <option value="2-Man">2-Mann-System (2 Referees)</option>
-          <option value="1-Man">1-Mann-System (1 Solo-Ref)</option>
-        </select>
+        <span class="feld-label" id="lbl_system_typ" data-i18n="lbl_system">Schiedsrichter-System</span>
+        <div data-seg="system_typ" data-seg-label="lbl_system_typ"></div>
       </div>
       <div>
         <label for="spiel_liga" data-i18n="lbl_league">Liga / Stufe</label>
@@ -186,11 +181,8 @@
           </label>
         </div>
         <div>
-          <label for="current_review_round">Supervision Durchgang</label>
-          <select id="current_review_round" onchange="saveCurrentRefData()" style="font-weight: bold;">
-            <option value="R1">Review 1 (Hinrunde)</option>
-            <option value="R2">Review 2 (Rückrunde)</option>
-          </select>
+          <span class="feld-label" id="lbl_current_review_round" data-i18n="lbl_round">Supervision-Durchgang</span>
+          <div data-seg="current_review_round" data-seg-label="lbl_current_review_round"></div>
         </div>
         <div>
           <label for="current_schiri_partner" data-i18n="lbl_partner">Gespann-Partner (Automatisch)</label>
@@ -200,45 +192,20 @@
 
       <!-- 2. GESAMTEINSCHÄTZUNG -->
       <div class="section-title"><span class="num">2</span> <span data-i18n="sec2_title">Gesamteinschätzung (Standard)</span></div>
-      <table>
-        <thead>
-          <tr>
-            <th style="width: 8%; text-align: center;" data-i18n="th_choice">Wahl</th>
-            <th style="width: 25%;" data-i18n="th_grade">Stufe</th>
-            <th data-i18n="th_definition">Definition & Kriterien</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="text-align: center;"><input type="radio" name="overall_grade" value="100" id="grade_sg" onchange="calcScores()"></td>
-            <td><label for="grade_sg" class="radio-row" style="color: var(--green); font-weight: bold;" data-i18n="grade_vg">Sehr Gut</label></td>
-            <td data-i18n="desc_vg">Mutige, korrekte Schlüsselentscheide unter hohem Druck (z. B. doppelte Unterzahl, Torannullierung). Kein Phantom-Pfiff, perfekte Ruhe, erstklassige Spielkontrolle.</td>
-          </tr>
-          <tr>
-            <td style="text-align: center;"><input type="radio" name="overall_grade" value="80" id="grade_gut" onchange="calcScores()"></td>
-            <td><label for="grade_gut" class="radio-row" style="color: var(--navy-light); font-weight: bold;" data-i18n="grade_good">Gut / Zufriedenstellend</label></td>
-            <td data-i18n="desc_good">Ordentlich geleitetes Spiel, Frustrationsniveau tief gehalten, gutes Gespür für Spielfluss. Hält sich bei Bedarf im Hintergrund und ist vor dem Spielzug an der Torlinie.</td>
-          </tr>
-          <tr>
-            <td style="text-align: center;"><input type="radio" name="overall_grade" value="50" id="grade_vb" onchange="calcScores()"></td>
-            <td><label for="grade_vb" class="radio-row" style="color: var(--orange); font-weight: bold;" data-i18n="grade_ni">Verbesserungsbedürftig</label></td>
-            <td data-i18n="desc_ni">Wenig Zugriff aufs Spiel, Über- oder Unterinterpretation von Regeln, macht Routine-Situationen unnötig hektisch oder unkonsequent.</td>
-          </tr>
-          <tr>
-            <td style="text-align: center;"><input type="radio" name="overall_grade" value="20" id="grade_ug" onchange="calcScores()"></td>
-            <td><label for="grade_ug" class="radio-row" style="color: var(--red); font-weight: bold;" data-i18n="grade_unsat">Ungenügend</label></td>
-            <td data-i18n="desc_unsat">Kontrollverlust, gravierende Regelfehlentscheide, erhebliche Sicherheits- oder Eislaufdefizite.</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="grade-box" id="gradeBox">
+        <span class="sr-only" id="lbl_overall_grade" data-i18n="sec2_title">Gesamteinschätzung</span>
+        <div data-seg="overall_grade" data-seg-label="lbl_overall_grade" data-seg-beschreibung="gradeHint"></div>
+        <p class="grade-hinweis" id="gradeHint" aria-live="polite"></p>
+      </div>
 
       <!-- 3. PERFORMANCE MATRIX -->
       <div class="section-title"><span class="num">3</span> <span data-i18n="sec3_title">Leistungs-Checkliste & Rollen-Kriterien</span></div>
-      <table>
+      <p class="seg-legende" data-i18n="perf_legend">++ sehr gut · + gut · – Mängel · –– ungenügend · N/A nicht bewertbar</p>
+      <table class="perf-table">
         <thead>
           <tr>
-            <th style="width: 34%;" data-i18n="th_matrix_area">Bereich & Leitfragen</th>
-            <th style="width: 22%;" data-i18n="th_matrix_rating">Bewertung</th>
+            <th style="width: 30%;" data-i18n="th_matrix_area">Bereich & Leitfragen</th>
+            <th style="width: 34%;" data-i18n="th_matrix_rating">Bewertung</th>
             <th data-i18n="th_matrix_notes">Szenen, Timestamps & Notizen</th>
           </tr>
         </thead>
@@ -246,7 +213,7 @@
           <tr>
             <td id="lbl_perf_1"><strong>1. Eislaufen & Physis</strong><br><small style="color:var(--text-muted);">Agilität, Mobilität, Rückwärtslaufen, Fitness</small></td>
             <td>
-              <select class="perf-select" id="perf_1" onchange="calcScores()"></select>
+              <div data-seg="perf_1" data-seg-label="lbl_perf_1"></div>
             </td>
             <td>
               <button type="button" class="stamp-btn" onclick="addTimestamp('note_1')">+ Drittel/Timestamp</button>
@@ -256,7 +223,7 @@
           <tr>
             <td id="lbl_perf_2"><strong>2. Positionsspiel & Sichtachsen</strong><br><small style="color:var(--text-muted);">Torlinie vor Spielzug, Blaue Linie, Blickfeld</small></td>
             <td>
-              <select class="perf-select" id="perf_2" onchange="calcScores()"></select>
+              <div data-seg="perf_2" data-seg-label="lbl_perf_2"></div>
             </td>
             <td>
               <button type="button" class="stamp-btn" onclick="addTimestamp('note_2')">+ Drittel/Timestamp</button>
@@ -266,7 +233,7 @@
           <tr>
             <td id="lbl_perf_3"><strong>3. Pfiff, Zeichengebung & Präsenz</strong><br><small style="color:var(--text-muted);">Signalgebung, Prägnanz, Körpersprache</small></td>
             <td>
-              <select class="perf-select" id="perf_3" onchange="calcScores()"></select>
+              <div data-seg="perf_3" data-seg-label="lbl_perf_3"></div>
             </td>
             <td>
               <button type="button" class="stamp-btn" onclick="addTimestamp('note_3')">+ Drittel/Timestamp</button>
@@ -276,7 +243,7 @@
           <tr>
             <td id="lbl_perf_4"><strong>4. Antizipation & Spielaufmerksamkeit</strong><br><small style="color:var(--text-muted);">Spielzüge lesen, Off-Puck Play, Gefahren</small></td>
             <td>
-              <select class="perf-select" id="perf_4" onchange="calcScores()"></select>
+              <div data-seg="perf_4" data-seg-label="lbl_perf_4"></div>
             </td>
             <td>
               <button type="button" class="stamp-btn" onclick="addTimestamp('note_4')">+ Drittel/Timestamp</button>
@@ -286,7 +253,7 @@
           <tr>
             <td id="lbl_perf_5"><strong>5. Deeskalation & Post-Whistle</strong><br><small style="color:var(--text-muted);">Torraumabsicherung, Rudelbildungen unterbinden</small></td>
             <td>
-              <select class="perf-select" id="perf_5" onchange="calcScores()"></select>
+              <div data-seg="perf_5" data-seg-label="lbl_perf_5"></div>
             </td>
             <td>
               <button type="button" class="stamp-btn" onclick="addTimestamp('note_5')">+ Drittel/Timestamp</button>
@@ -296,7 +263,7 @@
           <tr>
             <td id="lbl_perf_6"><strong>6. Teamwork & Kommunikation</strong><br><small style="color:var(--text-muted);">Gespann-Abstimmung, Dialog mit Captains/Coaches</small></td>
             <td>
-              <select class="perf-select" id="perf_6" onchange="calcScores()"></select>
+              <div data-seg="perf_6" data-seg-label="lbl_perf_6"></div>
             </td>
             <td>
               <button type="button" class="stamp-btn" onclick="addTimestamp('note_6')">+ Drittel/Timestamp</button>
@@ -306,7 +273,7 @@
           <tr>
             <td id="lbl_perf_7"><strong>7. Regelanwendung & Linientreue</strong><br><small style="color:var(--text-muted);">Strafmassstab bzw. Icing/Offside-Präzision</small></td>
             <td>
-              <select class="perf-select" id="perf_7" onchange="calcScores()"></select>
+              <div data-seg="perf_7" data-seg-label="lbl_perf_7"></div>
             </td>
             <td>
               <button type="button" class="stamp-btn" onclick="addTimestamp('note_7')">+ Drittel/Timestamp</button>
@@ -318,18 +285,18 @@
 
       <!-- 4. COACHING & ENTWICKLUNG -->
       <div class="section-title"><span class="num">4</span> <span data-i18n="sec4_title">Coaching, Trend & Mindset</span></div>
-      <div class="grid-3">
-        <div>
-          <label for="coach_trend" data-i18n="lbl_trend">Leistungsentwicklung / Trend (6.7%)</label>
-          <select id="coach_trend" onchange="calcScores()"></select>
+      <div class="coach-liste">
+        <div class="coach-zeile">
+          <span class="feld-label" id="lbl_coach_trend" data-i18n="lbl_trend">Leistungsentwicklung / Trend (6.7%)</span>
+          <div data-seg="coach_trend" data-seg-label="lbl_coach_trend"></div>
         </div>
-        <div>
-          <label for="coach_attitude" data-i18n="lbl_attitude">Einstellung On-/Off-Ice (6.7%)</label>
-          <select id="coach_attitude" onchange="calcScores()"></select>
+        <div class="coach-zeile">
+          <span class="feld-label" id="lbl_coach_attitude" data-i18n="lbl_attitude">Einstellung On-/Off-Ice (6.7%)</span>
+          <div data-seg="coach_attitude" data-seg-label="lbl_coach_attitude"></div>
         </div>
-        <div>
-          <label for="coach_feedback" data-i18n="lbl_feedback_mind">Feedback-Bereitschaft (6.6%)</label>
-          <select id="coach_feedback" onchange="calcScores()"></select>
+        <div class="coach-zeile">
+          <span class="feld-label" id="lbl_coach_feedback" data-i18n="lbl_feedback_mind">Feedback-Bereitschaft (6.6%)</span>
+          <div data-seg="coach_feedback" data-seg-label="lbl_coach_feedback"></div>
         </div>
       </div>
 
@@ -428,14 +395,15 @@
   </div>
 </div>
 
-<script src="js/i18n.js?v=11"></script>
-<script src="js/dialog.js?v=11"></script>
-<script src="js/config.js?v=11"></script>
-<script src="js/scoring.js?v=11"></script>
-<script src="js/storage.js?v=11"></script>
-<script src="js/ui.js?v=11"></script>
-<script src="js/export.js?v=11"></script>
-<script src="js/stats.js?v=11"></script>
-<script src="js/app.js?v=11"></script>
+<script src="js/i18n.js?v=12"></script>
+<script src="js/dialog.js?v=12"></script>
+<script src="js/segment.js?v=12"></script>
+<script src="js/config.js?v=12"></script>
+<script src="js/scoring.js?v=12"></script>
+<script src="js/storage.js?v=12"></script>
+<script src="js/ui.js?v=12"></script>
+<script src="js/export.js?v=12"></script>
+<script src="js/stats.js?v=12"></script>
+<script src="js/app.js?v=12"></script>
 </body>
 </html>

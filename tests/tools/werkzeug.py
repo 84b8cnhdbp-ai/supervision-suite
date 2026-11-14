@@ -207,10 +207,11 @@ class Browser:
             raise RuntimeError('JS-Fehler: ' + r['exceptionDetails'].get('exception', {}).get('description', str(r['exceptionDetails'])))
         return r['result'].get('value')
 
-    TASTEN = {'Enter': ('Enter', 13, '\r'), 'Escape': ('Escape', 27, ''), 'Tab': ('Tab', 9, '')}
+    TASTEN = {'Enter': ('Enter', 13, '\r'), 'Escape': ('Escape', 27, ''), 'Tab': ('Tab', 9, ''),
+              'ArrowRight': ('ArrowRight', 39, ''), 'ArrowLeft': ('ArrowLeft', 37, ''), ' ': ('Space', 32, ' ')}
 
     def taste(self, name):
-        """Echter Tastendruck (wie auf der Tastatur): 'Enter', 'Escape', 'Tab'."""
+        """Echter Tastendruck (wie auf der Tastatur): 'Enter', 'Escape', 'Tab', 'ArrowRight', 'ArrowLeft', ' '."""
         code, vk, text = self.TASTEN[name]
         self.befehl('Input.dispatchKeyEvent', type='keyDown', key=name, code=code, windowsVirtualKeyCode=vk, text=text)
         self.befehl('Input.dispatchKeyEvent', type='keyUp', key=name, code=code, windowsVirtualKeyCode=vk)

@@ -57,9 +57,9 @@ def main():
                 b.js('new Promise((r) => setTimeout(r, 600))')
                 pruefe(b.js(FENSTER + ' === null'), L + 'Sichern: Fenster nach Tipp auf Eintrag nicht zu')
                 pruefe(b.js("document.activeElement && document.activeElement.name") == 'overall_grade', L + 'Sichern: Fokus nicht in der Gesamteinschätzung')
-                pruefe(b.js("document.querySelector('input[name=overall_grade]').closest('table').classList.contains('feld-hervorheben')"),
+                pruefe(b.js("document.getElementById('gradeBox').classList.contains('feld-hervorheben')"),
                        L + 'Sichern: Gesamteinschätzung nicht hervorgehoben')
-                r = b.js("(() => { const r = document.querySelector('input[name=overall_grade]').closest('table').getBoundingClientRect(); return [r.top, r.bottom, innerHeight]; })()")
+                r = b.js("(() => { const r = document.getElementById('gradeBox').getBoundingClientRect(); return [r.top, r.bottom, innerHeight]; })()")
                 pruefe(r[0] < r[2] and r[1] > 0, L + f'Sichern: Gesamteinschätzung nach Sprung nicht sichtbar {r}')
                 pruefe(b.js('__downloads.length') == 0, L + 'Sichern: trotz fehlender Felder exportiert')
 

@@ -61,28 +61,41 @@ const I18N = {
     txt_tab_crew: "Gespann-Übersicht",
     txt_tab_stats: "Saison-Statistik",
     radar_labels: ["Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln"],
+    round_options: [
+      {val: "R1", kurz: "R1 · Hinrunde", lang: "Review 1 (Hinrunde)"},
+      {val: "R2", kurz: "R2 · Rückrunde", lang: "Review 2 (Rückrunde)"}
+    ],
+    system_options: [
+      {val: "1-Man", kurz: "1-Mann", lang: "1-Mann-System (1 Solo-Ref)"},
+      {val: "2-Man", kurz: "2-Mann", lang: "2-Mann-System (2 Referees)"},
+      {val: "3-Man", kurz: "3-Mann", lang: "3-Mann-System (1 Head / 2 Lines)"},
+      {val: "4-Man", kurz: "4-Mann", lang: "4-Mann-System (2 Heads / 2 Lines)"}
+    ],
+    lbl_round: "Supervision-Durchgang",
+    perf_legend: "++ sehr gut · + gut · – Mängel · –– ungenügend · N/A nicht bewertbar",
+    grade_choose: "Bitte bewusst wählen – ohne Gesamteinschätzung kann das Review nicht gesichert werden.",
     perf_options: [
-      { val: "100", text: "++ (Überdurchschnittlich)" },
-      { val: "80", text: "+ (Erfüllt / Gut)" },
-      { val: "50", text: "- (Mängel erkennbar)" },
-      { val: "20", text: "-- (Ungenügend)" },
-      { val: "NA", text: "N/A (Nicht bewertbar)" }
+      {val: "100", kurz: "++", lang: "++ Überdurchschnittlich"},
+      {val: "80", kurz: "+", lang: "+ Erfüllt / Gut"},
+      {val: "50", kurz: "–", lang: "– Mängel erkennbar"},
+      {val: "20", kurz: "––", lang: "–– Ungenügend"},
+      {val: "NA", kurz: "N/A", lang: "N/A Nicht bewertbar"}
     ],
     coach_trend_opts: [
-      { val: "Konstant stabil", text: "Konstant stabil (Gut / 80%)" },
-      { val: "Fortschritt erkennbar", text: "Fortschritt erkennbar (Top / 100%)" },
-      { val: "Erstbeobachtung", text: "Erstbeobachtung (Neutral / 80%)" },
-      { val: "Rückschritt / Instabil", text: "Rückschritt / Instabil (40%)" }
+      {val: "Fortschritt erkennbar", kurz: "Fortschritt", lang: "Fortschritt erkennbar (100 %)"},
+      {val: "Konstant stabil", kurz: "Stabil", lang: "Konstant stabil (80 %)"},
+      {val: "Erstbeobachtung", kurz: "Erstbeobachtung", lang: "Erstbeobachtung (neutral, 80 %)"},
+      {val: "Rückschritt / Instabil", kurz: "Rückschritt", lang: "Rückschritt / Instabil (40 %)"}
     ],
     coach_att_opts: [
-      { val: "Gut / Angemessen", text: "Gut / Angemessen (80%)" },
-      { val: "Vorbildlich / Professionell", text: "Vorbildlich / Professionell (100%)" },
-      { val: "Ausbaufähig", text: "Ausbaufähig (45%)" }
+      {val: "Vorbildlich / Professionell", kurz: "Vorbildlich", lang: "Vorbildlich / Professionell (100 %)"},
+      {val: "Gut / Angemessen", kurz: "Gut", lang: "Gut / Angemessen (80 %)"},
+      {val: "Ausbaufähig", kurz: "Ausbaufähig", lang: "Ausbaufähig (45 %)"}
     ],
     coach_feed_opts: [
-      { val: "Konstruktiv", text: "Konstruktiv (80%)" },
-      { val: "Sehr offen & reflektiert", text: "Sehr offen & reflektiert (100%)" },
-      { val: "Defensiv / Rechtfertigend", text: "Defensiv / Rechtfertigend (40%)" }
+      {val: "Sehr offen & reflektiert", kurz: "Sehr offen", lang: "Sehr offen & reflektiert (100 %)"},
+      {val: "Konstruktiv", kurz: "Konstruktiv", lang: "Konstruktiv (80 %)"},
+      {val: "Defensiv / Rechtfertigend", kurz: "Defensiv", lang: "Defensiv / Rechtfertigend (40 %)"}
     ],
     status_exc: "Leistung: Überdurchschnittlich / Sehr Gut",
     status_good: "Leistung: Gut / Erfüllt",
@@ -197,28 +210,41 @@ const I18N = {
     txt_tab_crew: "Crew Overview",
     txt_tab_stats: "Season Stats",
     radar_labels: ["Skating", "Position", "Presence", "Anticipation", "De-escalation", "Teamwork", "Rules"],
+    round_options: [
+      {val: "R1", kurz: "R1 · First half", lang: "Review 1 (first half of season)"},
+      {val: "R2", kurz: "R2 · Second half", lang: "Review 2 (second half of season)"}
+    ],
+    system_options: [
+      {val: "1-Man", kurz: "1-man", lang: "1-man system (1 solo referee)"},
+      {val: "2-Man", kurz: "2-man", lang: "2-man system (2 referees)"},
+      {val: "3-Man", kurz: "3-man", lang: "3-man system (1 head / 2 lines)"},
+      {val: "4-Man", kurz: "4-man", lang: "4-man system (2 heads / 2 lines)"}
+    ],
+    lbl_round: "Supervision round",
+    perf_legend: "++ very good · + good · – deficits · –– unsatisfactory · N/A not evaluated",
+    grade_choose: "Please choose deliberately – without an overall assessment the review cannot be saved.",
     perf_options: [
-      { val: "100", text: "++ (Above Average)" },
-      { val: "80", text: "+ (Proficient / Good)" },
-      { val: "50", text: "- (Deficits Identified)" },
-      { val: "20", text: "-- (Unsatisfactory)" },
-      { val: "NA", text: "N/A (Not Evaluated)" }
+      {val: "100", kurz: "++", lang: "++ Above average"},
+      {val: "80", kurz: "+", lang: "+ Proficient / Good"},
+      {val: "50", kurz: "–", lang: "– Deficits identified"},
+      {val: "20", kurz: "––", lang: "–– Unsatisfactory"},
+      {val: "NA", kurz: "N/A", lang: "N/A Not evaluated"}
     ],
     coach_trend_opts: [
-      { val: "Konstant stabil", text: "Consistent / Stable (Good / 80%)" },
-      { val: "Fortschritt erkennbar", text: "Noticeable Progress (Top / 100%)" },
-      { val: "Erstbeobachtung", text: "First Observation (Neutral / 80%)" },
-      { val: "Rückschritt / Instabil", text: "Regression / Inconsistent (40%)" }
+      {val: "Fortschritt erkennbar", kurz: "Progress", lang: "Noticeable progress (100 %)"},
+      {val: "Konstant stabil", kurz: "Stable", lang: "Consistent / stable (80 %)"},
+      {val: "Erstbeobachtung", kurz: "First observation", lang: "First observation (neutral, 80 %)"},
+      {val: "Rückschritt / Instabil", kurz: "Regression", lang: "Regression / inconsistent (40 %)"}
     ],
     coach_att_opts: [
-      { val: "Gut / Angemessen", text: "Good / Professional (80%)" },
-      { val: "Vorbildlich / Professionell", text: "Exemplary / Role Model (100%)" },
-      { val: "Ausbaufähig", text: "Needs Development (45%)" }
+      {val: "Vorbildlich / Professionell", kurz: "Exemplary", lang: "Exemplary / role model (100 %)"},
+      {val: "Gut / Angemessen", kurz: "Good", lang: "Good / professional (80 %)"},
+      {val: "Ausbaufähig", kurz: "Needs work", lang: "Needs development (45 %)"}
     ],
     coach_feed_opts: [
-      { val: "Konstruktiv", text: "Constructive (80%)" },
-      { val: "Sehr offen & reflektiert", text: "Highly Receptive & Reflective (100%)" },
-      { val: "Defensiv / Rechtfertigend", text: "Defensive / Resistant (40%)" }
+      {val: "Sehr offen & reflektiert", kurz: "Very open", lang: "Highly receptive & reflective (100 %)"},
+      {val: "Konstruktiv", kurz: "Constructive", lang: "Constructive (80 %)"},
+      {val: "Defensiv / Rechtfertigend", kurz: "Defensive", lang: "Defensive / resistant (40 %)"}
     ],
     status_exc: "Performance: Above Average / Excellent",
     status_good: "Performance: Good / Proficient",
@@ -357,55 +383,7 @@ function applyTranslations() {
   });
   applyClub();
   if (typeof zeigeBadge === 'function') zeigeBadge();   // Badge-Text je nach Status (js/app.js)
-  // Listen (Notenstufen, Coaching) mit Rückfall auf Deutsch
-  const dict = {
-    perf_options: t('perf_options'), coach_trend_opts: t('coach_trend_opts'),
-    coach_att_opts: t('coach_att_opts'), coach_feed_opts: t('coach_feed_opts')
-  };
-
-  for (let i = 1; i <= 7; i++) {
-    const select = document.getElementById(`perf_${i}`);
-    const curVal = select.value || "80";
-    select.innerHTML = "";
-    dict.perf_options.forEach(opt => {
-      const o = document.createElement('option');
-      o.value = opt.val;
-      o.innerText = opt.text;
-      if (opt.val === curVal) o.selected = true;
-      select.appendChild(o);
-    });
-  }
-
-  const tSel = document.getElementById('coach_trend');
-  const curT = tSel.value || "Konstant stabil";
-  tSel.innerHTML = "";
-  dict.coach_trend_opts.forEach(opt => {
-    const o = document.createElement('option');
-    o.value = opt.val;
-    o.innerText = opt.text;
-    if (curT.includes(opt.val)) o.selected = true;
-    tSel.appendChild(o);
-  });
-
-  const aSel = document.getElementById('coach_attitude');
-  const curA = aSel.value || "Gut / Angemessen";
-  aSel.innerHTML = "";
-  dict.coach_att_opts.forEach(opt => {
-    const o = document.createElement('option');
-    o.value = opt.val;
-    o.innerText = opt.text;
-    if (curA.includes(opt.val)) o.selected = true;
-    aSel.appendChild(o);
-  });
-
-  const fSel = document.getElementById('coach_feedback');
-  const curF = fSel.value || "Konstruktiv";
-  fSel.innerHTML = "";
-  dict.coach_feed_opts.forEach(opt => {
-    const o = document.createElement('option');
-    o.value = opt.val;
-    o.innerText = opt.text;
-    if (curF.includes(opt.val)) o.selected = true;
-    fSel.appendChild(o);
-  });
+  // Knopfreihen (Notenstufen, Coaching, Durchgang, System) neu beschriften; gewählte Werte bleiben (js/segment.js)
+  baueAlleKnopfreihen();
+  zeigeStufenText();
 }

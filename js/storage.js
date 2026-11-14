@@ -59,7 +59,7 @@ function getDefaultRefData() {
 
 function saveGlobalState() {
   gameData.global = {
-    system_typ: document.getElementById('system_typ').value,
+    system_typ: segWert('system_typ'),
     spiel_liga: document.getElementById('spiel_liga').value,
     spiel_paarung: document.getElementById('spiel_paarung').value,
     spiel_id: document.getElementById('spiel_id').value,
@@ -87,7 +87,7 @@ function loadFullState() {
       if (gameData.global) {
         if (gameData.global.system_typ) {
           currentSystem = gameData.global.system_typ;
-          document.getElementById('system_typ').value = currentSystem;
+          setzeSeg('system_typ', currentSystem);
         }
         document.getElementById('spiel_liga').value = gameData.global.spiel_liga || "National League";
         document.getElementById('spiel_paarung').value = gameData.global.spiel_paarung || "";

@@ -33,7 +33,7 @@ function exportSingleReviewJSON() {
   if (!gameData.global.spiel_datum) missing.push({ text: t('missing_date'), aktion: () => springeZuFeld(document.getElementById('spiel_datum')) });
   if (sc.part2 === null) missing.push({ text: t('missing_grade'), aktion: () => {
     const erste = document.querySelector('input[name="overall_grade"]');
-    springeZuFeld(erste, erste.closest('table'));
+    springeZuFeld(erste, document.getElementById('gradeBox'));
   } });
   if (missing.length) {
     zeigeFenster({
