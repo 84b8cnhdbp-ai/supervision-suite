@@ -61,6 +61,35 @@ Tests nach jedem Teilschritt: `python3 tests/tools/alle-tests.py` (Daten DE/EN, 
 
 **Fertig, wenn:** Alle Funktionen von vorher gehen; auf iPad hoch/quer und MacBook gut bedienbar; Dark Mode sauber; Drucken nicht schlechter als vorher; alle Texte über `t()` auf DE und EN.
 
+### Stand (Branch `etappe-2`, noch nicht auf `main`)
+Fertig und getestet (`alle-tests.py` grün, Bilder gegen `main` angesehen):
+
+| Teilschritt | Commit |
+|---|---|
+| Testwerkzeuge unter `tests/tools/` | `96a2d2d`, `ec4c792` |
+| 2.1 Fundament: Farben, Schrift, Dark Mode nach System | `bc3a7d9` |
+| 2.1b Sprachwahl DE/EN, FR/IT vorbereitet | `bcdc64e` |
+| Verein zentral (`js/club.js`) | `4fe619b` |
+| 2.2 Eigene Fenster und Hinweise | `90b0227` |
+| 2.3 Knopfreihen | `35a4485` |
+| 2.4a Gerüst: Seitenleiste, Werkzeugleiste, Menü „Mehr“ | `0cf7fb9` |
+| 2.4b Zwei Spalten: Score-Karte, Netzdiagramm, „Bereit zum Sichern?“ | `6bb0178` |
+| 2.5 iPad hochkant: Schublade, kompakte Score-Leiste | `4763a29` |
+| 2.6 Fenster „Spiel bearbeiten“ | `bfb6c47` |
+| Auswahltext „Name wählen …“ | `1cf66d5` |
+
+Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`.
+
+**Als Nächstes:** 2.7 Szene-Fenster mit Chips (Drittel 1/2/3/OT, Spielzeit mm:ss, Notiz; Format `[P2 08:34] Text` bleibt), danach 2.8 Gespann-Übersicht und Saison-Statistik im neuen Stil, 2.9 Druck und Feinschliff.
+
+**Für 2.9 vorgemerkt:**
+- `manifest.json`-Farben (`theme_color`, `background_color`) ans neue Design anpassen, hell und dunkel.
+- VoiceOver auf dem iPad prüfen, wo die rechte Spalte hochkant per `display: contents` aufgelöst wird (Score-Leiste oben, Profil und Bereit am Formularende): Bereich „Score und Profil“ muss für VoiceOver erhalten bleiben.
+- Supervisor in die Titelzeile des Drucks.
+- FR und IT übersetzen (bleiben versteckt), danach `texte-test.py --streng`; restliche rein deutsche Texte im HTML auf `t()`.
+
+**Offener Entscheid:** Kriterien ohne Vorbelegung starten (siehe „Offene Entscheide“) – nur nach Livios Go.
+
 ---
 
 ## Etappe 3 – Spielliste und Bewertungen wieder öffnen
