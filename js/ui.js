@@ -33,7 +33,7 @@ function setupRefereeDropdown() {
   const sel = document.getElementById('current_schiri_name');
   sel.innerHTML = '<option value="">-- Schiedsrichter wählen --</option>';
   if (!KADER.length) {
-    sel.innerHTML = '<option value="">-- Zuerst Kader importieren (📋) --</option>';
+    sel.innerHTML = '<option value="">-- Zuerst Kader importieren --</option>';
   }
   const info = document.getElementById('kaderInfo');
   if (info) info.innerText = KADER.length
@@ -65,21 +65,33 @@ function handleRefSelectChange() {
   updatePartnerField();
 }
 
+// Darstellung umschalten: Auto -> Hell -> Dunkel -> Auto (Grundfunktionen in js/theme.js)
 function toggleTheme() {
-  document.body.classList.toggle('dark-mode');
-  const isDark = document.body.classList.contains('dark-mode');
-  document.getElementById('themeToggle').innerText = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
-  localStorage.setItem('referee_theme_preference', isDark ? 'dark' : 'light');
-  calcScores(false);
+  const naechste = { auto: 'light', light: 'dark', dark: 'auto' }[getThemePref()];
+  if (naechste === 'auto') localStorage.removeItem(THEME_KEY);
+  else localStorage.setItem(THEME_KEY, naechste);
+  applyTheme();
+  updateThemeButton();
+  redrawCharts();
+}
+
+function updateThemeButton() {
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.innerText = 'Darstellung: ' + THEME_NAMEN[getThemePref()];
+}
+
+// Netzdiagramme neu zeichnen (Farben kommen aus den CSS-Variablen)
+function redrawCharts() {
   if (activeTabType === "summary") renderSummaryView();
+  else if (activeTabType === "ref") calcScores(false);
 }
 
 function loadTheme() {
-  const pref = localStorage.getItem('referee_theme_preference');
-  if (pref === 'dark') {
-    document.body.classList.add('dark-mode');
-    document.getElementById('themeToggle').innerText = "☀️ Light Mode";
-  }
+  updateThemeButton();
+  // Wechselt das System zwischen hell und dunkel, Diagramme nachziehen
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (getThemePref() === 'auto') redrawCharts();
+  });
 }
 
 function switchSystem(newSys) {
@@ -414,20 +426,21 @@ function calcScores(shouldSave = true) {
 
   const statusText = document.getElementById('scoreStatusText');
   const ampelDot = document.getElementById('ampelDot');
-  const setAmpel = (text, color, rgba) => {
+  const setAmpel = (text, farbe) => {
     statusText.innerText = text;
-    ampelDot.style.backgroundColor = color;
-    ampelDot.style.boxShadow = `0 0 0 3px ${rgba}`;
+    ampelDot.style.backgroundColor = `var(${farbe})`;
+    ampelDot.style.boxShadow = `0 0 0 3px var(--accent-soft)`;
   };
+  // Schwellen unverändert; Farben = Bewertungsfarben aus css/app.css
   const t = sc.total;
-  if (t === null) setAmpel(dict.status_missing, "#94A3B8", "rgba(148, 163, 184, 0.3)");
-  else if (t > 80) setAmpel(dict.status_exc, "#15803D", "rgba(21, 128, 61, 0.3)");
-  else if (t >= 75) setAmpel(dict.status_good, "#4ADE80", "rgba(74, 222, 128, 0.3)");
-  else if (t >= 60) setAmpel(dict.status_sat, "#EAB308", "rgba(234, 179, 8, 0.3)");
-  else if (t >= 45) setAmpel(dict.status_ni, "var(--orange)", "rgba(234, 88, 12, 0.25)");
-  else setAmpel(dict.status_unsat, "var(--red)", "rgba(220, 38, 38, 0.25)");
+  if (t === null) setAmpel(dict.status_missing, '--r-none');
+  else if (t > 80) setAmpel(dict.status_exc, '--r-pp');
+  else if (t >= 75) setAmpel(dict.status_good, '--r-p');
+  else if (t >= 60) setAmpel(dict.status_sat, '--r-solid');
+  else if (t >= 45) setAmpel(dict.status_ni, '--r-m');
+  else setAmpel(dict.status_unsat, '--r-mm');
 
-  drawRadar('radarChart', sc.radar, '#2563EB');
+  drawRadar('radarChart', sc.radar);
   if (shouldSave) saveCurrentRefData();
 }
 
@@ -465,10 +478,10 @@ function renderSummaryView() {
   document.getElementById('crewScoreVal').innerText = fmt(crewAvg);
 
   const crewRadar = avgScores7.map((sum, i) => radarCounts[i] ? sum / radarCounts[i] : null);
-  drawRadar('crewRadarChart', crewRadar, '#4F46E5');
+  drawRadar('crewRadarChart', crewRadar);
 }
 
-function drawRadar(canvasId, scores, polyColor = '#2563EB') {
+function drawRadar(canvasId, scores) {
   const canvas = document.getElementById(canvasId);
   if (!canvas || !canvas.getContext) return;
   const ctx = canvas.getContext('2d');
@@ -480,9 +493,12 @@ function drawRadar(canvasId, scores, polyColor = '#2563EB') {
   const labels = I18N[currentLang].radar_labels;
   const total = labels.length;
 
-  const isDark = document.body.classList.contains('dark-mode');
-  const gridStroke = isDark ? "#3A506B" : "#CBD5E1";
-  const axisStroke = isDark ? "#2A3B53" : "#E2E8F0";
+  // Farben aus den CSS-Variablen (hell/dunkel)
+  const css = getComputedStyle(document.documentElement);
+  const farbe = (name) => css.getPropertyValue(name).trim();
+  const gridStroke = farbe('--radar-grid');
+  const axisStroke = farbe('--radar-axis');
+  const polyColor = farbe('--accent');
 
   ctx.clearRect(0, 0, w, h);
 
@@ -512,7 +528,7 @@ function drawRadar(canvasId, scores, polyColor = '#2563EB') {
   }
 
   ctx.beginPath();
-  ctx.fillStyle = polyColor === '#4F46E5' ? "rgba(79, 70, 229, 0.28)" : "rgba(37, 99, 235, 0.25)";
+  ctx.fillStyle = polyColor;
   ctx.strokeStyle = polyColor;
   ctx.lineWidth = 2;
 
@@ -526,7 +542,9 @@ function drawRadar(canvasId, scores, polyColor = '#2563EB') {
     else ctx.lineTo(x, y);
   }
   ctx.closePath();
+  ctx.globalAlpha = 0.25;
   ctx.fill();
+  ctx.globalAlpha = 1;
   ctx.stroke();
 
   for (let i = 0; i < total; i++) {
@@ -539,9 +557,9 @@ function drawRadar(canvasId, scores, polyColor = '#2563EB') {
     ctx.beginPath();
     ctx.arc(x, y, 3, 0, Math.PI * 2);
     if (isNA) {
-      ctx.strokeStyle = "#94A3B8"; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.strokeStyle = farbe('--radar-na'); ctx.lineWidth = 1.5; ctx.stroke();
     } else {
-      ctx.fillStyle = isDark ? "#FFFFFF" : "#0B2545";
+      ctx.fillStyle = farbe('--radar-point');
       ctx.fill();
     }
   }

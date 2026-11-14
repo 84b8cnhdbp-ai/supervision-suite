@@ -53,8 +53,8 @@ const I18N = {
     sec_crew_obs: "Gemeinsame Gespann-Beobachtungen",
     lbl_crew_notes: "Zusammenarbeit, Teamwork & Spielcharakter",
     btn_reset: "Gesamtes Spiel zurücksetzen",
-    txt_tab_crew: "★ Gespann-Übersicht",
-    txt_tab_stats: "📊 EVZ Saison-Statistik",
+    txt_tab_crew: "Gespann-Übersicht",
+    txt_tab_stats: "Saison-Statistik",
     radar_labels: ["Eislaufen", "Position", "Präsenz", "Antizipation", "Deeskalation", "Teamwork", "Regeln"],
     perf_options: [
       { val: "100", text: "++ (Überdurchschnittlich)" },
@@ -172,21 +172,13 @@ const I18N = {
   }
 };
 
+// Ab Etappe 2 nur noch Deutsch. Die englischen Texte oben bleiben vorerst stehen,
+// werden aber nicht mehr verwendet; neue Texte nur auf Deutsch.
 let currentLang = "de";
 
-function toggleLang() {
-  currentLang = currentLang === "de" ? "en" : "de";
-  document.getElementById('langToggle').innerText = currentLang === "de" ? "🌐 EN" : "🌐 DE";
-  localStorage.setItem('referee_lang_preference', currentLang);
-  applyTranslations();
-  renderTabs();
-  if (activeTabType === "ref") loadRefereeForm(activeRefIndex);
-}
-
 function loadLanguagePreference() {
-  const pref = localStorage.getItem('referee_lang_preference');
-  if (pref === "en" || pref === "de") currentLang = pref;
-  document.getElementById('langToggle').innerText = currentLang === "de" ? "🌐 EN" : "🌐 DE";
+  currentLang = "de";
+  localStorage.removeItem('referee_lang_preference');  // alte Einstellung aufräumen
 }
 
 function applyTranslations() {
