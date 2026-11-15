@@ -20,6 +20,9 @@ import time
 import urllib.request
 
 HIER = os.path.dirname(os.path.abspath(__file__))
+# Standard-Referenz für alle Vergleiche mit dem alten Stand (Daten-, Übersicht-, Wechsel-Test, bilder.py):
+# Tag auf dem Stand vor Etappe 2 (5e59592). Bleibt gültig, auch wenn main später weiterläuft.
+REFERENZ = 'stand-etappe-1'
 REPO = os.path.abspath(os.path.join(HIER, '..', '..'))
 FIXTURES = os.path.join(REPO, 'tests', 'fixtures')
 ERGEBNISSE = os.path.join(HIER, 'ergebnisse')   # steht in .gitignore
@@ -156,6 +159,13 @@ class Browser:
                                       f'--remote-debugging-port={port}', '--no-first-run', '--no-default-browser-check',
                                       '--hide-scrollbars', '--force-device-scale-factor=1', 'about:blank'],
                                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        try:
+            return self._verbinden(port)
+        except BaseException:
+            self.__exit__()   # Chrome nicht verwaist zurücklassen, wenn der Verbindungsaufbau scheitert
+            raise
+
+    def _verbinden(self, port):
         ziel = None
         for _ in range(100):
             try:

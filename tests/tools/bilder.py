@@ -1,7 +1,8 @@
 """Bilder: Bildschirmfotos aller Ansichten (iPad hochkant, iPad quer, MacBook; hell und dunkel) und Druck-PDF.
 
 Aufruf:   python3 tests/tools/bilder.py                 (nur aktueller Stand)
-          python3 tests/tools/bilder.py --gegen main    (zusätzlich Referenzstand, nebeneinander)
+          python3 tests/tools/bilder.py --gegen         (zusätzlich alter Stand, Tag stand-etappe-1, nebeneinander)
+          python3 tests/tools/bilder.py --gegen main    (anderer Referenzstand)
           python3 tests/tools/bilder.py --gegen HEAD --pixel   (dazu Pixelvergleich: listet jedes Bild, das sich
                                                          auch nur in einem Pixel unterscheidet; Abbruchcode 1)
           Statt eines Git-Stands geht auch ein Ordner mit einer Kopie der App (--gegen /pfad/zur/kopie).
@@ -15,7 +16,7 @@ import shutil
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, ERGEBNISSE, Browser, server, git_stand, daten_setzen, LEER  # noqa: E402
+from werkzeug import REPO, ERGEBNISSE, REFERENZ, Browser, server, git_stand, daten_setzen, LEER  # noqa: E402
 
 GROESSEN = [('ipad-hoch-768', 768, 1024), ('ipad-hoch', 834, 1194), ('ipad-quer-1080', 1080, 810), ('ipad-quer', 1194, 834), ('macbook', 1440, 900)]
 SCHEMEN = ['light', 'dark']
@@ -158,7 +159,8 @@ def main():
     shutil.rmtree(ordner, ignore_errors=True)
     staende = []
     if '--gegen' in sys.argv:
-        ref = sys.argv[sys.argv.index('--gegen') + 1]
+        i = sys.argv.index('--gegen') + 1
+        ref = sys.argv[i] if i < len(sys.argv) and not sys.argv[i].startswith('--') else REFERENZ
         if os.path.isdir(ref):   # Ordner (z. B. Kopie eines nicht committeten Stands) statt Git-Stand
             fotografieren(os.path.abspath(ref), os.path.join(ordner, 'referenz'))
         else:

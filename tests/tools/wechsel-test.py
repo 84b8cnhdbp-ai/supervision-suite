@@ -1,7 +1,7 @@
-"""Wechsel-Test (vor dem Merge): Eine nicht exportierte Bewertung übersteht den Wechsel von main auf den neuen Stand.
+"""Wechsel-Test (vor dem Merge): Eine nicht exportierte Bewertung übersteht den Wechsel vom alten auf den neuen Stand.
 
 Ablauf (ein Browser-Profil, eine Adresse – wie auf dem iPad):
-1. Alter Stand (Standard: main, ?v=7): Kader-Import (echte Dateiwahl), Spieldaten, zwei Schiedsrichter mit
+1. Alter Stand (Standard: Tag stand-etappe-1 = main vor dem Merge, ?v=7): Kader-Import (echte Dateiwahl), Spieldaten, zwei Schiedsrichter mit
    Gesamteinschätzung, Kriterien (eines N/A), Coaching, Notizen mit alten Zeitangaben „[2. Drittel 8:34]“, Stärken,
    Rapport, Gespann-Notiz; Englisch und dunkel – alles über die alte Oberfläche, NICHT exportiert.
    Festgehalten: localStorage sowie Export-JSON und CSV der alten Oberfläche (nur abgefangen, nichts geändert).
@@ -17,9 +17,12 @@ Ablauf (ein Browser-Profil, eine Adresse – wie auf dem iPad):
 5. Wechsel ohne erhöhte ?v=: neuer Code mit alter Nummer – die alte Version bleibt vollständig aktiv, keine gemischten
    Versionen, Badge „Update blockiert“.
 
+Rückweg aus dem echten Notfall-Ablauf (siehe Arbeitsplan):
+  python3 tests/tools/wechsel-test.py --rueck /pfad/zum/ergebnis
+
 Gegenprobe (von Hand, prüft den Test selbst):
   python3 tests/tools/wechsel-test.py --gegenprobe   (neuer Stand speichert unter anderem Schlüssel -> muss rot werden)
-Aufruf: python3 tests/tools/wechsel-test.py [--von main]   (Abbruchcode 1 bei Fehlern)
+Aufruf: python3 tests/tools/wechsel-test.py [--von stand-etappe-1]   (Abbruchcode 1 bei Fehlern)
 """
 import http.server
 import importlib.util
@@ -33,7 +36,7 @@ import threading
 import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, FIXTURES, Browser, git_stand  # noqa: E402
+from werkzeug import REPO, FIXTURES, REFERENZ, Browser, git_stand  # noqa: E402
 
 _spec = importlib.util.spec_from_file_location('daten_test', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'daten-test.py'))
 _daten = importlib.util.module_from_spec(_spec)
@@ -41,6 +44,10 @@ _spec.loader.exec_module(_daten)
 vergleiche, gewollt = _daten.vergleiche, _daten.gewollt
 
 ZUSTAND = {'dir': None, 'online': True}
+
+
+class AbbruchFehler(Exception):
+    pass
 
 
 def starte_server():
@@ -111,7 +118,7 @@ def main():
         if not ok:
             fehler.append(text)
 
-    von = sys.argv[sys.argv.index('--von') + 1] if '--von' in sys.argv else 'main'
+    von = sys.argv[sys.argv.index('--von') + 1] if '--von' in sys.argv else REFERENZ
     alt = git_stand(von)
     neu = kopie(REPO)
     if '--gegenprobe' in sys.argv:   # neuer Stand liest/schreibt unter anderem Schlüssel: Test muss rot werden
@@ -121,10 +128,14 @@ def main():
             open(p, 'w', encoding='utf-8').write(s.replace("'referee_multi_supervision_data'", "'referee_daten_neu'"))
     nr_alt = int(re.search(r'\?v=(\d+)', open(os.path.join(alt, 'index.html'), encoding='utf-8').read()).group(1))
     nr_neu = int(re.search(r'\?v=(\d+)', open(os.path.join(neu, 'index.html'), encoding='utf-8').read()).group(1))
-    rueck = git_stand(von)
-    mit_nummer(rueck, nr_neu + 1)          # Rückweg: alter Code mit höherer Nummer (wie git revert + ?v= erhöhen)
+    if '--rueck' in sys.argv:   # Rückweg aus einem Ordner, z. B. dem Ergebnis des Notfall-Ablaufs (Arbeitsplan)
+        rueck = kopie(sys.argv[sys.argv.index('--rueck') + 1])
+    else:
+        rueck = git_stand(von)
+        mit_nummer(rueck, nr_neu + 1)      # Rückweg: alter Code mit höherer Nummer (wie Notfall-Ablauf: revert + ?v= erhöhen)
+    nr_rueck = int(re.search(r'\?v=(\d+)', open(os.path.join(rueck, 'index.html'), encoding='utf-8').read()).group(1))
     blockiert = kopie(REPO)
-    mit_nummer(blockiert, nr_neu + 1)      # neuer Code mit der Nummer des gerade aktiven (alten) Stands
+    mit_nummer(blockiert, nr_rueck)        # neuer Code mit der Nummer des gerade aktiven (alten) Stands
 
     ZUSTAND['dir'] = alt
     srv = starte_server()
@@ -154,6 +165,7 @@ def main():
         return [{'name': d['name'], 'inhalt': json.loads(d['text']) if d['name'].endswith('.json') else d['text']} for d in dl]
 
     try:
+      try:
         with Browser() as b:
             b.vor_laden('window.alert = () => {};')   # alte Oberfläche meldet den Kader-Import mit alert()
             b.fenster(1194, 834)
@@ -229,6 +241,11 @@ def main():
             pruefe(st['neu'] and st['nummern'] == [str(nr_neu)], f'Neuer Stand nicht vollständig aktiv ({st})')
             pruefe(speicher(b) == vorher, 'Neuer Stand: localStorage beim Start verändert ' +
                    str([k for k in set(vorher) | set(speicher(b)) if vorher.get(k) != speicher(b).get(k)]))
+            sys_neu = b.js('currentSystem')
+            pruefe(sys_neu == daten_alt['global']['system_typ'] and b.js("Object.keys(gameData.referees || {}).length") > 0,
+                   f"Neuer Stand: System {sys_neu} statt {daten_alt['global']['system_typ']} oder keine Bewertungen gelesen")
+            if sys_neu != daten_alt['global']['system_typ']:
+                raise AbbruchFehler('Bewertung nach dem Wechsel nicht gefunden – weitere Prüfungen nicht möglich')
             pruefe(b.js('currentLang') == 'en', 'Neuer Stand: Englisch nicht übernommen')
             pruefe(b.js("document.documentElement.dataset.theme || ''") == 'dark', f"Neuer Stand: dunkel nicht übernommen ({b.js('document.documentElement.dataset.theme')})")
             # Felder zeigen die alten Werte
@@ -291,8 +308,8 @@ def main():
             pruefe(h1['overall_grade'] == '100' and h1['top_strengths'].endswith('neu bearbeitet'), f'Neuer Stand: Bearbeitung nicht gespeichert ({h1["overall_grade"]})')
             b.fehler = []
             ZUSTAND['dir'] = rueck
-            st = laden_bis(b, lambda s: s['alt'] and s['nummern'] == [str(nr_neu + 1)])
-            pruefe(st['alt'] and st['nummern'] == [str(nr_neu + 1)], f'Rückweg: alter Code nicht vollständig aktiv ({st})')
+            st = laden_bis(b, lambda s: s['alt'] and s['nummern'] == [str(nr_rueck)])
+            pruefe(st['alt'] and st['nummern'] == [str(nr_rueck)], f'Rückweg: alter Code nicht vollständig aktiv ({st})')
             for bezeichnung, extra in (('nach „Auto“', None), ('mit gespeicherten Werten „auto“ und „fr“', {'referee_theme_preference': 'auto', 'referee_lang_preference': 'fr'})):
                 if extra:   # Werte, die nur die neue Version kennt, direkt im Speicher – alte Oberfläche neu starten
                     b.js(';'.join(f"localStorage.setItem({k!r}, {v!r})" for k, v in extra.items()))
@@ -316,8 +333,10 @@ def main():
                 b.oeffnen(url, warten=1.5)
                 st = b.js(STAND)
             badge = b.js("document.getElementById('pwaBadge').innerText")
-            pruefe(st['alt'] and not st['neu'] and st['nummern'] == [str(nr_neu + 1)], f'Ohne Erhöhung: alte Version nicht unverändert aktiv ({st})')
+            pruefe(st['alt'] and not st['neu'] and st['nummern'] == [str(nr_rueck)], f'Ohne Erhöhung: alte Version nicht unverändert aktiv ({st})')
             pruefe('blockiert' in badge, f'Ohne Erhöhung: Badge zeigt „{badge}“ statt „Update blockiert“')
+      except (AbbruchFehler, RuntimeError, ConnectionError) as e:   # als Fehler melden, nicht abstürzen
+        fehler.append(f'Abbruch: {str(e).splitlines()[0][:200]}')
     finally:
         srv.shutdown()
         for d in (alt, neu, rueck, blockiert):

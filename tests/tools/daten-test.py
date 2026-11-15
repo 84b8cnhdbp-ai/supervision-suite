@@ -1,10 +1,10 @@
 """Daten-Test: Die App muss mit denselben Eingaben dieselben Daten erzeugen wie ein Referenzstand.
 
 Vergleicht Export-JSON (pro Reiter), CSV, Saison-Statistik, Kader-Import, Systemwechsel und
-localStorage zwischen dem aktuellen Arbeitsstand und einem Git-Stand (Standard: main).
+localStorage zwischen dem aktuellen Arbeitsstand und einem Git-Stand (Standard: Tag stand-etappe-1).
 Das Aussehen darf sich ändern – die Daten nicht.
 
-Aufruf:   python3 tests/tools/daten-test.py                  (gegen main, Deutsch)
+Aufruf:   python3 tests/tools/daten-test.py                  (gegen stand-etappe-1, Deutsch)
           python3 tests/tools/daten-test.py --sprache en     (beide Stände auf Englisch)
           python3 tests/tools/daten-test.py --gegen 7c48820
 Ergebnis: tests/tools/ergebnisse/daten-<stand>.json (nicht im Repo), Abbruchcode 1 bei Unterschieden.
@@ -18,7 +18,7 @@ import shutil
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, ERGEBNISSE, Browser, server, git_stand, daten_setzen, LEER  # noqa: E402
+from werkzeug import REPO, ERGEBNISSE, REFERENZ, Browser, server, git_stand, daten_setzen, LEER  # noqa: E402
 
 TEST_JS = r"""
 (async () => {
@@ -140,7 +140,7 @@ def vergleiche(pfad, a, b, aus):
 
 
 def main():
-    ref = sys.argv[sys.argv.index('--gegen') + 1] if '--gegen' in sys.argv else 'main'
+    ref = sys.argv[sys.argv.index('--gegen') + 1] if '--gegen' in sys.argv else REFERENZ
     sprache = sys.argv[sys.argv.index('--sprache') + 1] if '--sprache' in sys.argv else 'de'
     os.makedirs(ERGEBNISSE, exist_ok=True)
     alt_dir = git_stand(ref)

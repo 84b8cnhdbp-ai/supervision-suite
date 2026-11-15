@@ -6,6 +6,12 @@ steht in `.gitignore` und kommt **nie** ins Repo.
 
 Alle Befehle im Projektordner ausführen.
 
+**Referenz:** Alle Vergleiche mit dem alten Stand (Daten-, Übersicht-, Wechsel-Test, `bilder.py --gegen`) laufen
+standardmässig gegen den Tag `stand-etappe-1` (Stand vor Etappe 2, `5e59592`), nicht gegen `main` – so bleiben sie
+gültig, auch wenn `main` weiterläuft. Ein anderer Stand geht mit `--gegen …` bzw. `--von …`.
+
+**Gegenproben** nie im Arbeitsordner, immer in einer temporären Kopie: `python3 tests/tools/gegenprobe.py` (siehe unten).
+
 **Bewegung:** Alle Tests laufen mit „Bewegung reduzieren“ (`prefers-reduced-motion`), damit Bilder und Messungen nie
 mitten in einer Animation entstehen. Nur der Animations-Test schaltet die Übergänge ein (`b.bewegung = True`).
 
@@ -24,8 +30,9 @@ Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
 ## Daten-Test – „gleiche Eingaben, gleiche Daten“
 
 ```sh
-python3 tests/tools/daten-test.py                  # aktueller Stand gegen main, Deutsch
+python3 tests/tools/daten-test.py                  # aktueller Stand gegen stand-etappe-1, Deutsch
 python3 tests/tools/daten-test.py --sprache en     # beide Stände auf Englisch
+python3 tests/tools/daten-test.py --gegen main     # anderer Referenzstand
 python3 tests/tools/daten-test.py --gegen 7c48820
 ```
 
@@ -181,7 +188,7 @@ python3 tests/tools/uebersicht-test.py
 
 Gespann: eine Karte je Rolle als echter Knopf (Enter/Leertaste, VoiceOver-Name), Werte = `computeRefScores`,
 Durchschnitt mit denselben Schwellen wie die Bewertung, Tipp öffnet den Reiter, leerer Zustand („Rollen besetzen“),
-Druck. Statistik: Zahlen mit den Beispieldateien und **Zelle für Zelle gleich wie auf `main`** (gleiche Dateien in den
+Druck. Statistik: Zahlen mit den Beispieldateien und **Zelle für Zelle gleich wie im alten Stand** (`stand-etappe-1`) (gleiche Dateien in den
 alten Stand geladen), negative Entwicklung mit echtem „−“ und Pfeil, Abzeichen-Kontrast hell/dunkel, Tabelle passt ab
 768 px, leerer Zustand („.json wählen“), Sprachwechsel, DE/EN.
 
@@ -221,14 +228,15 @@ Einziger Test mit Übergängen: Reiterwechsel blendet ein (150 ms), Score zählt
 Bewertung und Gespann, Endwert = berechneter Score); beim Bearbeiten und Sprachwechsel sofort. Druck mitten im
 Hochzählen (Druckansicht und `beforeprint`): Zahl und Ring sofort fertig. Mit „Bewegung reduzieren“ bewegt sich nichts.
 
-## Wechsel-Test – von `main` auf den neuen Stand, ohne Datenverlust
+## Wechsel-Test – vom alten auf den neuen Stand, ohne Datenverlust
 
 ```sh
-python3 tests/tools/wechsel-test.py                 # main → aktueller Stand
+python3 tests/tools/wechsel-test.py                 # stand-etappe-1 → aktueller Stand
+python3 tests/tools/wechsel-test.py --rueck ORDNER  # Rückweg aus einem Ordner (Ergebnis des Notfall-Ablaufs)
 python3 tests/tools/wechsel-test.py --gegenprobe    # prüft den Test selbst: muss rot werden
 ```
 
-Ein Browser-Profil, eine Adresse – wie auf dem iPad: Auf `main` wird über die alte Oberfläche eine Bewertung
+Ein Browser-Profil, eine Adresse – wie auf dem iPad: Im alten Stand (`stand-etappe-1` = `main` vor dem Merge) wird über die alte Oberfläche eine Bewertung
 ausgefüllt (Kader per echter Dateiwahl, Spieldaten, zwei Schiedsrichter, Notizen mit alten Zeitangaben, Englisch,
 dunkel), **nicht** exportiert. Dann liefert dieselbe Adresse den neuen Stand: neue Version vollständig (keine
 gemischten Versionen), Speicher beim Start unverändert, jedes Feld mit dem alten Wert, Scores sowie Export-JSON und CSV
@@ -236,6 +244,18 @@ gleich wie in der alten Oberfläche (gewollte Abweichungen wie im Daten-Test), E
 Cache. Rückweg (alter Code mit höherer `?v=`, wie `git revert`): nach Bearbeiten und Darstellung „Auto“ startet die
 alte Oberfläche ohne JS-Fehler und zeigt die Bewertung, auch mit gespeicherten Werten „auto“ und „fr“.
 Neuer Code mit gleicher Nummer: alte Version bleibt aktiv, Badge „Update blockiert“.
+
+## Gegenproben – fällt ein Test auf, wenn die App kaputt ist?
+
+```sh
+python3 tests/tools/gegenprobe.py           # alle (einige Minuten)
+python3 tests/tools/gegenprobe.py --liste   # Katalog anzeigen
+python3 tests/tools/gegenprobe.py system-vermerk
+```
+
+Jede Gegenprobe kopiert das ganze Repo in einen temporären Ordner, baut dort absichtlich einen Fehler ein und startet den
+Test in der Kopie; er muss rot werden und die erwartete Meldung zeigen. Am Schluss wird geprüft, dass der Arbeitsordner
+unverändert ist. Neue Gegenproben im Katalog `GEGENPROBEN` eintragen – nie Dateien im Repo dafür ändern.
 
 ## Service-Worker-Test – Updates, offline, langsames Netz
 
@@ -253,7 +273,8 @@ vom Service Worker geliefert, bei langsamem Netz Start nach ca. 3 s. Ergebnis �
 
 ```sh
 python3 tests/tools/bilder.py                 # aktueller Stand
-python3 tests/tools/bilder.py --gegen main    # zusätzlich main daneben
+python3 tests/tools/bilder.py --gegen         # zusätzlich der alte Stand (stand-etappe-1) daneben
+python3 tests/tools/bilder.py --gegen main    # anderer Referenzstand
 python3 tests/tools/bilder.py --gegen HEAD --pixel        # Pixelvergleich (z. B. vor/nach dem Aufräumen)
 python3 tests/tools/bilder.py --gegen /pfad/kopie --pixel # Referenz aus einem Ordner (nicht committeter Stand)
 ```
