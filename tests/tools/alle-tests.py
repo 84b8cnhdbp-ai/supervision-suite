@@ -13,7 +13,7 @@ HIER = os.path.dirname(os.path.abspath(__file__))
 TESTS = [
     ('Daten-Test Deutsch', ['daten-test.py']),
     ('Daten-Test Englisch', ['daten-test.py', '--sprache', 'en']),
-    ('Texte-Test', ['texte-test.py']),
+    ('Texte-Test', ['texte-test.py', '--streng']),
     ('Kunstsprache-Test', ['kunstsprache-test.py']),
     ('Vereins-Test', ['verein-test.py']),
     ('Fenster-Test', ['fenster-test.py']),
