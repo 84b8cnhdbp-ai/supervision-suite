@@ -17,7 +17,7 @@ python3 tests/tools/alle-tests.py --ohne-sw  # ohne Service-Worker-Test (ca. 1 M
 ```
 
 Führt Daten-Test (Deutsch und Englisch), Texte- (streng), Kunstsprache-, Vereins-, Fenster-, Knopfreihen-, Layout-, Score-,
-Spiel-, Szene-, Übersicht-, Druck-, Bereiche-, Animations- und Service-Worker-Test aus und zeigt eine Zusammenfassung
+Spiel-, Szene-, Übersicht-, Druck-, Bereiche-, Animations-, Wechsel- und Service-Worker-Test aus und zeigt eine Zusammenfassung
 mit der Schlussmeldung jedes Tests (aus stdout; Meldungen auf stderr werden zusätzlich angezeigt).
 Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
 
@@ -197,6 +197,22 @@ python3 tests/tools/animation-test.py
 Einziger Test mit Übergängen: Reiterwechsel blendet ein (150 ms), Score zählt nur beim Reiterwechsel hoch (400 ms,
 Bewertung und Gespann, Endwert = berechneter Score); beim Bearbeiten und Sprachwechsel sofort. Druck mitten im
 Hochzählen (Druckansicht und `beforeprint`): Zahl und Ring sofort fertig. Mit „Bewegung reduzieren“ bewegt sich nichts.
+
+## Wechsel-Test – von `main` auf den neuen Stand, ohne Datenverlust
+
+```sh
+python3 tests/tools/wechsel-test.py                 # main → aktueller Stand
+python3 tests/tools/wechsel-test.py --gegenprobe    # prüft den Test selbst: muss rot werden
+```
+
+Ein Browser-Profil, eine Adresse – wie auf dem iPad: Auf `main` wird über die alte Oberfläche eine Bewertung
+ausgefüllt (Kader per echter Dateiwahl, Spieldaten, zwei Schiedsrichter, Notizen mit alten Zeitangaben, Englisch,
+dunkel), **nicht** exportiert. Dann liefert dieselbe Adresse den neuen Stand: neue Version vollständig (keine
+gemischten Versionen), Speicher beim Start unverändert, jedes Feld mit dem alten Wert, Scores sowie Export-JSON und CSV
+gleich wie in der alten Oberfläche (gewollte Abweichungen wie im Daten-Test), Einstellungen bleiben, offline aus dem
+Cache. Rückweg (alter Code mit höherer `?v=`, wie `git revert`): nach Bearbeiten und Darstellung „Auto“ startet die
+alte Oberfläche ohne JS-Fehler und zeigt die Bewertung, auch mit gespeicherten Werten „auto“ und „fr“.
+Neuer Code mit gleicher Nummer: alte Version bleibt aktiv, Badge „Update blockiert“.
 
 ## Service-Worker-Test – Updates, offline, langsames Netz
 
