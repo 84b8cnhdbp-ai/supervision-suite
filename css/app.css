@@ -133,6 +133,7 @@ header {
   gap: 6px;
 }
 .badge-pwa { background: var(--seg); color: var(--text); }
+.badge-pwa[data-status="update"] { cursor: pointer; }
 .badge-status { background: var(--seg); color: var(--secondary); }
 .badge-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--r-p); }
 
@@ -222,6 +223,14 @@ header {
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
 
+/* Abstände und Feldgrössen (früher Inline-Styles im HTML) */
+.abstand-12 { margin-bottom: 12px; }
+.abstand-14 { margin-bottom: 14px; }
+.abstand-oben-15 { margin-top: 15px; }
+.spalte-bereich { width: 30%; }
+.spalte-bewertung { width: 34%; }
+.leitfragen { color: var(--text-muted); }
+
 label { font-size: 12px; font-weight: 600; color: var(--secondary); display: block; margin-bottom: 4px; }
 input, select, textarea {
   width: 100%;
@@ -240,6 +249,13 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 textarea { resize: vertical; min-height: 64px; }
+.feld-mittel { min-height: 85px; }
+.feld-gross { min-height: 110px; }
+.feld-auto { background-color: var(--bg-subtle); color: var(--text-muted); cursor: not-allowed; }   /* wird automatisch gefüllt */
+.name-eigen { display: block; margin-top: 6px; }
+.name-eigen[hidden] { display: none; }
+/* Nur eine der drei Ansichten ist sichtbar (zeigeAnsicht in js/ui.js) */
+.bewertung[hidden], .gespann[hidden], .statistik[hidden] { display: none; }
 optgroup { font-weight: bold; }
 
 .analytics-card {

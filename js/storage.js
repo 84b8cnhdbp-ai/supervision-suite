@@ -75,9 +75,16 @@ function saveGlobalState() {
 function saveToStorage() {
   localStorage.setItem('referee_multi_supervision_data', JSON.stringify(gameData));
   if (typeof zeigeBereit === 'function') zeigeBereit();   // „Bereit zum Sichern?“ nachführen
+  letzteSicherung = new Date();
+  zeigeSicherung();
+}
+
+// „Gesichert hh:mm“ in der Seitenleiste (auch nach Sprachwechsel in der neuen Sprache)
+let letzteSicherung = null;
+function zeigeSicherung() {
   const status = document.getElementById('saveStatus');
-  if (status) {
-    status.innerText = t('saved_status', { zeit: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+  if (status && letzteSicherung) {
+    status.innerText = t('saved_status', { zeit: letzteSicherung.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
   }
 }
 

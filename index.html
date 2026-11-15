@@ -12,9 +12,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="css/app.css?v=21">
-<script src="js/club.js?v=21"></script>
-<script src="js/theme.js?v=21"></script>
+<link rel="stylesheet" href="css/app.css?v=22">
+<script src="js/club.js?v=22"></script>
+<script src="js/theme.js?v=22"></script>
 </head>
 <body>
 
@@ -23,7 +23,7 @@
   <!-- SEITENLEISTE (unter 1000 px vorerst als Leiste oben; ab 2.5 eingeklappt) -->
   <nav class="seitenleiste no-print" id="seitenleiste" data-i18n-aria-label="nav_label" aria-label="Navigation">
     <div class="sl-kopf">
-      <img id="clubLogo" data-club-logo alt="" onerror="this.style.display='none'">
+      <img id="clubLogo" data-club-logo alt="">
       <div class="sl-kopf-text">
         <strong data-i18n="app_name">Supervision</strong>
         <span id="saisonText"></span>
@@ -31,14 +31,14 @@
     </div>
     <div class="sl-gruppe">
       <span class="sl-titel" data-i18n="nav_game">Spiel</span>
-      <button type="button" class="sl-eintrag" id="navSpiel" onclick="zeigeBewertung()">
+      <button type="button" class="sl-eintrag" id="navSpiel">
         <span class="sl-haupt" id="navSpielTitel"></span>
         <span class="sl-neben" id="navSpielInfo"></span>
       </button>
     </div>
     <div class="sl-gruppe">
       <span class="sl-titel" data-i18n="nav_overview">Übersicht</span>
-      <button type="button" class="sl-eintrag" id="navStats" onclick="selectStatsTab()">
+      <button type="button" class="sl-eintrag" id="navStats">
         <span class="sl-haupt" data-i18n="txt_tab_stats">Saison-Statistik</span>
       </button>
     </div>
@@ -59,13 +59,13 @@
       <button type="button" class="knopf-spiele" id="btnSpiele" aria-controls="seitenleiste" aria-expanded="false"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="nav_games">Spiele</span></button>
       <div class="reiter" id="tabsContainer" role="tablist" data-i18n-aria-label="tabs_label" aria-label="Schiedsrichter"></div>
       <div class="aktionen">
-        <button type="button" class="knopf-sichern" id="btnSichern" onclick="exportSingleReviewJSON()"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><span data-i18n="btn_save">Sichern</span></button>
-        <button type="button" class="knopf-icon" id="btnDrucken" onclick="window.print()" data-i18n-aria-label="btn_print" aria-label="Drucken"><svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg></button>
-        <button type="button" class="knopf-icon" id="btnMehr" onclick="toggleMehr()" aria-haspopup="true" aria-expanded="false" aria-controls="mehrMenu" data-i18n-aria-label="btn_more" aria-label="Mehr"><svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+        <button type="button" class="knopf-sichern" id="btnSichern"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><span data-i18n="btn_save">Sichern</span></button>
+        <button type="button" class="knopf-icon" id="btnDrucken" data-i18n-aria-label="btn_print" aria-label="Drucken"><svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg></button>
+        <button type="button" class="knopf-icon" id="btnMehr" aria-haspopup="true" aria-expanded="false" aria-controls="mehrMenu" data-i18n-aria-label="btn_more" aria-label="Mehr"><svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
         <div class="mehr-menu" id="mehrMenu" role="dialog" data-i18n-aria-label="btn_more" aria-label="Mehr" hidden>
-          <button type="button" class="menu-eintrag" id="menuSpiel" onclick="mehrAktion(() => oeffneSpielDialog())" data-i18n="game_edit">Spiel bearbeiten</button>
-          <button type="button" class="menu-eintrag" onclick="mehrAktion(exportCSV)" data-i18n="menu_csv">CSV-Export</button>
-          <button type="button" class="menu-eintrag" onclick="mehrAktion(kaderWaehlen)" data-i18n="kader_import">Kader importieren</button>
+          <button type="button" class="menu-eintrag" id="menuSpiel" data-i18n="game_edit">Spiel bearbeiten</button>
+          <button type="button" class="menu-eintrag" id="menuCsv" data-i18n="menu_csv">CSV-Export</button>
+          <button type="button" class="menu-eintrag" id="menuKader" data-i18n="kader_import">Kader importieren</button>
           <div class="menu-gruppe">
             <span class="feld-label" id="lbl_sprache" data-i18n="lang_label">Sprache</span>
             <div data-seg="sprache" data-seg-label="lbl_sprache"></div>
@@ -75,11 +75,11 @@
             <div data-seg="darstellung" data-seg-label="lbl_darstellung"></div>
           </div>
           <hr class="menu-trenner">
-          <button type="button" class="menu-eintrag menu-gefahr" id="menuReset" onclick="mehrAktion(resetAll)" data-i18n="menu_reset">Spiel zurücksetzen</button>
+          <button type="button" class="menu-eintrag menu-gefahr" id="menuReset" data-i18n="menu_reset">Spiel zurücksetzen</button>
         </div>
       </div>
     </div>
-    <input type="file" id="kaderDatei" accept=".json,.txt" hidden onchange="handleKaderUpload(event)">
+    <input type="file" id="kaderDatei" accept=".json,.txt" hidden>
 
   <div class="app-container">
     <!-- Kopf nur im Druck -->
@@ -125,7 +125,7 @@
         </section>
         <section class="karte netz-karte">
           <h2 class="karten-titel" data-i18n="radar_title">Profil</h2>
-          <svg id="radarChart" class="netz" viewBox="0 0 300 236" role="img" aria-label="Profil"></svg>
+          <svg id="radarChart" class="netz" viewBox="0 0 300 236" role="img" data-i18n-aria-label="radar_title" aria-label="Profil"></svg>
         </section>
         <section class="karte bereit-karte no-print">
           <h2 class="karten-titel" data-i18n="ready_title">Bereit zum Sichern?</h2>
@@ -137,14 +137,12 @@
       <div class="formular-spalte">
       <!-- 1. SCHIEDSRICHTER-ANGABEN MIT SMARTEM GESPASS-PARTNER -->
       <div class="section-title"><span class="num">1</span> <span data-i18n="sec1_title">Angaben zur Person & Funktion</span></div>
-      <div class="grid-3" style="margin-bottom: 12px;">
+      <div class="grid-3 abstand-12">
         <div>
           <label for="current_schiri_name" data-i18n="lbl_ref_name">Schiedsrichter</label>
-          <select id="current_schiri_name" onchange="handleRefSelectChange()">
-            <option value="">-- Name wählen oder eingeben --</option>
-          </select>
-          <input type="text" id="current_schiri_name_custom" placeholder="Anderer Name (Gast-Ref)" style="display: none; margin-top: 6px;" oninput="saveCurrentRefData()">
-          <button type="button" class="knopf-klein no-print" id="btnKaderForm" onclick="kaderWaehlen()" data-i18n="kader_import" hidden>Kader importieren</button>
+          <select id="current_schiri_name"></select>
+          <input type="text" id="current_schiri_name_custom" class="name-eigen" data-i18n-placeholder="ph_other_name" placeholder="" hidden>
+          <button type="button" class="knopf-klein no-print" id="btnKaderForm" data-i18n="kader_import" hidden>Kader importieren</button>
         </div>
         <div>
           <span class="feld-label" id="lbl_current_review_round" data-i18n="lbl_round">Supervision-Durchgang</span>
@@ -152,7 +150,7 @@
         </div>
         <div>
           <label for="current_schiri_partner" data-i18n="lbl_partner">Gespann-Partner (Automatisch)</label>
-          <input type="text" id="current_schiri_partner" placeholder="Wird automatisch aus den Reitern geladen" readonly style="background-color: var(--bg-subtle); color: var(--text-muted); cursor: not-allowed;">
+          <input type="text" id="current_schiri_partner" class="feld-auto" data-i18n-placeholder="ph_partner" placeholder="" readonly>
         </div>
       </div>
 
@@ -170,14 +168,14 @@
       <table class="perf-table">
         <thead>
           <tr>
-            <th style="width: 30%;" data-i18n="th_matrix_area">Bereich & Leitfragen</th>
-            <th style="width: 34%;" data-i18n="th_matrix_rating">Bewertung</th>
+            <th class="spalte-bereich" data-i18n="th_matrix_area">Bereich & Leitfragen</th>
+            <th class="spalte-bewertung" data-i18n="th_matrix_rating">Bewertung</th>
             <th data-i18n="th_matrix_notes">Szenen & Notizen</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td id="lbl_perf_1"><strong>1. Eislaufen & Physis</strong><br><small style="color:var(--text-muted);">Agilität, Mobilität, Rückwärtslaufen, Fitness</small></td>
+            <td id="lbl_perf_1"></td>
             <td>
               <div data-seg="perf_1" data-seg-label="lbl_perf_1"></div>
             </td>
@@ -189,7 +187,7 @@
             </td>
           </tr>
           <tr>
-            <td id="lbl_perf_2"><strong>2. Positionsspiel & Sichtachsen</strong><br><small style="color:var(--text-muted);">Torlinie vor Spielzug, Blaue Linie, Blickfeld</small></td>
+            <td id="lbl_perf_2"></td>
             <td>
               <div data-seg="perf_2" data-seg-label="lbl_perf_2"></div>
             </td>
@@ -201,7 +199,7 @@
             </td>
           </tr>
           <tr>
-            <td id="lbl_perf_3"><strong>3. Pfiff, Zeichengebung & Präsenz</strong><br><small style="color:var(--text-muted);">Signalgebung, Prägnanz, Körpersprache</small></td>
+            <td id="lbl_perf_3"></td>
             <td>
               <div data-seg="perf_3" data-seg-label="lbl_perf_3"></div>
             </td>
@@ -213,7 +211,7 @@
             </td>
           </tr>
           <tr>
-            <td id="lbl_perf_4"><strong>4. Antizipation & Spielaufmerksamkeit</strong><br><small style="color:var(--text-muted);">Spielzüge lesen, Off-Puck Play, Gefahren</small></td>
+            <td id="lbl_perf_4"></td>
             <td>
               <div data-seg="perf_4" data-seg-label="lbl_perf_4"></div>
             </td>
@@ -225,7 +223,7 @@
             </td>
           </tr>
           <tr>
-            <td id="lbl_perf_5"><strong>5. Deeskalation & Post-Whistle</strong><br><small style="color:var(--text-muted);">Torraumabsicherung, Rudelbildungen unterbinden</small></td>
+            <td id="lbl_perf_5"></td>
             <td>
               <div data-seg="perf_5" data-seg-label="lbl_perf_5"></div>
             </td>
@@ -237,7 +235,7 @@
             </td>
           </tr>
           <tr>
-            <td id="lbl_perf_6"><strong>6. Teamwork & Kommunikation</strong><br><small style="color:var(--text-muted);">Gespann-Abstimmung, Dialog mit Captains/Coaches</small></td>
+            <td id="lbl_perf_6"></td>
             <td>
               <div data-seg="perf_6" data-seg-label="lbl_perf_6"></div>
             </td>
@@ -249,7 +247,7 @@
             </td>
           </tr>
           <tr>
-            <td id="lbl_perf_7"><strong>7. Regelanwendung & Linientreue</strong><br><small style="color:var(--text-muted);">Strafmassstab bzw. Icing/Offside-Präzision</small></td>
+            <td id="lbl_perf_7"></td>
             <td>
               <div data-seg="perf_7" data-seg-label="lbl_perf_7"></div>
             </td>
@@ -282,37 +280,37 @@
 
       <!-- 5. ABSCHLUSS & FEEDBACK MIT AUTOMATISCHEM ORT/DATUM -->
       <div class="section-title"><span class="num">5</span> <span data-i18n="sec5_title">Abschluss-Rapport & Action Plan</span></div>
-      <div class="grid-2" style="margin-bottom: 12px;">
+      <div class="grid-2 abstand-12">
         <div data-druck-ganz>
           <label for="top_strengths" data-i18n="lbl_strengths">Top 2–3 Stärken (Keep Doing)</label>
-          <textarea id="top_strengths" oninput="saveCurrentRefData()" style="min-height: 85px;" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
+          <textarea id="top_strengths" class="feld-mittel" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
         </div>
         <div data-druck-ganz>
           <label for="top_workon" data-i18n="lbl_workon">Top 2–3 Entwicklungsschwerpunkte (Work On)</label>
-          <textarea id="top_workon" oninput="saveCurrentRefData()" style="min-height: 85px;" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
+          <textarea id="top_workon" class="feld-mittel" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
         </div>
       </div>
 
-      <div style="margin-bottom: 14px;" data-druck-ganz>
+      <div class="abstand-14" data-druck-ganz>
         <label for="general_report" data-i18n="lbl_report">Ausführlicher Rapport / Besondere Vorkommnisse</label>
-        <textarea id="general_report" oninput="saveCurrentRefData()" style="min-height: 110px;" placeholder="Szenenanalysen, Coaching-Notizen..."></textarea>
+        <textarea id="general_report" class="feld-gross" data-i18n-placeholder="ph_report" placeholder=""></textarea>
       </div>
 
-      <div class="grid-2" style="margin-top: 15px;">
+      <div class="grid-2 abstand-oben-15">
         <div>
           <label for="visum_ort_datum" data-i18n="lbl_location_date">Ort, Datum (Übernommen aus Metadaten)</label>
-          <input type="text" id="visum_ort_datum" oninput="saveCurrentRefData()" placeholder="Wird automatisch generiert...">
+          <input type="text" id="visum_ort_datum" data-i18n-placeholder="ph_location_auto" placeholder="">
         </div>
         <div>
           <label for="visum_name" data-i18n="lbl_signature">Visum Supervisor</label>
-          <input type="text" id="visum_name" oninput="saveCurrentRefData()" placeholder="Vorname Nachname">
+          <input type="text" id="visum_name" data-i18n-placeholder="ph_signature" placeholder="">
         </div>
       </div>
       </div>
     </div>
 
     <!-- ANSICHT 2: GESPANN-ÜBERSICHT -->
-    <div id="summaryView" class="gespann" style="display: none;">
+    <div id="summaryView" class="gespann" hidden>
       <div class="gespann-oben">
         <section class="karte gespann-score">
           <h2 class="karten-titel" data-i18n="crew_title">Gespann-Durchschnitt</h2>
@@ -332,7 +330,7 @@
         </section>
         <section class="karte netz-karte">
           <h2 class="karten-titel" data-i18n="crew_radar_title">Profil des Gespanns</h2>
-          <svg id="crewRadarChart" class="netz" viewBox="0 0 300 236" role="img" aria-label="Profil"></svg>
+          <svg id="crewRadarChart" class="netz" viewBox="0 0 300 236" role="img" data-i18n-aria-label="crew_radar_title" aria-label="Profil des Gespanns"></svg>
         </section>
       </div>
       <p class="leer-hinweis" id="crewLeer" hidden></p>
@@ -344,7 +342,7 @@
     </div>
 
     <!-- ANSICHT 3: SAISON-STATISTIK -->
-    <div id="seasonStatsView" class="statistik" style="display: none;">
+    <div id="seasonStatsView" class="statistik" hidden>
       <h2 class="ansicht-titel" data-i18n="stats_title">Schiedsrichter-Supervision — Gesamtstatistik</h2>
       <p class="stat-info" id="statInfo"><span id="statSaison"></span><span class="nur-druck" id="statGedruckt"></span></p>
       <section class="karte stat-laden">
@@ -386,25 +384,25 @@
       <div class="sf-karte">
         <label class="sf-zeile" for="spiel_liga"><span class="sf-label" data-i18n="lbl_league">Liga / Stufe</span>
               <select id="spiel_liga">
-                <optgroup label="Profisport" data-i18n-group="group_pro">
+                <optgroup label="" data-i18n-group="group_pro">
                   <option value="National League">National League (NL)</option>
                   <option value="Swiss League">Swiss League (SL)</option>
                 </optgroup>
-                <optgroup label="Amateursport Herren (Regio League)" data-i18n-group="group_men">
+                <optgroup label="" data-i18n-group="group_men">
                   <option value="MyHockey League">MyHockey League (MHL)</option>
                   <option value="1. Liga">1. Liga</option>
                   <option value="2. Liga">2. Liga</option>
                   <option value="3. Liga">3. Liga</option>
                   <option value="4. Liga">4. Liga</option>
                 </optgroup>
-                <optgroup label="Fraueneishockey (Women's Leagues)" data-i18n-group="group_women">
+                <optgroup label="" data-i18n-group="group_women">
                   <option value="PostFinance Women's League">PostFinance Women's League (PFWL)</option>
                   <option value="SWHL B">SWHL B</option>
                   <option value="SWHL C">SWHL C</option>
                   <option value="SWHL D">SWHL D</option>
                   <option value="JWL U16">Junior Women's League U16 (JWL U16)</option>
                 </optgroup>
-                <optgroup label="Nachwuchs Leistungssport (U21 / U18)" data-i18n-group="group_junior_pro">
+                <optgroup label="" data-i18n-group="group_junior_pro">
                   <option value="U21-Elit">U21-Elit</option>
                   <option value="U21-Top">U21-Top</option>
                   <option value="U21-A">U21-A</option>
@@ -412,7 +410,7 @@
                   <option value="U18-Top">U18-Top</option>
                   <option value="U18-A">U18-A</option>
                 </optgroup>
-                <optgroup label="Nachwuchs Breitensport (U16 / U14)" data-i18n-group="group_junior_ambition">
+                <optgroup label="" data-i18n-group="group_junior_ambition">
                   <option value="U16-Elit">U16-Elit</option>
                   <option value="U16-Top">U16-Top</option>
                   <option value="U16-A">U16-A</option>
@@ -420,11 +418,11 @@
                   <option value="U14-Top">U14-Top</option>
                   <option value="U14-A">U14-A</option>
                 </optgroup>
-                <optgroup label="Nachwuchs Erfassungsstufen (U12 / U9)" data-i18n-group="group_junior_grass">
+                <optgroup label="" data-i18n-group="group_junior_grass">
                   <option value="U12">U12 (Piccolo)</option>
                   <option value="U9">U9 (Bambini)</option>
                 </optgroup>
-                <optgroup label="Cup- & Sonderwettbewerbe" data-i18n-group="group_cup">
+                <optgroup label="" data-i18n-group="group_cup">
                   <option value="National Cup Herren">National Cup (Herren)</option>
                   <option value="National Cup Frauen">National Cup (Frauen)</option>
                   <option value="Kantonal- / Regionalcup">Kantonal- / Regionalcup</option>
@@ -462,7 +460,7 @@
 <dialog class="spiel-fenster szene-fenster" id="szeneDialog" aria-labelledby="szeneDialogTitel">
   <div class="sf-kopf">
     <button type="button" class="sf-knopf" id="szeneAbbrechen" data-i18n="dlg_cancel">Abbrechen</button>
-    <h2 id="szeneDialogTitel">Szene</h2>
+    <h2 id="szeneDialogTitel" data-i18n="scene_btn">Szene</h2>
     <button type="button" class="sf-knopf sf-fertig" id="szeneOk" data-i18n="stamp_add">Hinzufügen</button>
   </div>
   <div class="sf-inhalt">
@@ -481,19 +479,19 @@
   </div>
 </dialog>
 
-<script src="js/i18n.js?v=21"></script>
-<script src="js/dialog.js?v=21"></script>
-<script src="js/segment.js?v=21"></script>
-<script src="js/layout.js?v=21"></script>
-<script src="js/spiel.js?v=21"></script>
-<script src="js/szene.js?v=21"></script>
-<script src="js/druck.js?v=21"></script>
-<script src="js/config.js?v=21"></script>
-<script src="js/scoring.js?v=21"></script>
-<script src="js/storage.js?v=21"></script>
-<script src="js/ui.js?v=21"></script>
-<script src="js/export.js?v=21"></script>
-<script src="js/stats.js?v=21"></script>
-<script src="js/app.js?v=21"></script>
+<script src="js/i18n.js?v=22"></script>
+<script src="js/dialog.js?v=22"></script>
+<script src="js/segment.js?v=22"></script>
+<script src="js/layout.js?v=22"></script>
+<script src="js/spiel.js?v=22"></script>
+<script src="js/szene.js?v=22"></script>
+<script src="js/druck.js?v=22"></script>
+<script src="js/config.js?v=22"></script>
+<script src="js/scoring.js?v=22"></script>
+<script src="js/storage.js?v=22"></script>
+<script src="js/ui.js?v=22"></script>
+<script src="js/export.js?v=22"></script>
+<script src="js/stats.js?v=22"></script>
+<script src="js/app.js?v=22"></script>
 </body>
 </html>

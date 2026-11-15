@@ -14,8 +14,9 @@ const CLUB = {
 // Logo und Fenstertitel setzen (nur im Browser, nicht im Service Worker)
 function applyClub() {
   document.querySelectorAll('[data-club-logo]').forEach((logo) => {
+    logo.onerror = () => { logo.style.display = 'none'; };   // Logo-Datei fehlt: nichts anzeigen
     logo.src = CLUB.logo;
-    logo.alt = CLUB.kurz + ' Logo';
+    logo.alt = t('logo_alt');
   });
   document.title = t('app_title') + ' - ' + CLUB.name;
 }

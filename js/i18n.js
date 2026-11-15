@@ -188,6 +188,18 @@ const I18N = {
     ph_opponent: "z. B. Gastteam",
     opponent_old: "Bisherige Begegnung – wird erst beim Ändern als „{kurz} – Gegner“ gespeichert.",
     ph_other_name: "Anderer Name (Gast-Ref)",
+    ph_partner: "Wird automatisch aus den Reitern geladen",
+    ph_report: "Szenenanalysen, Coaching-Notizen...",
+    ph_location_auto: "Wird automatisch generiert...",
+    ph_signature: "Vorname Nachname",
+    logo_alt: "{kurz} Logo",
+    group_pro: "Profisport",
+    group_men: "Amateursport Herren (Regio League)",
+    group_women: "Fraueneishockey (Women's Leagues)",
+    group_junior_pro: "Nachwuchs Leistungssport (U21 / U18)",
+    group_junior_ambition: "Nachwuchs Breitensport (U16 / U14)",
+    group_junior_grass: "Nachwuchs Erfassungsstufen (U12 / U9)",
+    group_cup: "Cup- & Sonderwettbewerbe",
     game_nr: "Nr. {nr}",
     ready_hints: "Hinweise",
     ready_chip_hint: "✓ Bereit · {n} Hinweis",
@@ -448,6 +460,18 @@ const I18N = {
     ph_opponent: "e.g. visiting team",
     opponent_old: "Previous matchup – saved as “{kurz} – opponent” only once you change it.",
     ph_other_name: "Other name (guest official)",
+    ph_partner: "Filled in automatically from the tabs",
+    ph_report: "Scene analysis, coaching notes...",
+    ph_location_auto: "Generated automatically...",
+    ph_signature: "First name Last name",
+    logo_alt: "{kurz} logo",
+    group_pro: "Professional",
+    group_men: "Amateur men (Regio League)",
+    group_women: "Women's hockey (Women's Leagues)",
+    group_junior_pro: "Youth performance (U21 / U18)",
+    group_junior_ambition: "Youth development (U16 / U14)",
+    group_junior_grass: "Youth entry level (U12 / U9)",
+    group_cup: "Cup & special competitions",
     game_nr: "No. {nr}",
     ready_hints: "Notes",
     ready_chip_hint: "✓ Ready · {n} note",
@@ -591,6 +615,10 @@ function applyTranslations() {
   document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
     el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria-label')));
   });
+  document.querySelectorAll('[data-i18n-group]').forEach(el => {
+    el.label = t(el.getAttribute('data-i18n-group'));
+  });
+  if (typeof zeigeSicherung === 'function') zeigeSicherung();
   applyClub();
   if (typeof zeigeBadge === 'function') zeigeBadge();   // Badge-Text je nach Status (js/app.js)
   if (document.getElementById('altHinweis')) zeigeAltHinweis();

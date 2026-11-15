@@ -1,7 +1,7 @@
 """Texte-Test: Hat jede Sprache alle Texte? Funktioniert die Sprachwahl?
 
 Prüft (Fehler = Abbruchcode 1):
-- jeder Schlüssel, den Code und HTML verwenden (t('…'), data-i18n), existiert auf Deutsch
+- jeder Schlüssel, den Code und HTML verwenden (t('…'), data-i18n, -placeholder, -aria-label, -group), existiert auf Deutsch
 - Englisch hat alle deutschen Schlüssel, gleiche Platzhalter ({n} …) und gleich lange Listen
 - in Listen mit gespeicherten Werten (val) sind die Werte in allen Sprachen gleich (deutsch)
 - jede Rolle in SYSTEM_CONFIGS hat eine englische Bezeichnung
@@ -41,7 +41,7 @@ def verwendete_schluessel():
             for prefix in re.findall(r"'([a-z0-9_]+_)'\s*\+", erstes):
                 keys.add(prefix + '*')
     html = open(os.path.join(REPO, 'index.html'), encoding='utf-8').read()
-    keys |= set(re.findall(r'data-i18n="([a-z0-9_]+)"', html))
+    keys |= set(re.findall(r'data-i18n(?:-placeholder|-aria-label|-group)?="([a-z0-9_]+)"', html))
     return keys
 
 

@@ -41,7 +41,6 @@ if ('serviceWorker' in navigator) {
           if (!hadController || !badge) return;
           badge.dataset.status = 'update';
           badge.innerText = t('badge_update');
-          badge.style.cursor = "pointer";
           badge.onclick = () => location.reload();
         });
       })

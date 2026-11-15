@@ -2,6 +2,9 @@
 
 Aufruf:   python3 tests/tools/bilder.py                 (nur aktueller Stand)
           python3 tests/tools/bilder.py --gegen main    (zusätzlich Referenzstand, nebeneinander)
+          python3 tests/tools/bilder.py --gegen HEAD --pixel   (dazu Pixelvergleich: listet jedes Bild, das sich
+                                                         auch nur in einem Pixel unterscheidet; Abbruchcode 1)
+          Statt eines Git-Stands geht auch ein Ordner mit einer Kopie der App (--gegen /pfad/zur/kopie).
 Ergebnis: tests/tools/ergebnisse/bilder/uebersicht.html im Browser öffnen (nicht im Repo).
 
 Die App läuft mit dem erfundenen Beispielspiel aus tests/fixtures/.
@@ -27,6 +30,16 @@ ANSICHTEN = [
         await handleSeasonFilesUpload({ target: { files, value: '' } }); })()"""),
 ]
 
+# Feste Uhrzeit, damit „Gesichert 10:00“ und „gedruckt am …“ in allen Bildern gleich sind (Pixelvergleich);
+# dazu ohne Übergänge
+FESTE_ZEIT = """(() => { const T = new Date(2026, 10, 15, 10, 0, 0).getTime(); const D = Date;
+  class F extends D { constructor(...a) { super(...(a.length ? a : [T])); } static now() { return T; } }
+  window.Date = F;
+  // Übergänge aus (auch in älteren Ständen ohne Rücksicht auf „Bewegung reduzieren“): Bilder nie mitten in einer Animation
+  document.addEventListener('DOMContentLoaded', () => { const s = document.createElement('style');
+    s.textContent = '*, *::before, *::after { transition: none !important; animation: none !important; }';
+    document.head.appendChild(s); }); })()"""
+
 
 def fotografieren(wurzel, ziel):
     os.makedirs(ziel, exist_ok=True)
@@ -34,6 +47,7 @@ def fotografieren(wurzel, ziel):
     fehler = []
     try:
         with Browser() as b:
+            b.vor_laden(FESTE_ZEIT)
             for gname, w, h in GROESSEN:
                 for schema in SCHEMEN:
                     for aname, aktion in ANSICHTEN:
@@ -103,17 +117,56 @@ def uebersicht(ordner, staende):
         f.write('\n'.join(zeilen))
 
 
+PIXEL_JS = """(async (a, b) => {
+  const lade = (u) => new Promise((ok, f) => { const i = new Image(); i.onload = () => ok(i); i.onerror = f; i.src = u; });
+  const [x, y] = await Promise.all([lade(a), lade(b)]);
+  if (x.width !== y.width || x.height !== y.height) return [-1, x.width + '×' + x.height + ' / ' + y.width + '×' + y.height];
+  const daten = (i) => { const c = document.createElement('canvas'); c.width = i.width; c.height = i.height;
+    const k = c.getContext('2d'); k.drawImage(i, 0, 0); return k.getImageData(0, 0, i.width, i.height).data; };
+  const p = daten(x), q = daten(y);
+  let n = 0;
+  for (let j = 0; j < p.length; j += 4) if (p[j] !== q[j] || p[j + 1] !== q[j + 1] || p[j + 2] !== q[j + 2]) n++;
+  return [n, ''];
+})"""
+
+
+def pixelvergleich(ordner):
+    """Vergleicht jedes PNG von „referenz“ und „aktuell“. Gibt [(datei, abweichende Pixel, Hinweis)] zurück."""
+    abweichend = []
+    dateien = sorted(f for f in os.listdir(os.path.join(ordner, 'aktuell')) if f.endswith('.png'))
+    srv = server(ordner)
+    try:
+        with Browser() as b:
+            b.oeffnen(srv.basis + '/uebersicht.html', warten=0)
+            for d in dateien:
+                a, r = os.path.join(ordner, 'aktuell', d), os.path.join(ordner, 'referenz', d)
+                if not os.path.exists(r):
+                    abweichend.append((d, -1, 'fehlt in der Referenz'))
+                    continue
+                if open(a, 'rb').read() == open(r, 'rb').read():
+                    continue
+                n, hinweis = b.js(PIXEL_JS + f"('/referenz/{d}', '/aktuell/{d}')")
+                if n:
+                    abweichend.append((d, n, hinweis))
+    finally:
+        srv.shutdown()
+    return abweichend, len(dateien)
+
+
 def main():
     ordner = os.path.join(ERGEBNISSE, 'bilder')
     shutil.rmtree(ordner, ignore_errors=True)
     staende = []
     if '--gegen' in sys.argv:
         ref = sys.argv[sys.argv.index('--gegen') + 1]
-        d = git_stand(ref)
-        try:
-            fotografieren(d, os.path.join(ordner, 'referenz'))
-        finally:
-            shutil.rmtree(d, ignore_errors=True)
+        if os.path.isdir(ref):   # Ordner (z. B. Kopie eines nicht committeten Stands) statt Git-Stand
+            fotografieren(os.path.abspath(ref), os.path.join(ordner, 'referenz'))
+        else:
+            d = git_stand(ref)
+            try:
+                fotografieren(d, os.path.join(ordner, 'referenz'))
+            finally:
+                shutil.rmtree(d, ignore_errors=True)
         staende.append('referenz')
     fehler = fotografieren(REPO, os.path.join(ordner, 'aktuell'))
     staende.append('aktuell')
@@ -122,6 +175,12 @@ def main():
         print('JS-Fehler/Warnung:', f)
     n = len(GROESSEN) * len(SCHEMEN) * len(ANSICHTEN)
     print(f'{n} Bilder + 2 Druckansichten je Stand + Druck-PDF → {os.path.join(ordner, "uebersicht.html")}')
+    if '--pixel' in sys.argv and 'referenz' in staende:
+        abweichend, gesamt = pixelvergleich(ordner)
+        for d, n, hinweis in abweichend:
+            print(f'Abweichung: {d}: ' + (hinweis if n < 0 else f'{n} Pixel'))
+        print(f'Pixelvergleich: {gesamt - len(abweichend)} von {gesamt} Bildern pixelgleich')
+        sys.exit(1 if abweichend else 0)
 
 
 if __name__ == '__main__':

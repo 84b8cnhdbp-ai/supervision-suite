@@ -32,7 +32,27 @@ function initApp() {
   initSzenen();
   initDruck();
   initStatistik();
-  document.getElementById('crew_notes').addEventListener('input', saveGlobalState);   // Gespann-Notiz
+  initBedienung();
+}
+
+// Knöpfe und Felder verbinden (statt onclick/oninput im HTML)
+function initBedienung() {
+  const bei = (id, ereignis, fn) => document.getElementById(id).addEventListener(ereignis, fn);
+  bei('navSpiel', 'click', zeigeBewertung);
+  bei('navStats', 'click', selectStatsTab);
+  bei('btnSichern', 'click', exportSingleReviewJSON);
+  bei('btnDrucken', 'click', () => window.print());
+  bei('btnMehr', 'click', () => toggleMehr());
+  bei('menuSpiel', 'click', () => mehrAktion(() => oeffneSpielDialog()));
+  bei('menuCsv', 'click', () => mehrAktion(exportCSV));
+  bei('menuKader', 'click', () => mehrAktion(kaderWaehlen));
+  bei('menuReset', 'click', () => mehrAktion(resetAll));
+  bei('btnKaderForm', 'click', kaderWaehlen);
+  bei('kaderDatei', 'change', handleKaderUpload);
+  bei('current_schiri_name', 'change', handleRefSelectChange);
+  ['current_schiri_name_custom', 'top_strengths', 'top_workon', 'general_report', 'visum_ort_datum', 'visum_name']
+    .forEach((id) => bei(id, 'input', saveCurrentRefData));
+  bei('crew_notes', 'input', saveGlobalState);   // Gespann-Notiz
 }
 
 function setupRefereeDropdown() {
@@ -62,10 +82,10 @@ function handleRefSelectChange() {
   const sel = document.getElementById('current_schiri_name');
   const customInput = document.getElementById('current_schiri_name_custom');
   if (sel.value === "_CUSTOM_") {
-    customInput.style.display = "block";
+    customInput.hidden = false;
     customInput.focus();
   } else {
-    customInput.style.display = "none";
+    customInput.hidden = true;
     customInput.value = "";
   }
   saveCurrentRefData();
@@ -135,13 +155,16 @@ function renderTabs() {
   aktualisiereSeitenleiste();
 }
 
+// Eine der drei Ansichten zeigen (Anzeige im Einzelnen bestimmt das CSS, z. B. zwei Spalten)
+function zeigeAnsicht(id) {
+  ['singleRefView', 'summaryView', 'seasonStatsView'].forEach((v) => { document.getElementById(v).hidden = v !== id; });
+}
+
 function selectRefTab(index) {
   if (activeTabType === "ref") saveCurrentRefData();
   activeTabType = "ref";
   activeRefIndex = index;
-  document.getElementById('singleRefView').style.display = "";   // Anzeige bestimmt das CSS (z. B. zwei Spalten)
-  document.getElementById('summaryView').style.display = "none";
-  document.getElementById('seasonStatsView').style.display = "none";
+  zeigeAnsicht('singleRefView');
   renderTabs();
   loadRefereeForm(activeRefIndex);
 }
@@ -149,9 +172,7 @@ function selectRefTab(index) {
 function selectSummaryTab() {
   if (activeTabType === "ref") saveCurrentRefData();
   activeTabType = "summary";
-  document.getElementById('singleRefView').style.display = "none";
-  document.getElementById('summaryView').style.display = "";   // Anzeige bestimmt das CSS (z. B. zwei Spalten)
-  document.getElementById('seasonStatsView').style.display = "none";
+  zeigeAnsicht('summaryView');
   renderTabs();
   renderSummaryView();
 }
@@ -159,9 +180,7 @@ function selectSummaryTab() {
 function selectStatsTab() {
   if (activeTabType === "ref") saveCurrentRefData();
   activeTabType = "stats";
-  document.getElementById('singleRefView').style.display = "none";
-  document.getElementById('summaryView').style.display = "none";
-  document.getElementById('seasonStatsView').style.display = "";   // Anzeige bestimmt das CSS (z. B. zwei Spalten)
+  zeigeAnsicht('seasonStatsView');
   renderTabs();
 }
 
@@ -170,7 +189,7 @@ function adjustLabelsForRole(refConfig) {
   const kriterien = t(refConfig.type === 'lines' ? 'crit_lines' : 'crit_head');
   kriterien.forEach((k, i) => {
     document.getElementById(`lbl_perf_${i + 1}`).innerHTML =
-      `<strong>${escapeHtml(k.t)}</strong><br><small style="color:var(--text-muted);">${escapeHtml(k.s)}</small>`;
+      `<strong>${escapeHtml(k.t)}</strong><br><small class="leitfragen">${escapeHtml(k.s)}</small>`;
   });
 }
 
@@ -261,15 +280,15 @@ function loadRefereeForm(index) {
   const custom = document.getElementById('current_schiri_name_custom');
   if (data.name && KADER.includes(data.name)) {
     sel.value = data.name;
-    custom.style.display = "none";
+    custom.hidden = true;
     custom.value = "";
   } else if (data.name) {
     sel.value = "_CUSTOM_";
-    custom.style.display = "block";
+    custom.hidden = false;
     custom.value = data.name;
   } else {
     sel.value = "";
-    custom.style.display = "none";
+    custom.hidden = true;
     custom.value = "";
   }
 
