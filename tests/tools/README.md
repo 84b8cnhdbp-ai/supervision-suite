@@ -6,6 +6,9 @@ steht in `.gitignore` und kommt **nie** ins Repo.
 
 Alle Befehle im Projektordner ausführen.
 
+**Bewegung:** Alle Tests laufen mit „Bewegung reduzieren“ (`prefers-reduced-motion`), damit Bilder und Messungen nie
+mitten in einer Animation entstehen. Nur der Animations-Test schaltet die Übergänge ein (`b.bewegung = True`).
+
 ## Alles auf einmal – nach jedem Teilschritt
 
 ```sh
@@ -13,8 +16,10 @@ python3 tests/tools/alle-tests.py            # alle Tests (ca. 5 Min.)
 python3 tests/tools/alle-tests.py --ohne-sw  # ohne Service-Worker-Test (ca. 1 Min.)
 ```
 
-Führt Daten-Test (Deutsch und Englisch), Texte-, Vereins-, Fenster-, Knopfreihen-, Layout-, Score-, Spiel-, Szene-, Übersicht-, Druck- und Service-Worker-Test aus und zeigt eine
-Zusammenfassung. Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
+Führt Daten-Test (Deutsch und Englisch), Texte- (streng), Kunstsprache-, Vereins-, Fenster-, Knopfreihen-, Layout-, Score-,
+Spiel-, Szene-, Übersicht-, Druck-, Bereiche-, Animations- und Service-Worker-Test aus und zeigt eine Zusammenfassung
+mit der Schlussmeldung jedes Tests (aus stdout; Meldungen auf stderr werden zusätzlich angezeigt).
+Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
 
 ## Daten-Test – „gleiche Eingaben, gleiche Daten“
 
@@ -40,13 +45,24 @@ Gewollte Abweichungen sind im Test ausdrücklich aufgeführt und werden als „g
 
 ```sh
 python3 tests/tools/texte-test.py            # FR/IT fehlend = Hinweis
-python3 tests/tools/texte-test.py --streng   # ab Etappe 2.9: FR/IT fehlend = Fehler
+python3 tests/tools/texte-test.py --streng   # ab Etappe 2.9: FR/IT fehlend = Fehler (so in alle-tests.py)
 ```
 
-Prüft: jeder verwendete Schlüssel (`t('…')`, `data-i18n`) existiert; Englisch hat alle Texte mit gleichen
+Prüft: jeder verwendete Schlüssel (`t('…')`, `data-i18n`, `-placeholder`, `-aria-label`, `-group`) existiert; Englisch hat alle Texte mit gleichen
 Platzhaltern und gleich langen Listen; gespeicherte Werte (`val`) sind in allen Sprachen gleich; jede Rolle hat
 eine englische Bezeichnung; die Sprachwahl bleibt nach Neuladen; `?lang=fr` wird nicht gespeichert und zeigt
 fehlende Texte auf Deutsch; versteckte Sprachen stehen nicht in der Auswahl.
+
+## Kunstsprache-Test – jeder Text über `t()`?
+
+```sh
+python3 tests/tools/kunstsprache-test.py
+```
+
+Erzeugt im Browser eine Kunstsprache, in der jeder Text als ⟦Text⟧ erscheint (gespeicherte Werte bleiben), und sucht
+in allen Ansichten, Fenstern, Menüs und im Druck Texte, Platzhalter, `aria-label`, `title` und `alt` ausserhalb von ⟦…⟧ –
+also fest eingebaute Texte. Ausgenommen sind Daten (Namen, Spiel, Verein, Ligen) und Sprachnamen. Die Kunstsprache gibt es
+nur im Test: nie in der Sprachwahl, nie gespeichert (wird geprüft).
 
 ## Vereins-Test – kein „EVZ“ fest im Code
 
@@ -158,6 +174,30 @@ ausgeblendet und `aria-hidden`; auch nach Reiterwechsel und Neuladen aktuell. Su
 Statistik: Saison aus den Spieldaten (eine, mehrere, keine; ab August neue Saison), Druckdatum, Kennzahlen in einer Zeile,
 Spaltentitel auf jeder Seite, keine geteilten Zeilen, „Bewertungen laden“ ausgeblendet, Fusszeile „Vertraulich“, DE/EN.
 
+Supervisor in der Titelzeile auch nach Änderung unter „Spiel bearbeiten“ (echte Klicks).
+Dass der Druck mitten im Hochzählen den fertigen Score zeigt, prüft der Animations-Test (nur dort laufen Übergänge).
+
+## Bereiche-Test – Karten für VoiceOver
+
+```sh
+python3 tests/tools/bereiche-test.py
+```
+
+Liest den Bedienungshilfen-Baum (was ein Screenreader sieht): Jede Karte ist ein Bereich mit ihrem Titel als Namen –
+Score (mit Rolle), Profil, Bereit zum Sichern?, Gespann-Durchschnitt, Profil des Gespanns, Gespann-Beobachtungen,
+Bewertungen laden –, auch hochkant mit aufgelöster rechter Spalte; nur Bereiche der sichtbaren Ansicht; 834/1080/1194 px,
+DE/EN. VoiceOver in Safari kann abweichen: auf dem iPad von Hand gegenprüfen.
+
+## Animations-Test – Übergänge
+
+```sh
+python3 tests/tools/animation-test.py
+```
+
+Einziger Test mit Übergängen: Reiterwechsel blendet ein (150 ms), Score zählt nur beim Reiterwechsel hoch (400 ms,
+Bewertung und Gespann, Endwert = berechneter Score); beim Bearbeiten und Sprachwechsel sofort. Druck mitten im
+Hochzählen (Druckansicht und `beforeprint`): Zahl und Ring sofort fertig. Mit „Bewegung reduzieren“ bewegt sich nichts.
+
 ## Service-Worker-Test – Updates, offline, langsames Netz
 
 ```sh
@@ -175,10 +215,15 @@ vom Service Worker geliefert, bei langsamem Netz Start nach ca. 3 s. Ergebnis �
 ```sh
 python3 tests/tools/bilder.py                 # aktueller Stand
 python3 tests/tools/bilder.py --gegen main    # zusätzlich main daneben
+python3 tests/tools/bilder.py --gegen HEAD --pixel        # Pixelvergleich (z. B. vor/nach dem Aufräumen)
+python3 tests/tools/bilder.py --gegen /pfad/kopie --pixel # Referenz aus einem Ordner (nicht committeter Stand)
 ```
 
-Fotografiert Head Referee, Linesperson, Gespann und Statistik in iPad hochkant (834 px), iPad quer (1194 px) und
-MacBook (1440 px), je hell und dunkel, plus ein Druck-PDF. Danach
+Fotografiert Head Referee, Linesperson, Gespann und Statistik in iPad hochkant (768, 834 px), iPad quer (1080, 1194 px) und
+MacBook (1440 px), je hell und dunkel, dazu Druckansichten und ein Druck-PDF – mit fester Uhrzeit und ohne Übergänge,
+damit gleiche Stände pixelgleiche Bilder ergeben. `--pixel` listet jedes Bild, das sich auch nur in einem Pixel
+unterscheidet (Abbruchcode 1). Achtung: Die Versionsnummer `?v=` steht in der Seitenleiste; für einen reinen
+Pixelvergleich die Referenz mit derselben Nummer verwenden. Danach
 `tests/tools/ergebnisse/bilder/uebersicht.html` im Browser öffnen.
 
 ## Andere Chrome-Installation

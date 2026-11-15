@@ -109,19 +109,6 @@ header {
   flex-wrap: wrap;
   gap: 16px;
 }
-.header-brand {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.header-brand img {
-  height: 48px;
-  width: auto;
-  object-fit: contain;
-}
-.header-titles h1 { margin: 0; font-size: 20px; font-weight: 700; }
-.header-titles p { margin: 3px 0 0 0; font-size: 12px; color: var(--secondary); }
-.header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
 .badge {
   padding: 5px 11px;
@@ -134,41 +121,8 @@ header {
 }
 .badge-pwa { background: var(--seg); color: var(--text); }
 .badge-pwa[data-status="update"] { cursor: pointer; }
-.badge-status { background: var(--seg); color: var(--secondary); }
-.badge-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--r-p); }
 
-.btn-control {
-  background: var(--card);
-  color: var(--text);
-  border: 1px solid var(--sep);
-  min-height: 44px;
-  padding: 0 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.btn-control:hover { background: var(--seg); }
-.lang-select { width: auto; min-width: 120px; font-size: 13px; font-weight: 600; }
-
-.kader-import { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; color: var(--accent); cursor: pointer; font-weight: 600; text-transform: none; letter-spacing: 0; }
-.kader-import:hover { text-decoration: underline; }
 .grade-missing { outline: 2px solid var(--r-m); outline-offset: 3px; border-radius: 12px; }
-.system-tabs-wrapper {
-  background: var(--toolbar);
-  padding: 10px 30px 0 30px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.referee-tabs {
-  display: flex;
-  gap: 4px;
-  overflow-x: auto;
-}
 .tab-btn {
   min-height: 44px;
   padding: 0 16px;
@@ -221,7 +175,6 @@ header {
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
 
 /* Abstände und Feldgrössen (früher Inline-Styles im HTML) */
 .abstand-12 { margin-bottom: 12px; }
@@ -265,52 +218,12 @@ textarea { resize: vertical; min-height: 64px; }
 }
 optgroup { font-weight: bold; }
 
-.analytics-card {
-  background: var(--card);
-  border: 1px solid var(--sep);
-  box-shadow: var(--card-shadow);
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 20px;
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 20px;
-  align-items: center;
-}
-.score-display {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.score-circle {
-  width: 65px;
-  height: 65px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--on-accent);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 18px;
-  font-variant-numeric: tabular-nums;
-}
-.score-circle small { font-size: 9px; font-weight: 500; color: var(--on-accent); opacity: 0.85; text-transform: uppercase; }
-.radar-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; border-radius: 12px; overflow: hidden; background: var(--card); border: 1px solid var(--sep); }
 th, td { padding: 10px 12px; text-align: left; font-size: 14px; vertical-align: top; border-bottom: 1px solid var(--sep); }
 th { background-color: var(--toolbar); color: var(--secondary); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
 tr:last-child td { border-bottom: none; }
 tr:nth-child(even) { background-color: var(--table-zebra); }
 
-.radio-row { display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0; }
-.radio-row input { width: auto; min-height: 0; margin: 0; cursor: pointer; }
 input[type="radio"] { width: 22px; height: 22px; min-height: 0; accent-color: var(--accent); }
 
 /* Szenen pro Kriterium (js/szene.js) */
@@ -340,17 +253,6 @@ input[type="radio"] { width: 22px; height: 22px; min-height: 0; accent-color: va
 .szene-fenster .feld-label { margin-top: 6px; }
 .szene-loeschen { align-self: stretch; text-align: center; background: var(--card); border-radius: 12px; }
 
-.toolbar {
-  margin-top: 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  border-top: 1px solid var(--sep);
-  padding-top: 20px;
-}
-.btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
 button.btn, label.btn {
   min-height: 44px;
   padding: 0 16px;
@@ -364,30 +266,6 @@ button.btn, label.btn {
   gap: 6px;
   transition: all 0.15s ease;
 }
-.btn-primary, .btn-accent { background-color: var(--accent); color: var(--on-accent); }
-.btn-primary:hover, .btn-accent:hover { background-color: var(--accent-hover); }
-.btn-outline { background-color: var(--card); color: var(--accent); border: 1px solid var(--sep); }
-.btn-outline:hover { background-color: var(--seg); }
-.btn-danger { background-color: var(--danger-soft); color: var(--t-bad); }
-.btn-danger:hover { filter: brightness(0.96); }
-
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin-top: 14px;
-}
-.summary-card {
-  background: var(--card);
-  border: 1px solid var(--sep);
-  box-shadow: var(--card-shadow);
-  border-radius: 12px;
-  padding: 16px;
-  text-align: center;
-}
-.summary-card h3 { margin: 0 0 6px 0; font-size: 14px; color: var(--text); }
-.summary-card .score { font-size: 24px; font-weight: 700; color: var(--accent); margin: 6px 0; font-variant-numeric: tabular-nums; }
-.summary-card .name { font-weight: 700; font-size: 13px; margin-bottom: 8px; }
 
 /* ---------- Gerüst (js/layout.js): Seitenleiste + Hauptbereich ---------- */
 .app { display: grid; grid-template-columns: 264px minmax(0, 1fr); min-height: 100vh; }
@@ -530,8 +408,7 @@ fieldset.seg {
 .seg input:checked + .seg-opt[data-farbe] { background: var(--farbe); color: #FFFFFF; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); }
 .seg input:focus-visible + .seg-opt { outline: 3px solid var(--accent); outline-offset: 1px; }
 .seg-legende { margin: -6px 0 8px; font-size: 12px; color: var(--secondary); }
-/* System in den Spieldaten: zwei Spalten breit, damit „1-Mann“ … nicht umbricht */
-.grid-4 > .feld-breit { grid-column: span 2; }
+/* System im Fenster „Spiel bearbeiten“: „1-Mann“ … nicht umbrechen */
 #system_typ .seg-opt { white-space: nowrap; }
 .perf-table .seg .seg-opt { font-size: 16px; }
 
@@ -825,7 +702,6 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
   .bereit-karte { order: 3; margin-top: 14px; }
 }
 
-
 /* Kriterien am Bildschirm als Zeilen: Titel | Knopfreihe, darunter Notizen; schmal alles untereinander */
 @media screen {
   .perf-table { display: block; }
@@ -853,8 +729,7 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
 }
 
 @media (max-width: 860px) {
-  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-  .analytics-card { grid-template-columns: 1fr; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
   .content { padding: 16px; }
 }
 
@@ -871,7 +746,7 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
   body { background: #FFF !important; color: #000 !important; padding: 0 !important; font-size: 11pt !important; }
   .app-container { box-shadow: none !important; border: none !important; max-width: 100% !important; }
   header { background: #FFF !important; color: #000 !important; padding: 0 0 8pt !important; border-bottom: 1.5pt solid #000 !important; }
-  .header-controls, .system-tabs-wrapper, .toolbar, .no-print, .toast-box, dialog,
+  .no-print, .toast-box, dialog,
   .seitenleiste, .werkzeugleiste, .mehr-menu { display: none !important; }
   .app { display: block; }
   .haupt { padding: 0 !important; }
@@ -939,6 +814,4 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
   .coach-liste { gap: 4pt; }
   .coach-zeile { grid-template-columns: 30% 1fr; gap: 6pt; }
   .seg-legende { margin: 0 0 4pt; font-size: 8.5pt; }
-  .analytics-card { background: #FFF !important; border: 1pt solid #C7C7CC !important; box-shadow: none !important; padding: 8px 12px !important; margin-bottom: 12px !important; }
-  .score-circle { background: #0A58CA !important; color: #FFF !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
