@@ -88,7 +88,7 @@ def main():
                             # Meldungen und Exporte
                             b.js("""window.__downloads = [];
                                     window.downloadBlob = async (blob, name) => __downloads.push(name + '\\n' + await blob.text());
-                                    exportSingleReviewJSON(); exportCSV(); addTimestamp('note_1'); resetAll();
+                                    exportSingleReviewJSON(); exportCSV(); oeffneSzene(1); resetAll();
                                     selectRefTab(2); exportSingleReviewJSON();""")
                             b.js('new Promise((r) => setTimeout(r, 300))')
                             # Meldungen: alte Popups (falls noch vorhanden) und eigene Fenster/Toasts im DOM

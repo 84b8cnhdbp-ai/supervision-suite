@@ -95,18 +95,17 @@ def main():
                 b.js('new Promise((r) => setTimeout(r, 800))')
                 pruefe(not daten(), L + 'Zurücksetzen: roter Knopf hat nicht gelöscht')
 
-                # 4. Szene mit Spielzeit
+                # 4. Szene (eigenes Fenster statt prompt; Details im Szene-Test)
                 start()
-                b.klick("button.stamp-btn[onclick*=\"note_2\"]")
-                pruefe(b.js(FENSTER + ' !== null'), L + 'Szene: kein Fenster')
-                pruefe(b.js("document.activeElement.classList.contains('fenster-eingabe') && document.activeElement.value") == 'P1 00:00',
-                       L + 'Szene: Eingabe nicht vorbelegt/fokussiert')
-                b.js("document.activeElement.select()"); b.tippen('P2 08:34'); b.taste('Enter')
-                pruefe(b.js("document.getElementById('note_2').value") == '[P2 08:34] ', L + f"Szene: Notiz ist {b.js('document.getElementById(\"note_2\").value')!r}")
-                pruefe(b.js("JSON.parse(localStorage.getItem('referee_multi_supervision_data')).referees['4-Man_h1'].note_2") == '[P2 08:34] ',
+                b.klick(".szene-knopf[data-szene='2']")
+                pruefe(b.js("document.getElementById('szeneDialog').open"), L + 'Szene: kein Fenster')
+                pruefe(b.js("document.activeElement.id") == 'szeneZeit', L + 'Szene: Fokus nicht auf der Spielzeit')
+                b.tippen('834'); b.taste('Enter')
+                pruefe(b.js("document.getElementById('note_2').value") == '[P1 08:34]', L + f"Szene: Notiz ist {b.js('document.getElementById(\"note_2\").value')!r}")
+                pruefe(b.js("JSON.parse(localStorage.getItem('referee_multi_supervision_data')).referees['4-Man_h1'].note_2") == '[P1 08:34]',
                        L + 'Szene: nicht gespeichert')
-                b.klick("button.stamp-btn[onclick*=\"note_2\"]"); b.taste('Escape')
-                pruefe(b.js("document.getElementById('note_2').value") == '[P2 08:34] ', L + 'Szene: Esc hat trotzdem etwas hinzugefügt')
+                b.klick(".szene-knopf[data-szene='2']"); b.tippen('1000'); b.taste('Escape')
+                pruefe(b.js("document.getElementById('note_2').value") == '[P1 08:34]', L + 'Szene: Esc hat trotzdem etwas hinzugefügt')
 
                 # 5. Kader-Import
                 b.js("""handleKaderUpload({ target: { files: [new File(['Meier Luca\\nKeller Nina\\n'], 'k.txt')], value: '' } })""")

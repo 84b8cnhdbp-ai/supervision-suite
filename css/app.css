@@ -288,20 +288,32 @@ tr:nth-child(even) { background-color: var(--table-zebra); }
 .radio-row input { width: auto; min-height: 0; margin: 0; cursor: pointer; }
 input[type="radio"] { width: 22px; height: 22px; min-height: 0; accent-color: var(--accent); }
 
-.stamp-btn {
-  min-height: 44px;
-  padding: 0 12px;
-  background: var(--card);
-  border: 1px solid var(--sep);
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-  cursor: pointer;
-  margin-bottom: 4px;
-  display: inline-block;
+/* Szenen pro Kriterium (js/szene.js) */
+.szenen-kopf { display: flex; }
+.szene-knopf {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; border: 1px solid var(--sep);
+  border-radius: 8px; background: var(--card); color: var(--accent); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
 }
-.stamp-btn:hover { background: var(--seg); }
+.szene-knopf:hover { background: var(--seg); }
+.szene-knopf:focus-visible, .szene-chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.szenen { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.szenen:empty { display: none; }
+.szenen li { max-width: 100%; }
+.szene-chip {
+  display: flex; align-items: flex-start; gap: 8px; max-width: 100%; min-height: 44px; padding: 7px 12px; border: 0; border-radius: 12px;
+  background: var(--seg); color: var(--text); font: inherit; font-size: 14px; line-height: 1.35; text-align: left; cursor: pointer;
+}
+.szene-chip:hover { filter: brightness(0.97); }
+.szene-zeit { flex-shrink: 0; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent); white-space: nowrap; }
+.szene-text {   /* lange Notizen höchstens zwei Zeilen, voller Text im Fenster */
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; overflow-wrap: anywhere;
+}
+.szene-text:empty { display: none; }
+.notiz-frei { margin-top: 8px; }
+.szene-hinweis { margin: -2px 0 4px 2px; font-size: 12px; color: var(--secondary); }
+.szene-fenster .sf-karte-block { gap: 6px; }
+.szene-fenster .feld-label { margin-top: 6px; }
+.szene-loeschen { align-self: stretch; text-align: center; background: var(--card); border-radius: 12px; }
 
 .toolbar {
   margin-top: 30px;
@@ -776,7 +788,7 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
   body { background: #FFF !important; color: #000 !important; padding: 0 !important; font-size: 11pt !important; }
   .app-container { box-shadow: none !important; border: none !important; max-width: 100% !important; }
   header { background: #FFF !important; color: #000 !important; padding: 0 0 8pt !important; border-bottom: 1.5pt solid #000 !important; }
-  .header-controls, .system-tabs-wrapper, .toolbar, .no-print, .stamp-btn, .toast-box, dialog,
+  .header-controls, .system-tabs-wrapper, .toolbar, .no-print, .toast-box, dialog,
   .seitenleiste, .werkzeugleiste, .mehr-menu { display: none !important; }
   .app { display: block; }
   .haupt { padding: 0 !important; }
@@ -789,6 +801,13 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
   .spiel-kopf { margin-bottom: 8pt; }
   .spiel-name { font-size: 15pt; }
   .spiel-info { font-size: 10pt; color: #000; }
+  /* Szenen im Druck: volle Liste, gleich sortiert wie die Anzeige */
+  .szenen { display: block !important; margin: 0 0 4pt; }
+  .szenen li { display: block; }
+  .szene-chip { display: block; min-height: 0; padding: 1pt 0; background: none !important; font-size: 9.5pt; }
+  .szene-zeit { color: #000; margin-right: 6pt; }
+  .szene-text { display: inline; -webkit-line-clamp: unset; line-clamp: none; overflow: visible; }
+  .notiz-frei:placeholder-shown { display: none; }
   .druck-kopf { display: flex !important; align-items: center; gap: 10pt; padding: 0 0 8pt; margin-bottom: 8pt; border-bottom: 1.5pt solid #000; }
   .druck-kopf img { height: 36pt; width: auto; }
   .druck-kopf strong { display: block; font-size: 15pt; }

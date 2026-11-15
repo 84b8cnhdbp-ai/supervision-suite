@@ -12,9 +12,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="css/app.css?v=17">
-<script src="js/club.js?v=17"></script>
-<script src="js/theme.js?v=17"></script>
+<link rel="stylesheet" href="css/app.css?v=18">
+<script src="js/club.js?v=18"></script>
+<script src="js/theme.js?v=18"></script>
 </head>
 <body>
 
@@ -172,7 +172,7 @@
           <tr>
             <th style="width: 30%;" data-i18n="th_matrix_area">Bereich & Leitfragen</th>
             <th style="width: 34%;" data-i18n="th_matrix_rating">Bewertung</th>
-            <th data-i18n="th_matrix_notes">Szenen, Timestamps & Notizen</th>
+            <th data-i18n="th_matrix_notes">Szenen & Notizen</th>
           </tr>
         </thead>
         <tbody>
@@ -182,8 +182,10 @@
               <div data-seg="perf_1" data-seg-label="lbl_perf_1"></div>
             </td>
             <td>
-              <button type="button" class="stamp-btn" onclick="addTimestamp('note_1')">+ Drittel/Timestamp</button>
-              <textarea id="note_1" oninput="saveCurrentRefData()" placeholder="Laufstil, Antritt, Ermüdung..."></textarea>
+              <div class="szenen-kopf"><button type="button" class="szene-knopf no-print" data-szene="1"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-i18n="scene_btn">Szene</span></button></div>
+              <ul class="szenen" id="szenen_1"></ul>
+              <textarea id="note_frei_1" class="notiz-frei" data-notiz="1" data-i18n-placeholder="ph_note_1" placeholder=""></textarea>
+              <textarea id="note_1" class="notiz-gespeichert" hidden></textarea>
             </td>
           </tr>
           <tr>
@@ -192,8 +194,10 @@
               <div data-seg="perf_2" data-seg-label="lbl_perf_2"></div>
             </td>
             <td>
-              <button type="button" class="stamp-btn" onclick="addTimestamp('note_2')">+ Drittel/Timestamp</button>
-              <textarea id="note_2" oninput="saveCurrentRefData()" placeholder="Positionierung, Einblick..."></textarea>
+              <div class="szenen-kopf"><button type="button" class="szene-knopf no-print" data-szene="2"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-i18n="scene_btn">Szene</span></button></div>
+              <ul class="szenen" id="szenen_2"></ul>
+              <textarea id="note_frei_2" class="notiz-frei" data-notiz="2" data-i18n-placeholder="ph_note_2" placeholder=""></textarea>
+              <textarea id="note_2" class="notiz-gespeichert" hidden></textarea>
             </td>
           </tr>
           <tr>
@@ -202,8 +206,10 @@
               <div data-seg="perf_3" data-seg-label="lbl_perf_3"></div>
             </td>
             <td>
-              <button type="button" class="stamp-btn" onclick="addTimestamp('note_3')">+ Drittel/Timestamp</button>
-              <textarea id="note_3" oninput="saveCurrentRefData()" placeholder="Präsenz, Signalgebung..."></textarea>
+              <div class="szenen-kopf"><button type="button" class="szene-knopf no-print" data-szene="3"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-i18n="scene_btn">Szene</span></button></div>
+              <ul class="szenen" id="szenen_3"></ul>
+              <textarea id="note_frei_3" class="notiz-frei" data-notiz="3" data-i18n-placeholder="ph_note_3" placeholder=""></textarea>
+              <textarea id="note_3" class="notiz-gespeichert" hidden></textarea>
             </td>
           </tr>
           <tr>
@@ -212,8 +218,10 @@
               <div data-seg="perf_4" data-seg-label="lbl_perf_4"></div>
             </td>
             <td>
-              <button type="button" class="stamp-btn" onclick="addTimestamp('note_4')">+ Drittel/Timestamp</button>
-              <textarea id="note_4" oninput="saveCurrentRefData()" placeholder="Spielzüge antizipieren..."></textarea>
+              <div class="szenen-kopf"><button type="button" class="szene-knopf no-print" data-szene="4"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-i18n="scene_btn">Szene</span></button></div>
+              <ul class="szenen" id="szenen_4"></ul>
+              <textarea id="note_frei_4" class="notiz-frei" data-notiz="4" data-i18n-placeholder="ph_note_4" placeholder=""></textarea>
+              <textarea id="note_4" class="notiz-gespeichert" hidden></textarea>
             </td>
           </tr>
           <tr>
@@ -222,8 +230,10 @@
               <div data-seg="perf_5" data-seg-label="lbl_perf_5"></div>
             </td>
             <td>
-              <button type="button" class="stamp-btn" onclick="addTimestamp('note_5')">+ Drittel/Timestamp</button>
-              <textarea id="note_5" oninput="saveCurrentRefData()" placeholder="Präsenz nach dem Pfiff..."></textarea>
+              <div class="szenen-kopf"><button type="button" class="szene-knopf no-print" data-szene="5"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-i18n="scene_btn">Szene</span></button></div>
+              <ul class="szenen" id="szenen_5"></ul>
+              <textarea id="note_frei_5" class="notiz-frei" data-notiz="5" data-i18n-placeholder="ph_note_5" placeholder=""></textarea>
+              <textarea id="note_5" class="notiz-gespeichert" hidden></textarea>
             </td>
           </tr>
           <tr>
@@ -232,8 +242,10 @@
               <div data-seg="perf_6" data-seg-label="lbl_perf_6"></div>
             </td>
             <td>
-              <button type="button" class="stamp-btn" onclick="addTimestamp('note_6')">+ Drittel/Timestamp</button>
-              <textarea id="note_6" oninput="saveCurrentRefData()" placeholder="Absprachen, Dialogton..."></textarea>
+              <div class="szenen-kopf"><button type="button" class="szene-knopf no-print" data-szene="6"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-i18n="scene_btn">Szene</span></button></div>
+              <ul class="szenen" id="szenen_6"></ul>
+              <textarea id="note_frei_6" class="notiz-frei" data-notiz="6" data-i18n-placeholder="ph_note_6" placeholder=""></textarea>
+              <textarea id="note_6" class="notiz-gespeichert" hidden></textarea>
             </td>
           </tr>
           <tr>
@@ -242,8 +254,10 @@
               <div data-seg="perf_7" data-seg-label="lbl_perf_7"></div>
             </td>
             <td>
-              <button type="button" class="stamp-btn" onclick="addTimestamp('note_7')">+ Drittel/Timestamp</button>
-              <textarea id="note_7" oninput="saveCurrentRefData()" placeholder="Linientreue, Regelwerk & Weisungen..."></textarea>
+              <div class="szenen-kopf"><button type="button" class="szene-knopf no-print" data-szene="7"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-i18n="scene_btn">Szene</span></button></div>
+              <ul class="szenen" id="szenen_7"></ul>
+              <textarea id="note_frei_7" class="notiz-frei" data-notiz="7" data-i18n-placeholder="ph_note_7" placeholder=""></textarea>
+              <textarea id="note_7" class="notiz-gespeichert" hidden></textarea>
             </td>
           </tr>
         </tbody>
@@ -445,17 +459,41 @@
   </div>
 </dialog>
 
-<script src="js/i18n.js?v=17"></script>
-<script src="js/dialog.js?v=17"></script>
-<script src="js/segment.js?v=17"></script>
-<script src="js/layout.js?v=17"></script>
-<script src="js/spiel.js?v=17"></script>
-<script src="js/config.js?v=17"></script>
-<script src="js/scoring.js?v=17"></script>
-<script src="js/storage.js?v=17"></script>
-<script src="js/ui.js?v=17"></script>
-<script src="js/export.js?v=17"></script>
-<script src="js/stats.js?v=17"></script>
-<script src="js/app.js?v=17"></script>
+<!-- FENSTER „SZENE“ (js/szene.js) -->
+<dialog class="spiel-fenster szene-fenster" id="szeneDialog" aria-labelledby="szeneDialogTitel">
+  <div class="sf-kopf">
+    <button type="button" class="sf-knopf" id="szeneAbbrechen" data-i18n="dlg_cancel">Abbrechen</button>
+    <h2 id="szeneDialogTitel">Szene</h2>
+    <button type="button" class="sf-knopf sf-fertig" id="szeneOk" data-i18n="stamp_add">Hinzufügen</button>
+  </div>
+  <div class="sf-inhalt">
+    <div class="sf-karte sf-karte-block">
+      <span class="feld-label" id="lbl_szene_drittel" data-i18n="scene_period">Drittel</span>
+      <div data-seg="szene_drittel" data-seg-label="lbl_szene_drittel"></div>
+      <label class="feld-label" for="szeneZeit" data-i18n="scene_time">Spielzeit (mm:ss)</label>
+      <input type="text" id="szeneZeit" inputmode="numeric" autocomplete="off" placeholder="mm:ss" aria-describedby="szeneZeitHinweis szeneFehler">
+      <p class="szene-hinweis" id="szeneZeitHinweis" data-i18n="scene_time_hint">Restzeit auf der Matchuhr</p>
+      <p class="sf-hinweis" id="szeneFehler" role="alert" hidden></p>
+      <label class="feld-label" for="szeneNotiz" data-i18n="scene_note">Notiz</label>
+      <textarea id="szeneNotiz" rows="3" data-i18n-placeholder="ph_scene_note" placeholder=""></textarea>
+      <p class="sf-hinweis sf-hinweis-info" id="szeneAlt" hidden></p>
+    </div>
+    <button type="button" class="menu-eintrag menu-gefahr szene-loeschen" id="szeneLoeschen" data-i18n="scene_delete" hidden>Szene löschen</button>
+  </div>
+</dialog>
+
+<script src="js/i18n.js?v=18"></script>
+<script src="js/dialog.js?v=18"></script>
+<script src="js/segment.js?v=18"></script>
+<script src="js/layout.js?v=18"></script>
+<script src="js/spiel.js?v=18"></script>
+<script src="js/szene.js?v=18"></script>
+<script src="js/config.js?v=18"></script>
+<script src="js/scoring.js?v=18"></script>
+<script src="js/storage.js?v=18"></script>
+<script src="js/ui.js?v=18"></script>
+<script src="js/export.js?v=18"></script>
+<script src="js/stats.js?v=18"></script>
+<script src="js/app.js?v=18"></script>
 </body>
 </html>

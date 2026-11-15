@@ -86,6 +86,9 @@ function baueAlleKnopfreihen() {
   baueSegmente('coach_attitude', t('coach_att_opts'), { standard: 'Gut / Angemessen', onChange: () => calcScores() });
   baueSegmente('coach_feedback', t('coach_feed_opts'), { standard: 'Konstruktiv', onChange: () => calcScores() });
 
+  // Fenster „Szene“: Drittel
+  baueSegmente('szene_drittel', ['P1', 'P2', 'P3', 'OT'].map((p) => ({ val: p, kurz: t('period_' + p), lang: t('period_long_' + p) })), { standard: 'P1' });
+
   // Menü „Mehr“: Sprache (sichtbare Sprachen, plus eine über ?lang= gewählte) und Darstellung
   baueSegmente('sprache', SPRACHEN.filter((s) => s.sichtbar || s.code === currentLang).map((s) => ({ val: s.code, kurz: s.name })),
     { standard: currentLang, onChange: (v) => { setLanguage(v); fokusAufWahl('sprache'); } });

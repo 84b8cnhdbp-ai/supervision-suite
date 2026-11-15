@@ -20,6 +20,7 @@ TESTS = [
     ('Layout-Test', ['layout-test.py']),
     ('Score-Test', ['score-test.py']),
     ('Spiel-Test', ['spiel-test.py']),
+    ('Szene-Test', ['szene-test.py']),
     ('Service-Worker-Test', ['sw-test.py']),
 ]
 

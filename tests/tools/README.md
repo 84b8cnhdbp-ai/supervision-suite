@@ -13,7 +13,7 @@ python3 tests/tools/alle-tests.py            # alle Tests (ca. 5 Min.)
 python3 tests/tools/alle-tests.py --ohne-sw  # ohne Service-Worker-Test (ca. 1 Min.)
 ```
 
-Führt Daten-Test (Deutsch und Englisch), Texte-, Vereins-, Fenster-, Knopfreihen-, Layout-, Score-, Spiel- und Service-Worker-Test aus und zeigt eine
+Führt Daten-Test (Deutsch und Englisch), Texte-, Vereins-, Fenster-, Knopfreihen-, Layout-, Score-, Spiel-, Szene- und Service-Worker-Test aus und zeigt eine
 Zusammenfassung. Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
 
 ## Daten-Test – „gleiche Eingaben, gleiche Daten“
@@ -120,6 +120,19 @@ nichts Verworfenes), „Fertig“ speichert; Begegnung „CLUB.kurz – Gegner�
 geändert wird; Visum wie früher; Namen und Durchgang je Rolle; Systemwechsel mit Rückfrage („Abbrechen“ vorgewählt)
 nur bei vorhandenen Bewertungen; Spielnummer als Hinweis getrennt von den Pflichtpunkten, Sichern bleibt möglich;
 automatisch öffnen nur ohne Spiel; Grössen 768/834/1194 px, DE/EN.
+
+## Szene-Test – Szenen und Chips
+
+```sh
+python3 tests/tools/szene-test.py
+```
+
+Mit echten Klicks und Tasten: Spielzeit freiwillig, „834“ → 08:34, gültig bis 20:00 und Sekunden unter 60, ungültige
+Zeit wird nicht gespeichert; Speicherformat genau `[P2 08:34] Text` bzw. `[P2] Text`, Zeilenumbrüche werden
+Leerzeichen, neue Szenen am Ende der Notiz; Anzeige und Druck sortiert (Drittel, Restzeit absteigend, ohne Zeit am Ende
+des Drittels, unlesbare alte Angaben ganz am Ende); Ändern an derselben Stelle, Löschen mit Rückfrage; freier Text
+getrennt, Notiz ohne Bearbeitung unverändert; zuletzt benutztes Drittel, bei anderem Spiel wieder „1.“; Chips höchstens
+zwei Zeilen; 768/834/1194 px, DE/EN.
 
 ## Service-Worker-Test – Updates, offline, langsames Netz
 

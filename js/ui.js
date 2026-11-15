@@ -29,6 +29,7 @@ function initApp() {
     loadRefereeForm(activeRefIndex);
   }
   initSpiel();
+  initSzenen();
 }
 
 function setupRefereeDropdown() {
@@ -280,6 +281,7 @@ function loadRefereeForm(index) {
     setzeSeg(`perf_${i}`, data[`perf_${i}`] || "80");
     document.getElementById(`note_${i}`).value = data[`note_${i}`] || "";
   }
+  zeigeAlleSzenen();   // Chips und freier Text aus der gespeicherten Notiz (js/szene.js)
 
   if (data.coach_trend) setzeSeg('coach_trend', data.coach_trend);
   if (data.coach_attitude) setzeSeg('coach_attitude', data.coach_attitude);
@@ -332,16 +334,6 @@ function saveCurrentRefData() {
   gameData.referees[refKey] = data;
   saveToStorage();
   aktualisiereReiter();   // Name im Reiter („H1 · Meier“) sofort nachführen
-}
-
-async function addTimestamp(targetId) {
-  const field = document.getElementById(targetId);
-  const stamp = await eingeben({ titel: t('stamp_title'), text: t('stamp_prompt'), wert: "P1 00:00", ok: t('stamp_add') });
-  if (stamp) {
-    field.value += (field.value.trim() ? "\n" : "") + "[" + stamp + "] ";
-    field.focus();
-    saveCurrentRefData();
-  }
 }
 
 function readFormData() {
