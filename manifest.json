@@ -6,8 +6,8 @@
   "display": "standalone",
   "orientation": "any",
   "lang": "de-CH",
-  "background_color": "#0B2545",
-  "theme_color": "#0B2545",
+  "background_color": "#F2F2F7",
+  "theme_color": "#F2F2F7",
   "description": "Coaching-, Evaluations- & Supervisionstool für Eishockey-Schiedsrichter",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },

@@ -104,8 +104,8 @@
     <div id="singleRefView" class="bewertung">
       <!-- Rechte Spalte (bleibt beim Scrollen stehen): Score, Netzdiagramm, Bereit zum Sichern? -->
       <aside class="score-spalte" data-i18n-aria-label="score_aside" aria-label="Score">
-        <section class="karte score-karte">
-          <h2 class="karten-titel"><span data-i18n="txt_weighted_for">Gewichteter Score</span> · <span id="activeRefLabel">Head Referee 1</span></h2>
+        <section class="karte score-karte" aria-labelledby="scoreKarteTitel">
+          <h2 class="karten-titel" id="scoreKarteTitel"><span data-i18n="txt_weighted_for">Gewichteter Score</span> · <span id="activeRefLabel">Head Referee 1</span></h2>
           <div class="score-zeile">
             <div class="score-ring">
               <svg viewBox="0 0 150 150" aria-hidden="true">
@@ -123,12 +123,12 @@
             <div class="score-teil"><span data-i18n="sub_part4">Coaching</span><span class="score-gewicht">20 %</span><strong id="subScorePart4">–</strong></div>
           </div>
         </section>
-        <section class="karte netz-karte">
-          <h2 class="karten-titel" data-i18n="radar_title">Profil</h2>
+        <section class="karte netz-karte" aria-labelledby="netzTitel">
+          <h2 class="karten-titel" id="netzTitel" data-i18n="radar_title">Profil</h2>
           <svg id="radarChart" class="netz" viewBox="0 0 300 236" role="img" data-i18n-aria-label="radar_title" aria-label="Profil"></svg>
         </section>
-        <section class="karte bereit-karte no-print">
-          <h2 class="karten-titel" data-i18n="ready_title">Bereit zum Sichern?</h2>
+        <section class="karte bereit-karte no-print" aria-labelledby="bereitTitel">
+          <h2 class="karten-titel" id="bereitTitel" data-i18n="ready_title">Bereit zum Sichern?</h2>
           <ul class="bereit-liste" id="bereitListe"></ul>
           <p class="bereit-status" id="bereitStatus"></p>
         </section>
@@ -312,8 +312,8 @@
     <!-- ANSICHT 2: GESPANN-ÜBERSICHT -->
     <div id="summaryView" class="gespann" hidden>
       <div class="gespann-oben">
-        <section class="karte gespann-score">
-          <h2 class="karten-titel" data-i18n="crew_title">Gespann-Durchschnitt</h2>
+        <section class="karte gespann-score" aria-labelledby="crewTitel">
+          <h2 class="karten-titel" id="crewTitel" data-i18n="crew_title">Gespann-Durchschnitt</h2>
           <div class="score-zeile">
             <div class="score-ring">
               <svg viewBox="0 0 150 150" aria-hidden="true">
@@ -328,15 +328,15 @@
             </div>
           </div>
         </section>
-        <section class="karte netz-karte">
-          <h2 class="karten-titel" data-i18n="crew_radar_title">Profil des Gespanns</h2>
+        <section class="karte netz-karte" aria-labelledby="crewNetzTitel">
+          <h2 class="karten-titel" id="crewNetzTitel" data-i18n="crew_radar_title">Profil des Gespanns</h2>
           <svg id="crewRadarChart" class="netz" viewBox="0 0 300 236" role="img" data-i18n-aria-label="crew_radar_title" aria-label="Profil des Gespanns"></svg>
         </section>
       </div>
       <p class="leer-hinweis" id="crewLeer" hidden></p>
       <div class="gespann-karten" id="summaryCardsContainer"></div>
-      <section class="karte gespann-notiz" data-druck-ganz>
-        <h2 class="karten-titel"><label for="crew_notes" data-i18n="sec_crew_obs">Gemeinsame Gespann-Beobachtungen</label></h2>
+      <section class="karte gespann-notiz" data-druck-ganz aria-labelledby="crewNotizTitel">
+        <h2 class="karten-titel" id="crewNotizTitel"><label for="crew_notes" data-i18n="sec_crew_obs">Gemeinsame Gespann-Beobachtungen</label></h2>
         <textarea id="crew_notes" data-i18n-placeholder="ph_crew_notes" placeholder=""></textarea>
       </section>
     </div>
@@ -345,9 +345,9 @@
     <div id="seasonStatsView" class="statistik" hidden>
       <h2 class="ansicht-titel" data-i18n="stats_title">Schiedsrichter-Supervision — Gesamtstatistik</h2>
       <p class="stat-info" id="statInfo"><span id="statSaison"></span><span class="nur-druck" id="statGedruckt"></span></p>
-      <section class="karte stat-laden">
+      <section class="karte stat-laden" aria-labelledby="statLadenTitel">
         <div>
-          <strong data-i18n="stats_load_title">Bewertungen laden</strong>
+          <strong id="statLadenTitel" data-i18n="stats_load_title">Bewertungen laden</strong>
           <p data-i18n="stats_load_text">Wähle alle gespeicherten Bewertungen (.json) aus deinem Ordner «Bewertungen».</p>
         </div>
         <button type="button" class="knopf-sichern" id="btnStatsLaden" data-i18n="stats_load_btn">Dateien wählen</button>

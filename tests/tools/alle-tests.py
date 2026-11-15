@@ -24,6 +24,7 @@ TESTS = [
     ('Szene-Test', ['szene-test.py']),
     ('Übersicht-Test', ['uebersicht-test.py']),
     ('Druck-Test', ['druck-test.py']),
+    ('Bereiche-Test', ['bereiche-test.py']),
     ('Service-Worker-Test', ['sw-test.py']),
 ]
 
