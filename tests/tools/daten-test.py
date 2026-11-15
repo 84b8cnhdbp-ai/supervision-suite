@@ -13,6 +13,7 @@ Die Test-Schnittstelle (globale Funktionen, die der Test aufruft) steht in tests
 """
 import json
 import os
+import re
 import shutil
 import sys
 
@@ -78,12 +79,22 @@ TEST_JS = r"""
 """
 
 
-# Gewollte Abweichungen gegenüber dem Referenzstand (Etappe 2.1b): gespeicherte Rollen und
-# Partner-Texte sind neu in jeder Sprache deutsch. Alles andere muss gleich bleiben.
+# Gewollte Abweichungen gegenüber dem Referenzstand:
+# - Etappe 2.1b: gespeicherte Rollen und Partner-Texte sind neu in jeder Sprache deutsch.
+# - Startsystem: Ein NEUES Spiel (leerer Start, „Spiel zurücksetzen“) beginnt neu mit dem System aus der
+#   Vereins-Einstellung (js/club.js, standardSystem), bisher immer 4-Mann. Gespeicherte Spiele behalten ihr System,
+#   Spiele ohne Angabe gelten weiter als 4-Mann – das prüfen die übrigen Teile dieses Tests (Beispielspiel) und der
+#   System- und der Wechsel-Test.
+# Alles andere muss gleich bleiben.
 EN_ZU_DE = {'Solo Referee': 'Einzel-Schiedsrichter'}
+STANDARD_SYSTEM = re.search(r"standardSystem:\s*'([^']+)'", open(os.path.join(REPO, 'js', 'club.js'), encoding='utf-8').read()).group(1)
 
 
 def gewollt(pfad, alt, neu):
+    if pfad == '.leerStart.system':
+        return alt == '4-Man' and neu == STANDARD_SYSTEM
+    if pfad == '.leerStart.reiter':
+        return neu == {'1-Man': 1, '2-Man': 2, '3-Man': 3, '4-Man': 4}[STANDARD_SYSTEM]
     if not isinstance(alt, str) or not (pfad.endswith('.role') or pfad.endswith('.partner') or pfad == '.rolle1Mann'):
         return False
     for en, de in EN_ZU_DE.items():
@@ -100,6 +111,10 @@ def lauf(wurzel, sprache):
             daten_setzen(b, srv.basis, spiel=True, sprache=sprache)
             b.oeffnen(srv.basis + '/index.html')
             r = b.js(TEST_JS)
+            # Leerer Start (neues Spiel ohne gespeicherte Daten): Startsystem und Anzahl Reiter
+            daten_setzen(b, srv.basis, spiel=False, sprache=sprache)
+            b.oeffnen(srv.basis + '/index.html')
+            r['leerStart'] = b.js("({ system: currentSystem, reiter: SYSTEM_CONFIGS[currentSystem].length })")
             r['jsFehler'] = [f for f in b.fehler if 'Update nicht möglich' not in f]
             # gespeicherte Spielstände als Objekte vergleichen (genauere Fundstellen)
             for k in ('nachReitern', 'ende'):

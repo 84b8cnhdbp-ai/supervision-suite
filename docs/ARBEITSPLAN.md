@@ -89,6 +89,8 @@ Fertig und getestet (`alle-tests.py` grün, Bilder gegen `main` angesehen):
 | 2.9b (5): CSS-Reste entfernt (Bilder pixelgleich), Test-Anleitung | `df74ba4` |
 | Französischer Reiter „Équipe“ | `e789c53` |
 | Wechsel-Test: `main` → neuer Stand ohne Datenverlust, Rückweg, ohne Erhöhung blockiert | `a02c701` |
+| Korrektur nach Test auf dem Mac: rechte Spalte scrollt bis zum unteren Ende mit; Dateiauswahl in Safari (Dateiwahl-Test) | `dea17a9` |
+| Neue Spiele mit 2-Mann (`standardSystem` in `js/club.js`); gespeicherte Spiele behalten ihr System, ohne Angabe 4-Mann (System-Test) | *(dieser Commit)* |
 
 Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`, `3407e00`, `ab11ea5`. Der Branch wird nach jedem Teilschritt auf GitHub gepusht (Sicherung).
 
@@ -213,6 +215,7 @@ Jedes Spiel bekommt beim ersten Import eine interne ID. Beim nächsten Import, i
 - **Lizenz** und **Datenschutz-Seite** für die Weitergabe.
 - **Sichtbare Versionsnummer** und **Änderungsliste** in der App.
 - **Einteilungs-Import** für eine Quelle, die alle Vereine haben (abklären, welche).
+- **System passend zur Liga vorschlagen:** Unter „Spiel bearbeiten“ schlägt die App das System zur gewählten Liga vor – 4-Mann für National League und Swiss League, sonst 2-Mann. Die Zuordnung ist pro Verein einstellbar (wie `standardSystem` in `js/club.js`) und wird vor der Freigabe mit dem SIHF abgeglichen. Bei vorhandenen Bewertungen gilt die bestehende Rückfrage zum Systemwechsel.
 
 ---
 

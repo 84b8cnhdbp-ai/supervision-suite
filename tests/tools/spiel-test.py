@@ -153,6 +153,9 @@ def main():
             # 7. Automatisch öffnen nur ohne Spiel
             start(834, 1194, spiel=False)
             pruefe(b.js(OFFEN), 'Ohne Spiel öffnet sich das Fenster nicht automatisch')
+            # neues Spiel: System aus der Vereins-Einstellung, im Fenster vorgewählt (ausdrücklich, nicht still 4-Mann)
+            pruefe(b.js('currentSystem') == b.js('CLUB.standardSystem') == b.js("segWert('system_typ')"),
+                   f"Neues Spiel: System {b.js('currentSystem')} statt {b.js('CLUB.standardSystem')}")
             setze('spiel_gegner', 'Gastteam'); b.klick('#sfFertig')
             b.oeffnen(srv.basis + '/index.html')
             pruefe(not b.js(OFFEN), 'Fenster öffnet sich trotz erfasstem Gegner')

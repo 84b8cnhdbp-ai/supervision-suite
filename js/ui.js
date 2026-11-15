@@ -5,7 +5,7 @@ function escapeHtml(str) {
   return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-let currentSystem = "4-Man";
+let currentSystem = SYSTEM_OHNE_ANGABE;   // wird in loadFullState gesetzt (gespeichertes Spiel oder neues Spiel)
 let activeTabType = "ref"; 
 let activeRefIndex = 0;
 let gameData = {

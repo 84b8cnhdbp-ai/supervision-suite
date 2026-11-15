@@ -9,7 +9,8 @@ Ablauf (ein Browser-Profil, eine Adresse – wie auf dem iPad):
 3. Prüfen: neue Version vollständig (alle Dateien mit derselben ?v=, keine gemischten Versionen), localStorage bis zur
    ersten Eingabe unverändert, jedes Feld zeigt den alten Wert, alte Zeitangaben bleiben, computeRefScores gleich,
    Export-JSON/CSV gleich wie in der alten Oberfläche (nur die bekannten gewollten Abweichungen des Daten-Tests),
-   Englisch und dunkel bleiben; danach offline neu laden: neue Version vollständig aus dem Cache, Daten da.
+   Englisch und dunkel bleiben; ältere Daten ohne Angabe zum System bleiben 4-Mann (neuer Standard gilt nur für neue
+   Spiele); danach offline neu laden: neue Version vollständig aus dem Cache, Daten da.
 4. Rückweg (git revert + ?v= erhöhen): In der neuen Oberfläche bearbeiten und Darstellung „Auto“ wählen (gibt es nur
    neu); dann liefert die Adresse den alten Code mit höherer ?v=. Die alte Oberfläche startet ohne JS-Fehler und zeigt
    die bearbeitete Bewertung – auch mit gespeicherten Werten, die nur die neue Version kennt („auto“, „fr“).
@@ -257,6 +258,16 @@ def main():
             vergleiche('', export_alt, export_neu, unterschiede)
             echt = [u for u in unterschiede if not gewollt(*u) and not u[0].endswith('.exportiertAm')]   # Zeitpunkt des Exports
             pruefe(not echt, f'Export weicht ab: {echt[:4]}')
+            # Ältere Daten ohne Angabe zum System (die alte Oberfläche speichert sie erst bei einer Spielangabe):
+            # weiterhin 4-Mann, Bewertung sichtbar – trotz neuem Standard für neue Spiele
+            b.js("""(() => { const d = JSON.parse(localStorage.getItem('referee_multi_supervision_data'));
+              delete d.global.system_typ; localStorage.setItem('referee_multi_supervision_data', JSON.stringify(d)); })()""")
+            b.oeffnen(url, warten=1.2)
+            b.js('selectRefTab(0)')
+            pruefe(b.js('currentSystem') == '4-Man' and b.js('getEffectiveRefName()') == 'Frei Lea',
+                   f"Alte Daten ohne System: {b.js('currentSystem')}, Name {b.js('getEffectiveRefName()')!r} (Bewertung verschwunden?)")
+            b.js(f"localStorage.setItem('referee_multi_supervision_data', {json.dumps(vorher['referee_multi_supervision_data'])})")
+            b.oeffnen(url, warten=1.2)
             # offline neu laden
             ZUSTAND['online'] = False
             b.oeffnen(url, warten=1.5)

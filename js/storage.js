@@ -90,14 +90,18 @@ function zeigeSicherung() {
 
 function loadFullState() {
   const raw = localStorage.getItem('referee_multi_supervision_data');
+  // Neues Spiel: System aus der Vereins-Einstellung, sofort in den Spieldaten vermerkt (damit eine Bewertung nie ohne
+  // Systemangabe gespeichert wird). Gespeichertes Spiel: sein System; fehlt die Angabe (ältere Stände): 4-Mann.
+  currentSystem = raw ? SYSTEM_OHNE_ANGABE : startSystem();
+  if (!raw) gameData.global = { ...(gameData.global || {}), system_typ: currentSystem };
   if (raw) {
     try {
       gameData = JSON.parse(raw);
       if (gameData.global) {
-        if (gameData.global.system_typ) {
+        if (gameData.global.system_typ && SYSTEM_CONFIGS[gameData.global.system_typ]) {
           currentSystem = gameData.global.system_typ;
-          setzeSeg('system_typ', currentSystem);
         }
+        setzeSeg('system_typ', currentSystem);
         document.getElementById('spiel_liga').value = gameData.global.spiel_liga || "National League";
         document.getElementById('spiel_paarung').value = gameData.global.spiel_paarung || "";
         document.getElementById('spiel_id').value = gameData.global.spiel_id || "";

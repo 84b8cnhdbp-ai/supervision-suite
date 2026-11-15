@@ -22,6 +22,7 @@ TESTS = [
     ('Layout-Test', ['layout-test.py']),
     ('Score-Test', ['score-test.py']),
     ('Spiel-Test', ['spiel-test.py']),
+    ('System-Test', ['system-test.py']),
     ('Szene-Test', ['szene-test.py']),
     ('Übersicht-Test', ['uebersicht-test.py']),
     ('Druck-Test', ['druck-test.py']),

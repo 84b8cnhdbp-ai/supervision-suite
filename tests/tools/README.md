@@ -17,7 +17,7 @@ python3 tests/tools/alle-tests.py --ohne-sw  # ohne Service-Worker-Test (ca. 1 M
 ```
 
 Führt Daten-Test (Deutsch und Englisch), Texte- (streng), Kunstsprache-, Vereins-, Fenster-, Knopfreihen-, Layout-, Score-,
-Spiel-, Szene-, Übersicht-, Druck-, Bereiche-, Animations-, Wechsel- und Service-Worker-Test aus und zeigt eine Zusammenfassung
+Spiel-, System-, Szene-, Übersicht-, Druck-, Bereiche-, Animations-, Wechsel-, Dateiwahl- und Service-Worker-Test aus und zeigt eine Zusammenfassung
 mit der Schlussmeldung jedes Tests (aus stdout; Meldungen auf stderr werden zusätzlich angezeigt).
 Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
 
@@ -34,7 +34,8 @@ Scores der Beispieldateien, Export-JSON jedes Reiters (Laden → Anzeigen → Sp
 CSV je Schiedsrichter-System, Kader-Import (JSON und TXT) und den `localStorage`.
 Das Aussehen darf sich unterscheiden, die Daten nicht. Ergebnis „0 Unterschiede“ = bestanden.
 Gewollte Abweichungen sind im Test ausdrücklich aufgeführt und werden als „gewollt“ angezeigt
-(seit 2.1b: gespeicherte Rolle/Partner immer deutsch, z. B. „Einzel-Schiedsrichter“ statt „Solo Referee“).
+(seit 2.1b: gespeicherte Rolle/Partner immer deutsch, z. B. „Einzel-Schiedsrichter“ statt „Solo Referee“;
+neues Spiel startet mit `standardSystem` aus `js/club.js` statt immer 4-Mann – geprüft im Teil „leerer Start“).
 
 **Test-Schnittstelle** – diese globalen Namen ruft der Test auf; sie bleiben bestehen (oder der Test wird mitgeändert):
 `selectRefTab(i)`, `selectSummaryTab()`, `selectStatsTab()`, `switchSystem(s)`, `exportSingleReviewJSON()`,
@@ -136,6 +137,28 @@ nichts Verworfenes), „Fertig“ speichert; Begegnung „CLUB.kurz – Gegner�
 geändert wird; Visum wie früher; Namen und Durchgang je Rolle; Systemwechsel mit Rückfrage („Abbrechen“ vorgewählt)
 nur bei vorhandenen Bewertungen; Spielnummer als Hinweis getrennt von den Pflichtpunkten, Sichern bleibt möglich;
 automatisch öffnen nur ohne Spiel; Grössen 768/834/1194 px, DE/EN.
+
+## System-Test – Standard-System für neue Spiele
+
+```sh
+python3 tests/tools/system-test.py
+```
+
+Neues Spiel und „Spiel zurücksetzen“ (echte Klicks) starten mit `standardSystem` aus `js/club.js` (beim Verein 2-Mann),
+das Startsystem steht sofort in den Spieldaten (eine Bewertung vor jeder Spielangabe bleibt nach dem Neuladen erhalten);
+ein gespeichertes 4-Mann-Spiel bleibt 4-Mann; ältere Daten ohne Angabe zum System gelten als 4-Mann; mit
+`standardSystem: '4-Man'` startet die App mit 4-Mann, ein ungültiger Wert fällt auf 4-Mann zurück.
+
+## Dateiwahl-Test – Knöpfe mit Dateiauswahl
+
+```sh
+python3 tests/tools/dateiwahl-test.py
+```
+
+Jeder Knopf mit Dateiauswahl („Kader importieren“ im Menü und beim Schiedsrichter-Feld, „Dateien wählen“ in der
+Statistik) mit echtem Klick: Die Auswahl öffnet sich (CDP `Page.setInterceptFileChooserDialog`), direkt im Klick, das
+Dateifeld ist nicht `display: none`, die übergebene Datei wird importiert; alle Dateifelder abgedeckt; Gegenprobe mit
+einem nicht angeschlossenen Knopf.
 
 ## Szene-Test – Szenen und Chips
 
