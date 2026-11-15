@@ -77,10 +77,12 @@ Fertig und getestet (`alle-tests.py` grün, Bilder gegen `main` angesehen):
 | 2.5 iPad hochkant: Schublade, kompakte Score-Leiste | `4763a29` |
 | 2.6 Fenster „Spiel bearbeiten“ | `bfb6c47` |
 | Auswahltext „Name wählen …“ | `1cf66d5` |
+| 2.7 Szene-Fenster mit Chips | `544aa3d` |
+| 2.7 Korrektur: alte Zeitangaben bleiben beim Ändern erhalten (tolerantes Lesen, Angabe bleibt ohne Wahl von Drittel/Zeit) | `d44da1c` |
 
-Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`.
+Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`. Der Branch wird nach jedem Teilschritt auf GitHub gepusht (Sicherung).
 
-**Als Nächstes:** 2.7 Szene-Fenster mit Chips (Drittel 1/2/3/OT, Spielzeit mm:ss, Notiz; Format `[P2 08:34] Text` bleibt), danach 2.8 Gespann-Übersicht und Saison-Statistik im neuen Stil, 2.9 Druck und Feinschliff.
+**Als Nächstes:** 2.8 Gespann-Übersicht und Saison-Statistik im neuen Stil, danach 2.9 Druck und Feinschliff.
 
 **Für 2.9 vorgemerkt:**
 - `manifest.json`-Farben (`theme_color`, `background_color`) ans neue Design anpassen, hell und dunkel.

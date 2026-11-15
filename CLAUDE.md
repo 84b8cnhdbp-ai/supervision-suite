@@ -10,7 +10,7 @@ Genutzt auf MacBook und iPad (hoch und quer), selten auf dem Handy.
 - **Zuerst Fragen beantworten und Vorschläge machen. Erst nach Livios ausdrücklichem „Go“ Code ändern.**
 - Pro Etappe aus `docs/ARBEITSPLAN.md` arbeiten, kleine Commits mit klarer Nachricht.
 - Vor jedem Commit zeigen, was geändert wurde, und kurz sagen, wie man es testet.
-- Nicht pushen, ausser Livio sagt es.
+- Nach jedem fertigen Teilschritt (getestet und committet) den Arbeits-Branch auf GitHub pushen (`git push origin etappe-2`) – als Sicherung. **`main` nie pushen**, ausser Livio sagt es ausdrücklich.
 - **Keine Git-Befehle, die Dateien wegräumen oder überschreiben** (`git stash`, `git reset --hard`, `git checkout -- …`, `git restore`, `git clean` u. ä.), ausser Livio verlangt es ausdrücklich.
 - Sprache in Code-Kommentaren, deutschen Texten der App und Antworten: Schweizer Hochdeutsch (kein ß, „ss“ verwenden).
 
