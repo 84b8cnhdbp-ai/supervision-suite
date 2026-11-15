@@ -80,16 +80,28 @@ Fertig und getestet (`alle-tests.py` grün, Bilder gegen `main` angesehen):
 | 2.7 Szene-Fenster mit Chips | `544aa3d` |
 | 2.7 Korrektur: alte Zeitangaben bleiben beim Ändern erhalten (tolerantes Lesen, Angabe bleibt ohne Wahl von Drittel/Zeit) | `d44da1c` |
 | 2.8 Gespann-Übersicht und Saison-Statistik im neuen Stil (Zahlen gleich wie `main`) | `ec41896` |
+| 2.9a Druck und Inhalt: Textfelder vollständig im Druck (leere weg), Supervisor in der Titelzeile, Statistik mit Saison, Druckdatum und Fusszeile „Vertraulich“ | `ad6c75b` |
 
-Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`. Der Branch wird nach jedem Teilschritt auf GitHub gepusht (Sicherung).
+Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`, `3407e00`. Der Branch wird nach jedem Teilschritt auf GitHub gepusht (Sicherung).
 
-**Als Nächstes:** 2.9 in zwei Schritten – 2.9a Druck und Inhalt, 2.9b Feinschliff –, danach Wechsel von `etappe-2` auf `main` (mit Checkliste).
+**Als Nächstes:** 2.9b Feinschliff, danach Wechsel-Test (eigener Commit) und Wechsel von `etappe-2` auf `main`.
 
-**Für 2.9 vorgemerkt:**
+**2.9b Feinschliff:**
 - `manifest.json`-Farben (`theme_color`, `background_color`) ans neue Design anpassen, hell und dunkel.
-- VoiceOver auf dem iPad prüfen, wo die rechte Spalte hochkant per `display: contents` aufgelöst wird (Score-Leiste oben, Profil und Bereit am Formularende): Bereich „Score und Profil“ muss für VoiceOver erhalten bleiben.
-- Supervisor in die Titelzeile des Drucks.
-- FR und IT übersetzen (bleiben versteckt), danach `texte-test.py --streng`; restliche rein deutsche Texte im HTML auf `t()`.
+- VoiceOver: jede Karte ein benannter Bereich, auch wo die rechte Spalte hochkant per `display: contents` aufgelöst wird; Test über den Bedienungshilfen-Baum.
+- Restliche rein deutsche Texte auf `t()`, geprüft mit einer Kunstsprache ⟦…⟧ (nur im Test, nie in der Sprachwahl, nie gespeichert); restliche Inline-Styles und -Handler entfernen.
+- FR und IT übersetzen; bleiben versteckt, nur über `?lang=fr` / `?lang=it`, ohne Speichern; `texte-test.py --streng` in `alle-tests.py`.
+- CSS-Reste: eine Regel nur entfernen, wenn ihre Klasse weder im HTML noch in einer JS-Datei vorkommt (viele Klassen entstehen erst im JavaScript); Bilder vor/nach dem Aufräumen pixelgleich.
+- Übergänge: Reiterwechsel weich (150 ms), Score zählt nur beim Reiterwechsel hoch (400 ms), `prefers-reduced-motion` respektieren. Der Druck zeigt immer den fertigen Score, auch mitten im Hochzählen.
+- Alle Tests laufen mit `prefers-reduced-motion`; nur der Animations-Test schaltet die Übergänge ein.
+
+**Wechsel auf `main` (Checkliste):**
+1. Wechsel-Test als eigener Commit: auf `main` (`?v=7`) eine Bewertung über die alte Oberfläche ausfüllen, ohne zu sichern; dann auf `etappe-2` wechseln. Daten, Export, Einstellungen und Offline-Betrieb müssen erhalten bleiben; Gegenprobe.
+2. Nur unter der Woche, nicht vor einem Einsatz in der Halle.
+3. Alten Stand markieren: Tag `stand-etappe-1` auf `5e59592`, Tag pushen.
+4. `main` per Fast-Forward auf `etappe-2` – nur nach Livios Go – und pushen.
+5. Danach `alle-tests.py` komplett und `bilder.py --gegen stand-etappe-1`, auf GitHub Pages prüfen (Update-Badge, offline).
+6. Zurück, falls nötig: `git revert` auf `main` und `?v=` erhöhen (nie zurück auf eine alte Nummer).
 
 **Offener Entscheid:** Kriterien ohne Vorbelegung starten (siehe „Offene Entscheide“) – nur nach Livios Go.
 
