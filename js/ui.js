@@ -33,6 +33,7 @@ function initApp() {
   initDruck();
   initStatistik();
   initBedienung();
+  initBewegung();
 }
 
 // Knöpfe und Felder verbinden (statt onclick/oninput im HTML)
@@ -158,6 +159,7 @@ function renderTabs() {
 // Eine der drei Ansichten zeigen (Anzeige im Einzelnen bestimmt das CSS, z. B. zwei Spalten)
 function zeigeAnsicht(id) {
   ['singleRefView', 'summaryView', 'seasonStatsView'].forEach((v) => { document.getElementById(v).hidden = v !== id; });
+  blendeEin(document.getElementById(id));
 }
 
 function selectRefTab(index) {
@@ -166,7 +168,7 @@ function selectRefTab(index) {
   activeRefIndex = index;
   zeigeAnsicht('singleRefView');
   renderTabs();
-  loadRefereeForm(activeRefIndex);
+  mitReiterWechsel(() => loadRefereeForm(activeRefIndex));
 }
 
 function selectSummaryTab() {
@@ -174,7 +176,7 @@ function selectSummaryTab() {
   activeTabType = "summary";
   zeigeAnsicht('summaryView');
   renderTabs();
-  renderSummaryView();
+  mitReiterWechsel(renderSummaryView);
 }
 
 function selectStatsTab() {
@@ -454,7 +456,7 @@ function calcScores(shouldSave = true) {
   const sc = computeRefScores(readFormData());
   const fmt = v => v === null ? "–" : v + "%";
 
-  document.getElementById('scoreVal').innerText = fmt(sc.total);
+  zeigeScoreZahl(document.getElementById('scoreVal'), sc.total);   // zählt nur beim Reiterwechsel hoch (js/bewegung.js)
   document.getElementById('subScorePart2').innerText = fmt(sc.part2);
   document.getElementById('subScorePart3').innerText = fmt(sc.part3);
   document.getElementById('subScorePart4').innerText = fmt(sc.part4);
@@ -531,7 +533,7 @@ function renderSummaryView() {
   });
 
   const crewAvg = scoredRefs > 0 ? Math.round(totalCrewScore / scoredRefs) : null;
-  document.getElementById('crewScoreVal').innerText = fmt(crewAvg);
+  zeigeScoreZahl(document.getElementById('crewScoreVal'), crewAvg);
   const st = scoreStatus(crewAvg);
   const ring = document.getElementById('crewRing');
   const umfang = 2 * Math.PI * 64;

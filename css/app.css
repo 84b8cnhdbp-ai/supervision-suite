@@ -256,6 +256,13 @@ textarea { resize: vertical; min-height: 64px; }
 .name-eigen[hidden] { display: none; }
 /* Nur eine der drei Ansichten ist sichtbar (zeigeAnsicht in js/ui.js) */
 .bewertung[hidden], .gespann[hidden], .statistik[hidden] { display: none; }
+/* Reiterwechsel: Ansicht blendet weich ein (js/bewegung.js) */
+.einblenden { animation: einblenden 150ms ease-out; }
+@keyframes einblenden { from { opacity: 0; } to { opacity: 1; } }
+/* „Bewegung reduzieren“: keine Übergänge und Animationen (gilt für alles, auch spätere) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
 optgroup { font-weight: bold; }
 
 .analytics-card {
@@ -852,6 +859,8 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
 }
 
 @media print {
+  /* Druck immer im fertigen Zustand: laufende Übergänge enden sofort */
+  *, *::before, *::after { transition: none !important; animation: none !important; }
   @page { size: A4 portrait; margin: 12mm 15mm; }
   :root, :root[data-theme="dark"] {
     color-scheme: light;
