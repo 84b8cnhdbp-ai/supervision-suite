@@ -6,7 +6,7 @@ Prüft (Druckansicht A4, wie beim Drucken / PDF):
   ausgeblendet; leere Felder fallen weg (samt Beschriftung)
 - Druckfassung am Bildschirm ausgeblendet und für VoiceOver unsichtbar (aria-hidden)
 - auch nach Reiterwechsel / Laden aktuell (programmatisch gefüllt)
-- Supervisor in der Titelzeile nur im Druck
+- Supervisor in der Titelzeile nur im Druck, nach Änderung unter „Spiel bearbeiten“ mit dem neuen Namen
 - Statistik: Kopf mit Saison aus den Spieldaten (eine / mehrere / keine), Druckdatum, Kennzahlen, Tabelle mit
   Spaltentiteln auf jeder Seite, keine geteilten Zeilen, „Bewertungen laden“ ausgeblendet, Fusszeile „Vertraulich“;
   Deutsch und Englisch
@@ -73,6 +73,19 @@ def main():
             pruefe(druckfassung(b, 'note_frei_2')['druck'] == 'none', 'Druck: leere Kriterien-Notiz nicht weggelassen')
             sup = b.js("(() => { const e = document.getElementById('spielTitelSupervisor'); return [getComputedStyle(e).display, e.textContent]; })()")
             pruefe(sup[0] != 'none' and sup[1] == ' · ' + b.js("t('print_supervisor', { name: 'Muster Peter' })"), f'Druck: Supervisor in der Titelzeile fehlt ({sup})')
+
+            # Supervisor unter „Spiel bearbeiten“ ändern (echte Klicks): Titelzeile im Druck zeigt den neuen Namen
+            b.fenster(1194, 834)
+            b.klick('#spielTitel')
+            b.js("document.getElementById('supervisor_name').value = ''")
+            b.klick('#supervisor_name')
+            b.tippen('Beispiel Anna')
+            b.klick('#sfFertig')
+            b.fenster(794, 1123, druck=True)
+            sup = b.js("(() => { const e = document.getElementById('spielTitelSupervisor'); return e ? [getComputedStyle(e).display, e.textContent] : null; })()")
+            pruefe(sup and sup[0] != 'none' and sup[1] == ' · ' + b.js("t('print_supervisor', { name: 'Beispiel Anna' })"),
+                   f'Druck nach „Spiel bearbeiten“: Supervisor nicht aktualisiert ({sup})')
+            pruefe(b.js("gameData.global.supervisor_name") == 'Beispiel Anna', 'Supervisor nicht gespeichert')
 
             # 3. nach Reiterwechsel / Laden aktuell
             b.fenster(1194, 834)

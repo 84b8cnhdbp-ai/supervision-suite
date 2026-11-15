@@ -33,8 +33,14 @@ for name, befehl in TESTS:
     start = time.time()
     r = subprocess.run([sys.executable, os.path.join(HIER, befehl[0])] + befehl[1:], capture_output=True, text=True)
     zeilen = (r.stdout + r.stderr).strip().splitlines()
-    ergebnisse.append((name, r.returncode == 0, zeilen[-1] if zeilen else '', time.time() - start))
-    if r.returncode != 0:
+    # Schlussmeldung = letzte Zeile auf stdout (stderr kann z. B. Meldungen des Test-Servers enthalten)
+    schluss = r.stdout.strip().splitlines()
+    letzte = schluss[-1] if schluss else '(keine Schlussmeldung – Test abgebrochen?)'
+    if r.stderr.strip():
+        letzte += f'  [+{len(r.stderr.strip().splitlines())} Zeilen stderr]'
+    ok = r.returncode == 0 and bool(schluss)
+    ergebnisse.append((name, ok, letzte, time.time() - start))
+    if not ok or r.stderr.strip():
         print(f'--- {name} ---')
         print('\n'.join(zeilen[-25:]))
 

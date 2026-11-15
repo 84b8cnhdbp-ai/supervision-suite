@@ -11,6 +11,7 @@ import json
 import os
 import shutil
 import socket
+import sys
 import struct
 import subprocess
 import tempfile
@@ -63,6 +64,12 @@ def server(wurzel, routen=None):
 
     class Srv(http.server.ThreadingHTTPServer):
         request_queue_size = 64   # Standard 5 ist zu klein, wenn Browser und Service Worker parallel laden
+
+        def handle_error(s, request, adresse):
+            # Bricht der Browser einen Ladevorgang ab (Seitenwechsel), ist das harmlos: nicht als Fehlerblock ausgeben
+            if isinstance(sys.exc_info()[1], (ConnectionResetError, BrokenPipeError, ConnectionAbortedError)):
+                return
+            super().handle_error(request, adresse)
     srv = Srv(('127.0.0.1', 0), H)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     srv.basis = f'http://127.0.0.1:{srv.server_address[1]}'
@@ -164,7 +171,17 @@ class Browser:
         self.nr = 0
         self.befehl('Page.enable')
         self.befehl('Runtime.enable')
+        self._medien('', 'light')   # ab Start: keine Übergänge (prefers-reduced-motion)
         return self
+
+    # Alle Tests laufen mit „Bewegung reduzieren“, damit Bilder und Messungen nie mitten in einem Übergang
+    # entstehen. Nur der Animations-Test setzt b.bewegung = True (vor b.fenster()).
+    bewegung = False
+
+    def _medien(self, media, farbschema):
+        self.befehl('Emulation.setEmulatedMedia', media=media,
+                    features=[{'name': 'prefers-color-scheme', 'value': farbschema},
+                              {'name': 'prefers-reduced-motion', 'value': 'no-preference' if self.bewegung else 'reduce'}])
 
     def __exit__(self, *a):
         self.proc.kill(); self.proc.wait()
@@ -188,9 +205,7 @@ class Browser:
 
     def fenster(self, breite, hoehe, farbschema='light', druck=False):
         self.befehl('Emulation.setDeviceMetricsOverride', width=breite, height=hoehe, deviceScaleFactor=1, mobile=False)
-        self.befehl('Emulation.setEmulatedMedia', media='print' if druck else '',
-                    features=[{'name': 'prefers-color-scheme', 'value': farbschema},
-                              {'name': 'prefers-reduced-motion', 'value': 'reduce'}])
+        self._medien('print' if druck else '', farbschema)
 
     def oeffnen(self, url, warten=0.6):
         self.befehl('Page.navigate', url=url)
