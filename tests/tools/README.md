@@ -13,7 +13,7 @@ python3 tests/tools/alle-tests.py            # alle Tests (ca. 5 Min.)
 python3 tests/tools/alle-tests.py --ohne-sw  # ohne Service-Worker-Test (ca. 1 Min.)
 ```
 
-Führt Daten-Test (Deutsch und Englisch), Texte-, Vereins-, Fenster-, Knopfreihen-, Layout-, Score-, Spiel-, Szene- und Service-Worker-Test aus und zeigt eine
+Führt Daten-Test (Deutsch und Englisch), Texte-, Vereins-, Fenster-, Knopfreihen-, Layout-, Score-, Spiel-, Szene-, Übersicht- und Service-Worker-Test aus und zeigt eine
 Zusammenfassung. Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
 
 ## Daten-Test – „gleiche Eingaben, gleiche Daten“
@@ -133,6 +133,18 @@ Leerzeichen, neue Szenen am Ende der Notiz; Anzeige und Druck sortiert (Drittel,
 des Drittels, unlesbare alte Angaben ganz am Ende); Ändern an derselben Stelle, Löschen mit Rückfrage; freier Text
 getrennt, Notiz ohne Bearbeitung unverändert; zuletzt benutztes Drittel, bei anderem Spiel wieder „1.“; Chips höchstens
 zwei Zeilen; 768/834/1194 px, DE/EN.
+
+## Übersicht-Test – Gespann-Übersicht und Saison-Statistik
+
+```sh
+python3 tests/tools/uebersicht-test.py
+```
+
+Gespann: eine Karte je Rolle als echter Knopf (Enter/Leertaste, VoiceOver-Name), Werte = `computeRefScores`,
+Durchschnitt mit denselben Schwellen wie die Bewertung, Tipp öffnet den Reiter, leerer Zustand („Rollen besetzen“),
+Druck. Statistik: Zahlen mit den Beispieldateien und **Zelle für Zelle gleich wie auf `main`** (gleiche Dateien in den
+alten Stand geladen), negative Entwicklung mit echtem „−“ und Pfeil, Abzeichen-Kontrast hell/dunkel, Tabelle passt ab
+768 px, leerer Zustand („.json wählen“), Sprachwechsel, DE/EN.
 
 ## Service-Worker-Test – Updates, offline, langsames Netz
 

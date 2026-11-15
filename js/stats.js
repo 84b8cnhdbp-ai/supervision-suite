@@ -43,13 +43,19 @@ async function handleSeasonFilesUpload(e) {
   e.target.value = '';
 }
 
+// Prozentwert wie bisher („80%“, Durchschnitt „87.0%“); fehlend = „–“
+const statProzent = (v) => (v === null || v === undefined ? '<span class="stat-leer">–</span>' : `${v}%`);
+
+// Saison-Statistik (Zahlen wie bisher; Aussehen Etappe 2.8). Sortieren usw. folgt in Etappe 7.
+let letzteStatistik = null;   // für Sprachwechsel
+
 function renderSeasonStatsDashboard(stats) {
+  letzteStatistik = stats;
   const container = document.getElementById('seasonStatsContent');
 
   let totalR1 = 0, countR1 = 0;
   let totalR2 = 0, countR2 = 0;
   let totalCompleted = 0;
-
   let rowsHtml = "";
 
   const allNames = Array.from(new Set([...KADER, ...Object.keys(stats)])).sort((a, b) => a.localeCompare(b, 'de'));
@@ -62,79 +68,64 @@ function renderSeasonStatsDashboard(stats) {
     if (r1 !== null) { totalR1 += r1; countR1++; }
     if (r2 !== null) { totalR2 += r2; countR2++; }
 
-    let avgStr = "-";
-    let deltaStr = `<span style="color: var(--text-muted);">-</span>`;
-
+    let avgStr = '<span class="stat-leer">–</span>';
+    let deltaStr = '<span class="stat-leer">–</span>';
     if (r1 !== null && r2 !== null) {
       totalCompleted++;
-      const avg = ((r1 + r2) / 2).toFixed(1);
-      avgStr = `<strong>${avg}%</strong>`;
+      avgStr = `<strong>${((r1 + r2) / 2).toFixed(1)}%</strong>`;
       const delta = r2 - r1;
-      if (delta > 0) {
-        deltaStr = `<span style="color: var(--green); font-weight: bold;">+${delta}% ↗</span>`;
-      } else if (delta < 0) {
-        deltaStr = `<span style="color: var(--red); font-weight: bold;">${delta}% ↘</span>`;
-      } else {
-        deltaStr = `<span style="color: var(--text-muted); font-weight: bold;">0% →</span>`;
-      }
+      // Richtung mit Pfeil (nicht nur Farbe); negative Werte mit echtem Minuszeichen
+      if (delta > 0) deltaStr = `<span class="stat-plus">+${delta}% <span aria-hidden="true">↑</span></span><span class="sr-only"> ${t('stats_up')}</span>`;
+      else if (delta < 0) deltaStr = `<span class="stat-minus">−${Math.abs(delta)}% <span aria-hidden="true">↓</span></span><span class="sr-only"> ${t('stats_down')}</span>`;
+      else deltaStr = `<span class="stat-gleich">0% <span aria-hidden="true">→</span></span><span class="sr-only"> ${t('stats_same')}</span>`;
     } else if (r1 !== null) {
       avgStr = `${r1}%`;
     } else if (r2 !== null) {
       avgStr = `${r2}%`;
     }
 
-    let statusBadge = `<span style="background: #FEE2E2; color: #991B1B; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold;">0/2 Offen</span>`;
-    if (r1 !== null && r2 !== null) {
-      statusBadge = `<span style="background: #DCFCE7; color: #166534; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold;">2/2 Fertig</span>`;
-    } else if (r1 !== null || r2 !== null) {
-      statusBadge = `<span style="background: #FEF9C3; color: #854D0E; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold;">1/2 In Arbeit</span>`;
-    }
+    const status = r1 !== null && r2 !== null ? ['fertig', t('stats_status_done')]
+      : (r1 !== null || r2 !== null ? ['arbeit', t('stats_status_progress')] : ['offen', t('stats_status_open')]);
 
     rowsHtml += `
       <tr>
-        <td style="font-weight: 600;">${escapeHtml(name)}</td>
-        <td style="text-align: center;">${statusBadge}</td>
-        <td style="text-align: center;">${r1 !== null ? r1 + '%' : '<span style="color: var(--text-muted);">-</span>'}</td>
-        <td style="text-align: center;">${r2 !== null ? r2 + '%' : '<span style="color: var(--text-muted);">-</span>'}</td>
-        <td style="text-align: center;">${deltaStr}</td>
-        <td style="text-align: center;">${avgStr}</td>
-      </tr>
-    `;
+        <th scope="row">${escapeHtml(name)}</th>
+        <td class="stat-mitte"><span class="stat-abzeichen stat-${status[0]}">${escapeHtml(status[1])}</span></td>
+        <td class="stat-zahl">${statProzent(r1)}</td>
+        <td class="stat-zahl">${statProzent(r2)}</td>
+        <td class="stat-zahl">${deltaStr}</td>
+        <td class="stat-zahl">${avgStr}</td>
+      </tr>`;
   });
 
-  const avgTeamR1 = countR1 > 0 ? (totalR1 / countR1).toFixed(1) + "%" : "-";
-  const avgTeamR2 = countR2 > 0 ? (totalR2 / countR2).toFixed(1) + "%" : "-";
+  const avgTeamR1 = countR1 > 0 ? (totalR1 / countR1).toFixed(1) + "%" : "–";
+  const avgTeamR2 = countR2 > 0 ? (totalR2 / countR2).toFixed(1) + "%" : "–";
 
   container.innerHTML = `
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px;">
-      <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 14px; border-radius: 8px; text-align: center;">
-        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Abgeschlossen (2/2)</div>
-        <div style="font-size: 22px; font-weight: 800; color: var(--navy); margin-top: 4px;">${totalCompleted} / ${allNames.length}</div>
-      </div>
-      <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 14px; border-radius: 8px; text-align: center;">
-        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Ø Review 1 (Hinrunde)</div>
-        <div style="font-size: 22px; font-weight: 800; color: var(--accent); margin-top: 4px;">${avgTeamR1}</div>
-      </div>
-      <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 14px; border-radius: 8px; text-align: center;">
-        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Ø Review 2 (Rückrunde)</div>
-        <div style="font-size: 22px; font-weight: 800; color: var(--green); margin-top: 4px;">${avgTeamR2}</div>
-      </div>
+    <div class="stat-kacheln">
+      <div class="karte stat-kachel"><span class="stat-kachel-titel">${escapeHtml(t('stats_done'))}</span><strong id="statFertig">${totalCompleted} / ${allNames.length}</strong></div>
+      <div class="karte stat-kachel"><span class="stat-kachel-titel">${escapeHtml(t('stats_avg_r1'))}</span><strong id="statR1" class="stat-r1">${avgTeamR1}</strong></div>
+      <div class="karte stat-kachel"><span class="stat-kachel-titel">${escapeHtml(t('stats_avg_r2'))}</span><strong id="statR2" class="stat-r2">${avgTeamR2}</strong></div>
     </div>
+    <div class="stat-tabelle-box">
+      <table class="stat-tabelle">
+        <thead>
+          <tr>
+            <th scope="col">${escapeHtml(t('stats_col_name'))}</th>
+            <th scope="col" class="stat-mitte">${escapeHtml(t('stats_col_status'))}</th>
+            <th scope="col" class="stat-zahl">${escapeHtml(t('stats_col_r1'))}</th>
+            <th scope="col" class="stat-zahl">${escapeHtml(t('stats_col_r2'))}</th>
+            <th scope="col" class="stat-zahl">${escapeHtml(t('stats_col_delta'))}</th>
+            <th scope="col" class="stat-zahl">${escapeHtml(t('stats_col_total'))}</th>
+          </tr>
+        </thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+    </div>`;
+}
 
-    <table>
-      <thead>
-        <tr>
-          <th>Schiedsrichter</th>
-          <th style="text-align: center;">Status</th>
-          <th style="text-align: center;">Review 1</th>
-          <th style="text-align: center;">Review 2</th>
-          <th style="text-align: center;">Entwicklung (Δ)</th>
-          <th style="text-align: center;">Gesamtnote</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${rowsHtml}
-      </tbody>
-    </table>
-  `;
+function initStatistik() {
+  const datei = document.getElementById('multiJsonInput');
+  document.getElementById('btnStatsLaden').addEventListener('click', () => datei.click());
+  datei.addEventListener('change', handleSeasonFilesUpload);
 }

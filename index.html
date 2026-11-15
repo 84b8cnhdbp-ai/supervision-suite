@@ -12,9 +12,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="css/app.css?v=19">
-<script src="js/club.js?v=19"></script>
-<script src="js/theme.js?v=19"></script>
+<link rel="stylesheet" href="css/app.css?v=20">
+<script src="js/club.js?v=20"></script>
+<script src="js/theme.js?v=20"></script>
 </head>
 <body>
 
@@ -311,56 +311,53 @@
       </div>
     </div>
 
-    <!-- ANSICHT 2: GESPASS-ZUSAMMENFASSUNG -->
-    <div id="summaryView" style="display: none;">
-      <div class="section-title" style="margin-top: 0;"><span class="num">★</span> <span data-i18n="sec_summary_title">Gespann-Übersicht & Team-Performance</span></div>
-      <div class="analytics-card" style="grid-template-columns: 1fr 1fr;">
-        <div class="score-display">
-          <div class="score-circle" style="background: #4F46E5;">
-            <span id="crewScoreVal">80%</span>
-            <small data-i18n="txt_team">Team</small>
-          </div>
-          <div>
-            <strong style="font-size: 16px;" data-i18n="txt_crew_avg">Gespann-Durchschnittsnote</strong>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;" data-i18n="txt_crew_sub">
-              Mittelwert aus allen bewerteten Schiedsrichtern dieses Spiels
+    <!-- ANSICHT 2: GESPANN-ÜBERSICHT -->
+    <div id="summaryView" class="gespann" style="display: none;">
+      <div class="gespann-oben">
+        <section class="karte gespann-score">
+          <h2 class="karten-titel" data-i18n="crew_title">Gespann-Durchschnitt</h2>
+          <div class="score-zeile">
+            <div class="score-ring">
+              <svg viewBox="0 0 150 150" aria-hidden="true">
+                <circle class="ring-grund" cx="75" cy="75" r="64"></circle>
+                <circle class="ring-wert" id="crewRing" cx="75" cy="75" r="64" stroke-dasharray="0 402.1" transform="rotate(-90 75 75)"></circle>
+              </svg>
+              <span class="score-zahl" id="crewScoreVal">–</span>
+            </div>
+            <div class="gespann-status">
+              <strong class="score-status" id="crewStatus"></strong>
+              <p class="gespann-sub" id="crewSub"></p>
             </div>
           </div>
-        </div>
-        <div class="radar-container">
+        </section>
+        <section class="karte netz-karte">
+          <h2 class="karten-titel" data-i18n="crew_radar_title">Profil des Gespanns</h2>
           <svg id="crewRadarChart" class="netz" viewBox="0 0 300 236" role="img" aria-label="Profil"></svg>
-        </div>
+        </section>
       </div>
-
-      <div class="summary-grid" id="summaryCardsContainer"></div>
-
-      <div class="section-title" style="margin-top: 28px;"><span class="num">✓</span> <span data-i18n="sec_crew_obs">Gemeinsame Gespann-Beobachtungen</span></div>
-      <div>
-        <label for="crew_notes" data-i18n="lbl_crew_notes">Zusammenarbeit, Teamwork & Spielcharakter</label>
-        <textarea id="crew_notes" oninput="saveGlobalState()" style="min-height: 100px;" placeholder="Beurteilung der Harmonie im Gespann, gegenseitige Unterstützung bei Rudelbildungen, Absprachen vor Bullys..."></textarea>
-      </div>
+      <p class="leer-hinweis" id="crewLeer" hidden></p>
+      <div class="gespann-karten" id="summaryCardsContainer"></div>
+      <section class="karte gespann-notiz">
+        <h2 class="karten-titel"><label for="crew_notes" data-i18n="sec_crew_obs">Gemeinsame Gespann-Beobachtungen</label></h2>
+        <textarea id="crew_notes" data-i18n-placeholder="ph_crew_notes" placeholder=""></textarea>
+      </section>
     </div>
 
     <!-- ANSICHT 3: SAISON-STATISTIK -->
-    <div id="seasonStatsView" style="display: none;">
-      <div class="section-title" style="margin-top: 0;"><span class="num">Σ</span> <span data-i18n="stats_title">Schiedsrichter-Supervision — Gesamtstatistik</span></div>
-      
-      <div style="background: var(--bg-subtle); padding: 16px 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+    <div id="seasonStatsView" class="statistik" style="display: none;">
+      <h2 class="ansicht-titel" data-i18n="stats_title">Schiedsrichter-Supervision — Gesamtstatistik</h2>
+      <section class="karte stat-laden">
         <div>
-          <strong style="display: block; margin-bottom: 4px;">Bewertungen importieren</strong>
-          <span style="font-size: 12px; color: var(--text-muted);">Wähle alle gespeicherten .json-Dateien aus deinem Ordner «Bewertungen» aus.</span>
+          <strong data-i18n="stats_load_title">Bewertungen laden</strong>
+          <p data-i18n="stats_load_text">Wähle alle gespeicherten Bewertungen (.json) aus deinem Ordner «Bewertungen».</p>
         </div>
-        <label class="btn btn-primary" style="margin: 0;">
-          JSON-Dateien auswählen & berechnen
-          <input type="file" id="multiJsonInput" multiple accept=".json" style="display: none;" onchange="handleSeasonFilesUpload(event)">
-        </label>
-      </div>
-
+        <button type="button" class="knopf-sichern" id="btnStatsLaden" data-i18n="stats_load_btn">Dateien wählen</button>
+        <input type="file" id="multiJsonInput" multiple accept=".json" hidden>
+      </section>
       <div id="seasonStatsContent">
-        <p style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 40px 0;">Noch keine Bewertungsdateien geladen. Klicke oben auf «JSON-Dateien auswählen & berechnen».</p>
+        <p class="leer-hinweis" data-i18n="stats_empty">Noch keine Bewertungen geladen.</p>
       </div>
     </div>
-
   </div>
   </div>
   </main>
@@ -482,18 +479,18 @@
   </div>
 </dialog>
 
-<script src="js/i18n.js?v=19"></script>
-<script src="js/dialog.js?v=19"></script>
-<script src="js/segment.js?v=19"></script>
-<script src="js/layout.js?v=19"></script>
-<script src="js/spiel.js?v=19"></script>
-<script src="js/szene.js?v=19"></script>
-<script src="js/config.js?v=19"></script>
-<script src="js/scoring.js?v=19"></script>
-<script src="js/storage.js?v=19"></script>
-<script src="js/ui.js?v=19"></script>
-<script src="js/export.js?v=19"></script>
-<script src="js/stats.js?v=19"></script>
-<script src="js/app.js?v=19"></script>
+<script src="js/i18n.js?v=20"></script>
+<script src="js/dialog.js?v=20"></script>
+<script src="js/segment.js?v=20"></script>
+<script src="js/layout.js?v=20"></script>
+<script src="js/spiel.js?v=20"></script>
+<script src="js/szene.js?v=20"></script>
+<script src="js/config.js?v=20"></script>
+<script src="js/scoring.js?v=20"></script>
+<script src="js/storage.js?v=20"></script>
+<script src="js/ui.js?v=20"></script>
+<script src="js/export.js?v=20"></script>
+<script src="js/stats.js?v=20"></script>
+<script src="js/app.js?v=20"></script>
 </body>
 </html>

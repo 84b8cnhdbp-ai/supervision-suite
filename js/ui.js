@@ -30,6 +30,8 @@ function initApp() {
   }
   initSpiel();
   initSzenen();
+  initStatistik();
+  document.getElementById('crew_notes').addEventListener('input', saveGlobalState);   // Gespann-Notiz
 }
 
 function setupRefereeDropdown() {
@@ -453,38 +455,75 @@ function calcScores(shouldSave = true) {
   if (shouldSave) saveCurrentRefData();
 }
 
+// Kleiner Ring (SVG) mit Score in der Statusfarbe
+function ringHtml(total, klein) {
+  const umfang = 2 * Math.PI * 64;
+  const st = scoreStatus(total);
+  const strich = total === null ? 0 : umfang * total / 100;
+  return `<span class="score-ring${klein ? ' klein' : ''}" aria-hidden="true"><svg viewBox="0 0 150 150">
+    <circle class="ring-grund" cx="75" cy="75" r="64"></circle>
+    <circle class="ring-wert" cx="75" cy="75" r="64" stroke-dasharray="${strich.toFixed(1)} ${umfang.toFixed(1)}" transform="rotate(-90 75 75)" style="stroke: var(${st.farbe})"></circle>
+  </svg><span class="score-zahl">${total === null ? '–' : total + '%'}</span></span>`;
+}
+
+// Gespann-Übersicht: Durchschnitt (gleiche Schwellen wie bei der Bewertung), Profil, eine Karte je Rolle
 function renderSummaryView() {
   const refs = SYSTEM_CONFIGS[currentSystem];
   const container = document.getElementById('summaryCardsContainer');
   container.innerHTML = "";
 
-  let totalCrewScore = 0, scoredRefs = 0;
+  let totalCrewScore = 0, scoredRefs = 0, mitName = 0;
   const avgScores7 = [0, 0, 0, 0, 0, 0, 0];
   const radarCounts = [0, 0, 0, 0, 0, 0, 0];
   const fmt = v => v === null ? "–" : v + "%";
 
   refs.forEach((ref, idx) => {
     const d = gameData.referees[`${currentSystem}_${ref.id}`] || getDefaultRefData();
-    const roleText = rolle(ref);
-
     const sc = computeRefScores(d);
     sc.radar.forEach((v, i) => { if (v !== null) { avgScores7[i] += v; radarCounts[i]++; } });
-    const p2 = sc.part2, p3 = sc.part3, p4 = sc.part4, refScore = sc.total;
+    const refScore = sc.total;
     if (refScore !== null) { totalCrewScore += refScore; scoredRefs++; }
+    if (d.name) mitName++;
+    const st = scoreStatus(refScore);
 
-    const card = document.createElement('div');
-    card.className = "summary-card";
-    card.innerHTML = `
-      <h3>${escapeHtml(roleText)}</h3>
-      <div class="name">${d.name ? escapeHtml(d.name) : `<i>${escapeHtml(t('summary_no_name'))}</i>`}</div>
-      <div class="score">${fmt(refScore)}</div>
-      <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(t('summary_grade'))}: ${fmt(p2)} | Matrix: ${fmt(p3)} | Coach: ${fmt(p4)}</div>
-    `;
-    container.appendChild(card);
+    // Echter Knopf: Tipp, Enter oder Leertaste öffnet den Reiter dieser Rolle
+    const karte = document.createElement('button');
+    karte.type = 'button';
+    karte.className = 'gespann-karte';
+    karte.dataset.index = idx;
+    karte.innerHTML = `
+      <span class="gk-kopf"><span class="gk-rolle">${escapeHtml(rolle(ref))}</span>
+        <span class="gk-name${d.name ? '' : ' gk-leer'}">${escapeHtml(d.name || t('crew_no_name'))}</span></span>
+      <span class="gk-zeile">${ringHtml(refScore, true)}
+        <span class="gk-status" style="color: var(${refScore === null ? '--t-warn' : st.schrift})">${escapeHtml(refScore === null ? t('crew_grade_missing') : t(st.text))}</span></span>
+      <span class="gk-teile">
+        <span><span class="gk-teil-name">${escapeHtml(t('sub_part2'))}</span> ${fmt(sc.part2)}</span>
+        <span><span class="gk-teil-name">${escapeHtml(t('sub_part3'))}</span> ${fmt(sc.part3)}</span>
+        <span><span class="gk-teil-name">${escapeHtml(t('sub_part4'))}</span> ${fmt(sc.part4)}</span>
+      </span>`;
+    karte.setAttribute('aria-label', t('crew_card_label', {
+      rolle: rolle(ref), name: d.name || t('crew_no_name'), score: fmt(refScore),
+      status: refScore === null ? t('crew_grade_missing') : t(st.text)
+    }));
+    karte.addEventListener('click', () => { selectRefTab(idx); window.scrollTo({ top: 0 }); });
+    container.appendChild(karte);
   });
 
   const crewAvg = scoredRefs > 0 ? Math.round(totalCrewScore / scoredRefs) : null;
   document.getElementById('crewScoreVal').innerText = fmt(crewAvg);
+  const st = scoreStatus(crewAvg);
+  const ring = document.getElementById('crewRing');
+  const umfang = 2 * Math.PI * 64;
+  ring.setAttribute('stroke-dasharray', `${(crewAvg === null ? 0 : umfang * crewAvg / 100).toFixed(1)} ${umfang.toFixed(1)}`);
+  ring.style.stroke = `var(${st.farbe})`;
+  const status = document.getElementById('crewStatus');
+  status.textContent = crewAvg === null ? t('crew_none') : t(st.text);
+  status.style.color = `var(${crewAvg === null ? '--secondary' : st.schrift})`;
+  document.getElementById('crewSub').textContent = t('crew_sub', { n: scoredRefs, von: refs.length });
+  // Leerer Zustand: noch niemand besetzt
+  const leer = document.getElementById('crewLeer');
+  leer.hidden = mitName > 0;
+  leer.textContent = t('crew_empty');
 
   const crewRadar = avgScores7.map((sum, i) => radarCounts[i] ? sum / radarCounts[i] : null);
   drawRadar('crewRadarChart', crewRadar);

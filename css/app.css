@@ -38,6 +38,8 @@
   --t-warn: #9A4A07;
   --t-bad: #B42318;
   --danger-soft: #FDECEA;
+  --good-soft: #E3F4E7;
+  --warn-soft: #FDF0DD;
 
   /* Netzdiagramm */
   --radar-grid: #D8D8DE;
@@ -66,7 +68,7 @@
     --bg: #000000; --card: #1C1C1E; --text: #F5F5F7; --secondary: #A1A1A6; --sep: #38383A;
     --seg: #2C2C2E; --seg-sel: #5A5A5E; --toolbar: #111113; --sidebar: #161618; --input: #111113;
     --accent: #4C9AFF; --accent-hover: #7AB4FF; --accent-soft: rgba(76, 154, 255, 0.28); --on-accent: #000000; --card-shadow: none;
-    --t-good: #7EE2A0; --t-good2: #B4F0C8; --t-solid: #FCD34D; --t-warn: #FDBA74; --t-bad: #FF8A80; --danger-soft: #3A1714;
+    --t-good: #7EE2A0; --t-good2: #B4F0C8; --t-solid: #FCD34D; --t-warn: #FDBA74; --t-bad: #FF8A80; --danger-soft: #3A1714; --good-soft: #15361F; --warn-soft: #3A2810;
     --radar-grid: #48484A; --radar-axis: #38383A; --radar-point: #F5F5F7; --radar-na: #8E8E93;
   }
 }
@@ -75,7 +77,7 @@
   --bg: #000000; --card: #1C1C1E; --text: #F5F5F7; --secondary: #A1A1A6; --sep: #38383A;
   --seg: #2C2C2E; --seg-sel: #5A5A5E; --toolbar: #111113; --sidebar: #161618; --input: #111113;
   --accent: #4C9AFF; --accent-hover: #7AB4FF; --accent-soft: rgba(76, 154, 255, 0.28); --on-accent: #000000; --card-shadow: none;
-  --t-good: #7EE2A0; --t-good2: #B4F0C8; --t-solid: #FCD34D; --t-warn: #FDBA74; --t-bad: #FF8A80; --danger-soft: #3A1714;
+  --t-good: #7EE2A0; --t-good2: #B4F0C8; --t-solid: #FCD34D; --t-warn: #FDBA74; --t-bad: #FF8A80; --danger-soft: #3A1714; --good-soft: #15361F; --warn-soft: #3A2810;
   --radar-grid: #48484A; --radar-axis: #38383A; --radar-point: #F5F5F7; --radar-na: #8E8E93;
 }
 
@@ -595,6 +597,57 @@ dialog.spiel-fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
 .bereit-hinweis:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
 .bereit-zeichen.hinweis { background: transparent; color: var(--t-warn); border: 2px solid var(--t-warn); font-style: italic; }
 
+/* ---------- Gespann-Übersicht und Saison-Statistik (Etappe 2.8) ---------- */
+.leer-hinweis { margin: 0 0 16px; padding: 14px 16px; border-radius: 12px; background: var(--toolbar); border: 1px dashed var(--sep); color: var(--secondary); font-size: 15px; }
+.leer-hinweis[hidden] { display: none; }
+.gespann-oben { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; margin-bottom: 16px; align-items: start; }
+.gespann-status { min-width: 0; }
+.gespann-sub { margin: 4px 0 0; font-size: 13px; color: var(--secondary); }
+.gespann-karten { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.gespann-karte {
+  display: flex; flex-direction: column; align-items: stretch; gap: 10px; min-height: 44px; padding: 14px 16px; text-align: left;
+  background: var(--card); color: var(--text); border: 1px solid var(--sep); border-radius: 12px; box-shadow: var(--card-shadow);
+  font: inherit; cursor: pointer;
+}
+.gespann-karte:hover { border-color: var(--accent); }
+.gespann-karte:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.gk-kopf { display: flex; flex-direction: column; gap: 2px; }
+.gk-rolle { font-size: 12px; font-weight: 600; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.3px; }
+.gk-name { font-size: 16px; font-weight: 700; }
+.gk-leer { font-weight: 400; font-style: italic; color: var(--secondary); }
+.gk-zeile { display: flex; align-items: center; gap: 12px; }
+.score-ring.klein { width: 56px; height: 56px; }
+.score-ring.klein .score-zahl { font-size: 15px; }
+.gk-status { font-size: 15px; font-weight: 600; }
+.gk-teile { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.gk-teil-name { font-weight: 400; color: var(--secondary); }
+.gespann-notiz textarea { min-height: 100px; }
+@media screen and (max-width: 700px) { .gespann-oben { grid-template-columns: 1fr; } }
+
+.ansicht-titel { margin: 0 0 14px; font-size: 22px; font-weight: 700; }
+.stat-laden { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
+.stat-laden p { margin: 4px 0 0; font-size: 14px; color: var(--secondary); }
+.stat-kacheln { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat-kachel { display: flex; flex-direction: column; gap: 4px; text-align: center; }
+.stat-kachel-titel { font-size: 12px; font-weight: 600; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.3px; }
+.stat-kachel strong { font-size: 24px; font-variant-numeric: tabular-nums; }
+.stat-r1 { color: var(--accent); }
+.stat-r2 { color: var(--t-good); }
+.stat-tabelle-box { overflow-x: auto; border-radius: 12px; }
+.stat-tabelle { margin: 0; }
+.stat-tabelle tbody tr:last-child th { border-bottom: 0; }
+.stat-tabelle th[scope="row"] { font-weight: 600; text-transform: none; letter-spacing: 0; font-size: 14px; color: var(--text); background: transparent; }
+.stat-mitte { text-align: center !important; }
+.stat-zahl { text-align: right !important; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stat-leer { color: var(--secondary); }
+.stat-abzeichen { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.stat-offen { background: var(--seg); color: var(--secondary); }
+.stat-arbeit { background: var(--warn-soft); color: var(--t-warn); }
+.stat-fertig { background: var(--good-soft); color: var(--t-good); }
+.stat-plus { color: var(--t-good); font-weight: 700; }
+.stat-minus { color: var(--t-bad); font-weight: 700; }
+.stat-gleich { color: var(--secondary); font-weight: 700; }
+
 /* ---------- Eigene Fenster (js/dialog.js) ---------- */
 dialog.fenster {
   width: min(420px, calc(100vw - 32px));
@@ -808,6 +861,12 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
   .szene-zeit { color: #000; margin-right: 6pt; }
   .szene-text { display: inline; -webkit-line-clamp: unset; line-clamp: none; overflow: visible; }
   .notiz-frei:placeholder-shown { display: none; }
+  /* Gespann-Übersicht im Druck */
+  .gespann-oben { grid-template-columns: 1fr 1fr; }
+  .gespann-karten { grid-template-columns: repeat(2, 1fr); gap: 6pt; }
+  .gespann-karte { box-shadow: none !important; border: 1pt solid #C7C7CC !important; padding: 6pt 8pt; break-inside: avoid; }
+  .gespann-notiz textarea { min-height: 0 !important; }
+  .leer-hinweis { border: 1pt dashed #999; }
   .druck-kopf { display: flex !important; align-items: center; gap: 10pt; padding: 0 0 8pt; margin-bottom: 8pt; border-bottom: 1.5pt solid #000; }
   .druck-kopf img { height: 36pt; width: auto; }
   .druck-kopf strong { display: block; font-size: 15pt; }

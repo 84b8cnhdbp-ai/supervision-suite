@@ -50,6 +50,15 @@ def fotografieren(wurzel, ziel):
                 daten_setzen(b, srv.basis, spiel=True, theme='dark' if schema == 'dark' else None)
                 b.oeffnen(srv.basis + '/index.html')
                 b.bild(os.path.join(ziel, f'druck_a4_{schema}.png'))
+            # Druck der Gespann-Übersicht
+            b.fenster(794, 1123, 'light', druck=True)
+            daten_setzen(b, srv.basis, spiel=True)
+            b.oeffnen(srv.basis + '/index.html')
+            b.js('selectSummaryTab()')
+            b.bild(os.path.join(ziel, 'druck_gespann.png'))
+            b.fenster(794, 1123, 'light', druck=True)
+            daten_setzen(b, srv.basis, spiel=True)
+            b.oeffnen(srv.basis + '/index.html')
             b.pdf(os.path.join(ziel, 'druck_head-referee.pdf'))
             fehler = [f for f in b.fehler if 'Update nicht möglich' not in f]
     finally:
@@ -64,6 +73,10 @@ def uebersicht(ordner, staende):
               'figcaption{font-weight:600;margin-bottom:6px}img{max-width:560px;border:1px solid #ccc;display:block}</style>',
               '<h1>Bildschirmfotos</h1><p>Druck-PDF: ' +
               ' · '.join(f'<a href="{s}/druck_head-referee.pdf">{html.escape(s)}</a>' for s in staende) + '</p>']
+    zeilen.append('<h2>Druckansicht Gespann-Übersicht</h2><div class="reihe">')
+    for s in staende:
+        zeilen.append(f'<figure><figcaption>{html.escape(s)}</figcaption><a href="{s}/druck_gespann.png"><img src="{s}/druck_gespann.png" loading="lazy"></a></figure>')
+    zeilen.append('</div>')
     for schema in SCHEMEN:
         datei = f'druck_a4_{schema}.png'
         zeilen.append(f'<h2>Druckansicht A4 · Darstellung {"dunkel" if schema == "dark" else "hell"}</h2><div class="reihe">')
