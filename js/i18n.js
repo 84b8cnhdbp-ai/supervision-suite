@@ -603,7 +603,7 @@ const I18N = {
     sec_crew_obs: "Observations communes sur l'équipe arbitrale",
     lbl_crew_notes: "Collaboration, travail d'équipe et caractère du match",
     btn_reset: "Réinitialiser tout le match",
-    txt_tab_crew: "Équipe arbitrale",
+    txt_tab_crew: "Équipe",
     txt_tab_stats: "Statistique de saison",
     radar_labels: ["Patinage", "Position", "Présence", "Anticipation", "Désescalade", "Teamwork", "Règles"],
     round_options: [
