@@ -81,12 +81,20 @@ Fertig und getestet (`alle-tests.py` grün, Bilder gegen `main` angesehen):
 | 2.7 Korrektur: alte Zeitangaben bleiben beim Ändern erhalten (tolerantes Lesen, Angabe bleibt ohne Wahl von Drittel/Zeit) | `d44da1c` |
 | 2.8 Gespann-Übersicht und Saison-Statistik im neuen Stil (Zahlen gleich wie `main`) | `ec41896` |
 | 2.9a Druck und Inhalt: Textfelder vollständig im Druck (leere weg), Supervisor in der Titelzeile, Statistik mit Saison, Druckdatum und Fusszeile „Vertraulich“ | `ad6c75b` |
+| Tests: Schlussmeldung immer sichtbar, Supervisor-Wechsel im Druck-Test, Bewegung reduzieren als Standard | `2037709` |
+| 2.9b Feinschliff (1): alle Texte über `t()`, keine Inline-Styles/-Handler, Kunstsprache-Test, Pixelvergleich | `2c8f9de` |
+| 2.9b (2): FR und IT übersetzt (versteckt, nur `?lang=`), Texte-Test streng | `e18357a` |
+| 2.9b (3): Karten als benannte Bereiche (VoiceOver), Manifest-Farben | `7b42687` |
+| 2.9b (4): Übergänge (Einblenden 150 ms, Score zählt beim Reiterwechsel 400 ms, Bewegung reduzieren, Druck fertig) | `b6c0300` |
+| 2.9b (5): CSS-Reste entfernt (Bilder pixelgleich), Test-Anleitung | `df74ba4` |
+| Französischer Reiter „Équipe“ | `e789c53` |
+| Wechsel-Test: `main` → neuer Stand ohne Datenverlust, Rückweg, ohne Erhöhung blockiert | `a02c701` |
 
-Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`, `3407e00`. Der Branch wird nach jedem Teilschritt auf GitHub gepusht (Sicherung).
+Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`, `3407e00`, `ab11ea5`. Der Branch wird nach jedem Teilschritt auf GitHub gepusht (Sicherung).
 
-**Als Nächstes:** 2.9b Feinschliff, danach Wechsel-Test (eigener Commit) und Wechsel von `etappe-2` auf `main`.
+**Als Nächstes:** Livios Test auf dem iPad (siehe Checkliste, Punkte 2–4), danach – nur nach Livios Go – Wechsel von `etappe-2` auf `main`.
 
-**2.9b Feinschliff:**
+**2.9b Feinschliff (erledigt):**
 - `manifest.json`-Farben (`theme_color`, `background_color`) ans neue Design anpassen, hell und dunkel.
 - VoiceOver: jede Karte ein benannter Bereich, auch wo die rechte Spalte hochkant per `display: contents` aufgelöst wird; Test über den Bedienungshilfen-Baum.
 - Restliche rein deutsche Texte auf `t()`, geprüft mit einer Kunstsprache ⟦…⟧ (nur im Test, nie in der Sprachwahl, nie gespeichert); restliche Inline-Styles und -Handler entfernen.
@@ -96,12 +104,17 @@ Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`, `3407e00
 - Alle Tests laufen mit `prefers-reduced-motion`; nur der Animations-Test schaltet die Übergänge ein.
 
 **Wechsel auf `main` (Checkliste):**
-1. Wechsel-Test als eigener Commit: auf `main` (`?v=7`) eine Bewertung über die alte Oberfläche ausfüllen, ohne zu sichern; dann auf `etappe-2` wechseln. Daten, Export, Einstellungen und Offline-Betrieb müssen erhalten bleiben; Gegenprobe.
-2. Nur unter der Woche, nicht vor einem Einsatz in der Halle.
-3. Alten Stand markieren: Tag `stand-etappe-1` auf `5e59592`, Tag pushen.
-4. `main` per Fast-Forward auf `etappe-2` – nur nach Livios Go – und pushen.
-5. Danach `alle-tests.py` komplett und `bilder.py --gegen stand-etappe-1`, auf GitHub Pages prüfen (Update-Badge, offline).
-6. Zurück, falls nötig: `git revert` auf `main` und `?v=` erhöhen (nie zurück auf eine alte Nummer).
+1. ~~Wechsel-Test als eigener Commit~~ (erledigt, `a02c701`, läuft in `alle-tests.py`).
+2. **Vor dem Merge: Test auf dem iPad über den lokalen Server** (Mac und iPad im selben WLAN, `python3 -m http.server`, Adresse des Macs im Safari): Bedienung und Layout hoch und quer, Szene mit Zifferntastatur, „Spiel bearbeiten“, Druck über „Teilen“. Probleme sollen vor dem Merge auffallen.
+3. **VoiceOver kurz auf dem iPad:** Reiter, eine Knopfreihe, Score-Leiste, Karten.
+4. **Handtest Bewertung über Nacht:** Am Vorabend in der App eine Bewertung offen lassen (nicht exportieren), nach dem Merge öffnen und prüfen, dass alles da ist. Wichtig: Auf dem iPad haben die Home-Bildschirm-App und Safari **getrennte Speicher** – den Test in der App machen, die in der Halle wirklich benutzt wird.
+5. Nur unter der Woche, nicht vor einem Einsatz in der Halle.
+6. Alten Stand markieren: Tag `stand-etappe-1` auf `5e59592`, Tag pushen.
+7. `main` per Fast-Forward auf `etappe-2` – nur nach Livios Go – und pushen.
+8. Danach `alle-tests.py` komplett und `bilder.py --gegen stand-etappe-1`, auf GitHub Pages prüfen (Update-Badge, offline).
+9. Zurück, falls nötig: `git revert` auf `main` und `?v=` erhöhen (nie zurück auf eine alte Nummer). Der Wechsel-Test prüft, dass die alte Oberfläche die Daten der neuen liest.
+
+**Hinweis Datensicherung:** Safari kann gespeicherte Daten einer Website löschen, wenn sie etwa 7 Tage nicht geöffnet wurde. Das Export-JSON bleibt die eigentliche Sicherung – jede Bewertung nach dem Spiel sichern.
 
 **Offener Entscheid:** Kriterien ohne Vorbelegung starten (siehe „Offene Entscheide“) – nur nach Livios Go.
 
