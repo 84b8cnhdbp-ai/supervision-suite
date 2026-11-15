@@ -94,8 +94,9 @@ def main():
 
             # 4. Sortierung mit gemischter Notiz, Druck gleich
             b.js(f"(() => {{ document.getElementById('note_4').value = '{GEMISCHT}'; saveCurrentRefData(); zeigeSzenen(4); }})()")
-            erwartet = ['P1 18:02|früh', 'P1 05:12|Erfundene Szene', 'P2 20:00|Beginn', 'P2 15:40|mittel', 'P2|ohne Zeit',
-                        'OT 03:00|Verlängerung', '2. Drittel 8:34|alt eins', 'alt zwei|zweite alte']
+            # „[2. Drittel 8:34]“ wird gelesen und richtig einsortiert, „[alt zwei]“ ist unlesbar (ganz am Ende)
+            erwartet = ['P1 18:02|früh', 'P1 05:12|Erfundene Szene', 'P2 20:00|Beginn', 'P2 15:40|mittel', 'P2 08:34|alt eins',
+                        'P2|ohne Zeit', 'OT 03:00|Verlängerung', 'alt zwei|zweite alte']
             pruefe(chips(4) == erwartet, f'Sortierung: {chips(4)}')
             pruefe(b.js("document.getElementById('note_frei_4').value") == 'freier Text dazwischen', 'freier Text nicht getrennt')
             # freien Text bearbeiten: Szenen (bisherige Reihenfolge) + freier Text
@@ -113,10 +114,43 @@ def main():
             b.klick('#szeneOk')
             zeilen = gespeichert(4).split('\n')
             pruefe(zeilen[4] == '[P2 15:40] geändert' and len(zeilen) == 9, f'Ändern: Zeile nicht an derselben Stelle: {zeilen}')
-            b.klick("#szenen_4 .szene-chip[data-zeile='2']")   # alte Angabe
-            pruefe(not b.js("document.getElementById('szeneAlt').hidden"), 'alte Angabe: Hinweis fehlt')
-            b.klick("label[for='szene_drittel__1']"); b.js("document.getElementById('szeneZeit').focus()"); b.tippen('834'); b.klick('#szeneOk')
-            pruefe(gespeichert(4).split('\n')[2] == '[P2 08:34] alt eins', f"alte Angabe nicht ersetzt: {gespeichert(4).split(chr(10))[2]!r}")
+            # alte LESBARE Angabe: vorbelegt; nur Text ändern -> Angabe Zeichen für Zeichen erhalten
+            b.klick("#szenen_4 .szene-chip[data-zeile='2']")   # [2. Drittel 8:34] alt eins
+            pruefe(b.js("segWert('szene_drittel')") == 'P2' and b.js("document.getElementById('szeneZeit').value") == '08:34',
+                   'alte lesbare Angabe: Drittel/Zeit nicht vorbelegt')
+            pruefe(not b.js("document.getElementById('szeneAlt').hidden") and b.js("document.getElementById('szeneAlt').textContent") == b.js("t('scene_old_read', { stempel: '2. Drittel 8:34' })"),
+                   'alte lesbare Angabe: Hinweis fehlt/falsch')
+            b.js("document.getElementById('szeneNotiz').value = 'alt eins neu'"); b.klick('#szeneOk')
+            pruefe(gespeichert(4).split('\n')[2] == '[2. Drittel 8:34] alt eins neu', f"lesbar, nur Text: {gespeichert(4).split(chr(10))[2]!r}")
+            # Gegenprobe: Zeit geändert -> neues Format
+            b.klick("#szenen_4 .szene-chip[data-zeile='2']")
+            b.js("document.getElementById('szeneZeit').select()"); b.js("document.getElementById('szeneZeit').focus()"); b.tippen('0700'); b.klick('#szeneOk')
+            pruefe(gespeichert(4).split('\n')[2] == '[P2 07:00] alt eins neu', f"lesbar, Zeit geändert: {gespeichert(4).split(chr(10))[2]!r}")
+            # alte UNLESBARE Angabe: nur Text ändern -> Angabe Zeichen für Zeichen erhalten
+            b.klick("#szenen_4 .szene-chip[data-zeile='7']")   # [alt zwei] zweite alte
+            pruefe(b.js("document.getElementById('szeneAlt').textContent") == b.js("t('scene_old_keep', { stempel: 'alt zwei' })"), 'unlesbare Angabe: Hinweis fehlt/falsch')
+            b.js("document.getElementById('szeneNotiz').value = 'zweite neu'"); b.klick('#szeneOk')
+            pruefe(gespeichert(4).split('\n')[7] == '[alt zwei] zweite neu', f"unlesbar, nur Text: {gespeichert(4).split(chr(10))[7]!r}")
+            # Gegenprobe: Drittel angetippt (auch das schon gewählte) -> neues Format
+            b.klick("#szenen_4 .szene-chip[data-zeile='7']")
+            vorgewaehlt = b.js("segWert('szene_drittel')")
+            b.klick(f"label[for='szene_drittel__{['P1', 'P2', 'P3', 'OT'].index(vorgewaehlt)}']")
+            pruefe(b.js("document.getElementById('szeneAlt').textContent") == b.js("t('scene_old_replace', { stempel: 'alt zwei' })"), 'unlesbare Angabe: Hinweis „wird ersetzt“ fehlt')
+            b.klick('#szeneOk')
+            pruefe(gespeichert(4).split('\n')[7] == f'[{vorgewaehlt}] zweite neu', f"unlesbar, Drittel gewählt: {gespeichert(4).split(chr(10))[7]!r}")
+            # Gegenprobe 2: unlesbar, Zeit eingegeben -> neues Format mit Zeit
+            b.js("(() => { const n = document.getElementById('note_4'); n.value = n.value.replace('[' + 'P', '[P') + '\\n[irgendwas] dritte'; saveCurrentRefData(); zeigeSzenen(4); })()")
+            nr = len(gespeichert(4).split('\n')) - 1
+            b.klick(f"#szenen_4 .szene-chip[data-zeile='{nr}']"); b.js("document.getElementById('szeneZeit').focus()"); b.tippen('1111'); b.klick('#szeneOk')
+            pruefe(gespeichert(4).split('\n')[nr].endswith(' 11:11] dritte') and gespeichert(4).split('\n')[nr].startswith('[P'), f"unlesbar, Zeit eingegeben: {gespeichert(4).split(chr(10))[nr]!r}")
+            b.js(f"(() => {{ document.getElementById('note_4').value = '{GEMISCHT}'; saveCurrentRefData(); zeigeSzenen(4); }})()")
+            # Lesen alter Formen (Gross-/Kleinschreibung egal)
+            formen = {'p2 8:34': ('P2', 514), '2. Drittel 8:34': ('P2', 514), '2.D 8:34': ('P2', 514), 'OT 3:00': ('OT', 180),
+                      'ot 3:00': ('OT', 180), '3. drittel': ('P3', None), 'P1 20:00': ('P1', 1200), '2d': ('P2', None),
+                      'Verlängerung 1:05': ('OT', 65), '2. Drittel 25:00': None, 'zweites': None, 'P4 01:00': None}
+            for f, soll in formen.items():
+                ist = b.js(f"(() => {{ const g = leseStempel({f!r}); return g ? [g.drittel, g.sekunden] : null; }})()")
+                pruefe(ist == (list(soll) if soll else None), f'Lesen „{f}“: {ist} statt {soll}')
             b.klick("#szenen_4 .szene-chip[data-zeile='5']")   # [P1 18:02] früh
             b.klick('#szeneLoeschen')
             pruefe(b.js("document.activeElement.textContent") == b.js("t('dlg_cancel')"), 'Löschen: „Abbrechen“ nicht vorgewählt')
@@ -124,7 +158,7 @@ def main():
             pruefe(len(gespeichert(4).split('\n')) == 9, 'Löschen: Enter hat gelöscht')
             b.klick('#szeneLoeschen'); b.klick('dialog.fenster[open] .fenster-knopf-gefahr')
             zeilen = gespeichert(4).split('\n')
-            pruefe(len(zeilen) == 8 and '[P1 18:02] früh' not in zeilen and zeilen[4] == '[P2 15:40] geändert', f'Löschen: {zeilen}')
+            pruefe(zeilen == [z for z in GEMISCHT.split('\\n') if z != '[P1 18:02] früh'], f'Löschen: {zeilen}')   # nur diese Zeile weg
 
             # 6. Zuletzt benutztes Drittel; anderes Spiel -> wieder 1.
             szene(5, '0500', 'drittes', drittel=2)

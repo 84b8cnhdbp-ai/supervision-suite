@@ -12,15 +12,28 @@ let szeneAktiv = null;                                // { kriterium, zeile (Ind
 
 // ---------- Lesen und Sortieren ----------
 
+// Drittel und Zeit aus einer Angabe lesen – auch aus alten Formen, Gross-/Kleinschreibung egal:
+//   „P2 08:34“, „p2 8:34“, „2. Drittel 8:34“, „2.D 8:34“, „2d“, „OT 3:00“, „Verlängerung“.
+// Ergebnis { drittel, sekunden } oder null (nicht lesbar).
+function leseStempel(stempel) {
+  const m = /^(?:p\s*([123])|([123])\s*\.?\s*d(?:rittel)?\.?|(ot|verl(?:ängerung)?\.?))\s*(?:(\d{1,2})[:.](\d{2}))?$/i.exec(String(stempel).trim());
+  if (!m) return null;
+  const drittel = m[3] ? 'OT' : 'P' + (m[1] || m[2]);
+  if (m[4] === undefined) return { drittel, sekunden: null };
+  const min = parseInt(m[4], 10), sek = parseInt(m[5], 10);
+  if (sek >= 60 || min > 20 || (min === 20 && sek > 0)) return null;
+  return { drittel, sekunden: min * 60 + sek };
+}
+
 // Eine Zeile der Notiz zerlegen. Ergebnis null = freier Text.
+// stempel = die gespeicherte Angabe Zeichen für Zeichen (bleibt erhalten, solange Drittel/Zeit nicht geändert werden).
 function leseSzene(zeile) {
   const m = /^\[([^\]]*)\]\s?(.*)$/.exec(zeile);
   if (!m) return null;
-  const stempel = m[1].trim();
-  const s = /^(P[123]|OT)(?:\s+(\d{1,2}):(\d{2}))?$/.exec(stempel);
-  if (!s) return { stempel, text: m[2], drittel: null, sekunden: null, lesbar: false };   // alte, unlesbare Angabe
-  const sekunden = s[2] !== undefined ? parseInt(s[2], 10) * 60 + parseInt(s[3], 10) : null;
-  return { stempel, text: m[2], drittel: s[1], sekunden, lesbar: true };
+  const stempel = m[1];
+  const gelesen = leseStempel(stempel);
+  if (!gelesen) return { stempel, text: m[2], drittel: null, sekunden: null, lesbar: false };   // alte, unlesbare Angabe
+  return { stempel, text: m[2], drittel: gelesen.drittel, sekunden: gelesen.sekunden, lesbar: true };
 }
 
 // Alle Szenen einer Notiz mit ihrer Zeilennummer, sortiert für die Anzeige (und den Druck):
@@ -135,11 +148,29 @@ function oeffneSzene(k, zeile = null) {
   document.getElementById('szeneFehler').hidden = true;
   document.getElementById('szeneLoeschen').hidden = zeile === null;
   document.getElementById('szeneOk').textContent = zeile === null ? t('stamp_add') : t('scene_save');
-  const alt = document.getElementById('szeneAlt');
-  alt.hidden = !(vorhanden && !vorhanden.lesbar);
-  if (!alt.hidden) alt.textContent = t('scene_old_stamp', { stempel: vorhanden.stempel });
+  // Bisherige Angabe in einem anderen Format: bleibt erhalten, solange Drittel und Zeit nicht gewählt werden
+  szeneAktiv.vorhanden = vorhanden;
+  szeneAktiv.gewaehlt = false;
+  zeigeAltHinweisSzene();
   if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
   (zeile === null ? document.getElementById('szeneZeit') : document.getElementById('szeneNotiz')).focus();
+}
+
+function zeigeAltHinweisSzene() {
+  const alt = document.getElementById('szeneAlt');
+  const v = szeneAktiv && szeneAktiv.vorhanden;
+  const anders = v && (!v.lesbar || v.stempel !== stempelText(v));   // nicht im neuen Format gespeichert
+  alt.hidden = !anders;
+  if (!anders) return;
+  const schluessel = szeneAktiv.gewaehlt ? 'scene_old_replace' : (v.lesbar ? 'scene_old_read' : 'scene_old_keep');
+  alt.textContent = t(schluessel, { stempel: v.stempel });
+}
+
+// Drittel angetippt oder Zeit eingegeben: alte Angabe wird beim Sichern ersetzt
+function szeneGewaehlt() {
+  if (!szeneAktiv || szeneAktiv.gewaehlt) return;
+  szeneAktiv.gewaehlt = true;
+  zeigeAltHinweisSzene();
 }
 
 function schliesseSzene() {
@@ -167,13 +198,15 @@ function szeneUebernehmen() {
   const drittel = segWert('szene_drittel') || 'P1';
   // Zeilenumbrüche werden Leerzeichen: jede Szene bleibt genau eine Zeile
   const text = document.getElementById('szeneNotiz').value.replace(/\s*\r?\n\s*/g, ' ').trim();
-  const stempel = sek === null ? drittel : `${drittel} ${zeitText(sek)}`;
+  // Bestehende Szene, Drittel und Zeit nicht angetippt: bisherige Angabe Zeichen für Zeichen behalten
+  const behalten = szeneAktiv.vorhanden && !szeneAktiv.gewaehlt;
+  const stempel = behalten ? szeneAktiv.vorhanden.stempel : (sek === null ? drittel : `${drittel} ${zeitText(sek)}`);
   const zeile = `[${stempel}]${text ? ' ' + text : ''}`;
   const { kriterium: k, zeile: nr } = szeneAktiv;
   const zeilen = notizFeld(k).value ? notizFeld(k).value.split('\n') : [];
   if (nr === null) zeilen.push(zeile);   // neu: anhängen (Reihenfolge der Eingabe)
   else zeilen[nr] = zeile;               // geändert: bleibt an derselben Stelle
-  szeneLetzte = { spiel: spielSchluessel(), drittel };
+  if (!behalten) szeneLetzte = { spiel: spielSchluessel(), drittel };
   schliesseSzene();
   speichereNotiz(k, zeilen.join('\n'));
   zeigeToast(t(nr === null ? 'scene_added' : 'scene_changed', { stempel }), 'ok');
@@ -199,5 +232,8 @@ function initSzenen() {
   const zeit = document.getElementById('szeneZeit');
   zeit.addEventListener('blur', formatiereSzeneZeit);
   zeit.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); formatiereSzeneZeit(); szeneUebernehmen(); } });
-  zeit.addEventListener('input', () => { document.getElementById('szeneFehler').hidden = true; });
+  zeit.addEventListener('input', () => { document.getElementById('szeneFehler').hidden = true; szeneGewaehlt(); });
+  // Drittel angetippt (auch das bereits gewählte) zählt als Wahl
+  document.querySelector('[data-seg="szene_drittel"]').addEventListener('click', (e) => { if (e.target.closest('label')) szeneGewaehlt(); });
+  document.querySelector('[data-seg="szene_drittel"]').addEventListener('keydown', (e) => { if (e.key.startsWith('Arrow') || e.key === ' ') szeneGewaehlt(); });
 }
