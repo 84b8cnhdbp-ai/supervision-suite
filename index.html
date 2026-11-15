@@ -12,9 +12,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="css/app.css?v=26">
-<script src="js/club.js?v=26"></script>
-<script src="js/theme.js?v=26"></script>
+<link rel="stylesheet" href="css/app.css?v=28">
+<script src="js/club.js?v=28"></script>
+<script src="js/theme.js?v=28"></script>
 </head>
 <body>
 
@@ -79,7 +79,7 @@
         </div>
       </div>
     </div>
-    <input type="file" id="kaderDatei" accept=".json,.txt" hidden>
+    <input type="file" id="kaderDatei" class="datei-feld" accept=".json,.txt" tabindex="-1" aria-hidden="true">
 
   <div class="app-container">
     <!-- Kopf nur im Druck -->
@@ -351,7 +351,7 @@
           <p data-i18n="stats_load_text">Wähle alle gespeicherten Bewertungen (.json) aus deinem Ordner «Bewertungen».</p>
         </div>
         <button type="button" class="knopf-sichern" id="btnStatsLaden" data-i18n="stats_load_btn">Dateien wählen</button>
-        <input type="file" id="multiJsonInput" multiple accept=".json" hidden>
+        <input type="file" id="multiJsonInput" class="datei-feld" multiple accept=".json" tabindex="-1" aria-hidden="true">
       </section>
       <div id="seasonStatsContent">
         <p class="leer-hinweis" data-i18n="stats_empty">Noch keine Bewertungen geladen.</p>
@@ -479,20 +479,20 @@
   </div>
 </dialog>
 
-<script src="js/i18n.js?v=26"></script>
-<script src="js/dialog.js?v=26"></script>
-<script src="js/segment.js?v=26"></script>
-<script src="js/layout.js?v=26"></script>
-<script src="js/spiel.js?v=26"></script>
-<script src="js/szene.js?v=26"></script>
-<script src="js/druck.js?v=26"></script>
-<script src="js/bewegung.js?v=26"></script>
-<script src="js/config.js?v=26"></script>
-<script src="js/scoring.js?v=26"></script>
-<script src="js/storage.js?v=26"></script>
-<script src="js/ui.js?v=26"></script>
-<script src="js/export.js?v=26"></script>
-<script src="js/stats.js?v=26"></script>
-<script src="js/app.js?v=26"></script>
+<script src="js/i18n.js?v=28"></script>
+<script src="js/dialog.js?v=28"></script>
+<script src="js/segment.js?v=28"></script>
+<script src="js/layout.js?v=28"></script>
+<script src="js/spiel.js?v=28"></script>
+<script src="js/szene.js?v=28"></script>
+<script src="js/druck.js?v=28"></script>
+<script src="js/bewegung.js?v=28"></script>
+<script src="js/config.js?v=28"></script>
+<script src="js/scoring.js?v=28"></script>
+<script src="js/storage.js?v=28"></script>
+<script src="js/ui.js?v=28"></script>
+<script src="js/export.js?v=28"></script>
+<script src="js/stats.js?v=28"></script>
+<script src="js/app.js?v=28"></script>
 </body>
 </html>

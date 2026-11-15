@@ -149,6 +149,7 @@ class Browser:
 
     def __enter__(self):
         self.fehler = []
+        self.dateiwahl = []   # Page.fileChooserOpened-Ereignisse
         self.profil = tempfile.mkdtemp(prefix='chrome-')
         s = socket.socket(); s.bind(('127.0.0.1', 0)); port = s.getsockname()[1]; s.close()
         self.proc = subprocess.Popen([CHROME, '--headless=new', f'--user-data-dir={self.profil}',
@@ -197,6 +198,8 @@ class Browser:
                 if 'error' in m:
                     raise RuntimeError(f"{methode}: {m['error']}")
                 return m.get('result', {})
+            if m.get('method') == 'Page.fileChooserOpened':   # Dateiauswahl geöffnet (nur mit setInterceptFileChooserDialog)
+                self.dateiwahl.append(m['params'])
             if m.get('method') == 'Runtime.exceptionThrown':
                 d = m['params']['exceptionDetails']
                 self.fehler.append(d.get('exception', {}).get('description') or d.get('text'))

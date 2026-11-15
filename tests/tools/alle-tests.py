@@ -17,6 +17,7 @@ TESTS = [
     ('Kunstsprache-Test', ['kunstsprache-test.py']),
     ('Vereins-Test', ['verein-test.py']),
     ('Fenster-Test', ['fenster-test.py']),
+    ('Dateiwahl-Test', ['dateiwahl-test.py']),
     ('Knopfreihen-Test', ['knopfreihen-test.py']),
     ('Layout-Test', ['layout-test.py']),
     ('Score-Test', ['score-test.py']),

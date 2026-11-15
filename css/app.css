@@ -207,6 +207,9 @@ textarea { resize: vertical; min-height: 64px; }
 .feld-auto { background-color: var(--bg-subtle); color: var(--text-muted); cursor: not-allowed; }   /* wird automatisch gefüllt */
 .name-eigen { display: block; margin-top: 6px; }
 .name-eigen[hidden] { display: none; }
+/* Dateifelder: unsichtbar, aber nicht display: none – Safari öffnet die Dateiauswahl sonst teils nicht.
+   Geöffnet werden sie über die Knöpfe (Kader importieren, Dateien wählen). */
+.datei-feld { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; opacity: 0; overflow: hidden; clip: rect(0 0 0 0); pointer-events: none; }
 /* Nur eine der drei Ansichten ist sichtbar (zeigeAnsicht in js/ui.js) */
 .bewertung[hidden], .gespann[hidden], .statistik[hidden] { display: none; }
 /* Reiterwechsel: Ansicht blendet weich ein (js/bewegung.js) */
@@ -623,8 +626,9 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
   .bewertung { display: grid; grid-template-columns: minmax(0, 1fr) 320px; grid-template-areas: "formular score"; gap: 28px; align-items: start; }
   .formular-spalte { grid-area: formular; }
   .score-spalte {
-    grid-area: score; margin: 0; position: sticky; top: calc(var(--wl-hoehe, 64px) + 12px);   /* unter der Werkzeugleiste (gemessen) */
-    max-height: calc(100vh - var(--wl-hoehe, 64px) - 24px); overflow-y: auto;
+    /* bleibt unter der Werkzeugleiste stehen; ist sie höher als das Fenster, scrollt sie mit, bis ihr unteres Ende
+       sichtbar ist (--spalte-oben, gemessen in js/layout.js) */
+    grid-area: score; margin: 0; position: sticky; top: var(--spalte-oben, calc(var(--wl-hoehe, 64px) + 12px));
   }
   .content { padding: 24px; }
 }

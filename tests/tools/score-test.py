@@ -2,6 +2,9 @@
 
 Prüft:
 - iPad quer (1194) und MacBook (1440): zwei Spalten, rechte Spalte bleibt beim Scrollen stehen und ist ganz sichtbar;
+  niedrige Fenster (1440×700, 1194×700, 1080×600): ist die Spalte höher als das Fenster, scrollt sie mit, bis ihr
+  unteres Ende sichtbar ist; ganz unten ist ihre letzte Zeile vollständig sichtbar, auch wenn ein Hinweis dazukommt
+  oder wegfällt (Gegenprobe mit der alten Regel);
   iPad hochkant (834): eine Spalte, Score oben
 - angezeigte Werte = computeRefScores (Gesamt und drei Teilwerte) in allen Reitern; Ring passend zum Score
 - Statustexte und Schwellen (> 80, ≥ 75, ≥ 60, ≥ 45, darunter, ohne Gesamteinschätzung)
@@ -38,8 +41,10 @@ def main():
                         continue   # Formular zu Ende: rollt mit dem Formularende mit (normal)
                     leiste = b.js(f"({RECHTECK})('.werkzeugleiste')")['b']
                     a = b.js(f"({RECHTECK})('{sel}')")
-                    pruefe(abs(a['t'] - (leiste + abstand)) <= 1.5 and a['b'] <= h + 1,
-                           f'{w}px: {sel} steht beim Scrollen ({y}) nicht direkt unter der Werkzeugleiste (oben {a["t"]:.0f}, erwartet {leiste + abstand:.0f})')
+                    # höher als das Fenster: unteres Ende 12 px über dem Fensterrand (Regel von Etappe 2.9b-Korrektur)
+                    soll = min(leiste + abstand, h - (a['b'] - a['t']) - 12) if abstand else leiste
+                    pruefe(abs(a['t'] - soll) <= 1.5 and a['b'] <= h + 1,
+                           f'{w}×{h}: {sel} steht beim Scrollen ({y}) nicht richtig (oben {a["t"]:.0f}, erwartet {soll:.0f})')
 
             for w, h in ((768, 1024), (834, 1194), (1080, 810), (1194, 834), (1440, 900)):
                 b.fenster(w, h)
@@ -66,6 +71,46 @@ def main():
                 b.js("const s = document.createElement('style'); s.textContent = '.werkzeugleiste { padding-top: 40px !important; }'; document.head.appendChild(s);")
                 b.js('new Promise((r) => setTimeout(r, 200))')
                 stehen(w, h, sel, abstand)
+
+            # 1c. Niedrige Fenster: ganz unten gescrollt ist die letzte Zeile der rechten Spalte vollständig sichtbar,
+            #     auch wenn ein Hinweis dazukommt oder wegfällt; passt die Spalte, bleibt sie unter der Werkzeugleiste
+            def letzte_zeile(w, h, wann, regel=''):
+                b.js("window.scrollTo(0, document.documentElement.scrollHeight)")
+                b.js('new Promise((r) => setTimeout(r, 150))')
+                z = b.js("""(() => { const sp = document.querySelector('.score-spalte');
+                  const zeilen = [...sp.querySelectorAll('li, p, .bereit-status')].filter((e) => e.offsetParent && e.textContent.trim());
+                  const l = zeilen[zeilen.length - 1]; const r = l.getBoundingClientRect(); const s = sp.getBoundingClientRect();
+                  return { text: l.textContent.trim().slice(0, 40), t: r.top, b: r.bottom, spB: s.bottom, spT: s.top,
+                           leiste: document.querySelector('.werkzeugleiste').getBoundingClientRect().bottom, h: innerHeight }; })()""")
+                ok = z['b'] <= z['h'] + 0.5 and z['b'] <= z['spB'] + 0.5 and z['t'] >= z['leiste'] - 0.5
+                pruefe(ok, f'{regel}{w}×{h} {wann}: letzte Zeile „{z["text"]}“ nicht ganz sichtbar (unten {z["b"]:.0f}, Fenster {z["h"]}, Spalte bis {z["spB"]:.0f})')
+                return ok
+
+            def niedrig(regel=''):
+                ergebnisse = []
+                for w, h in ((1440, 700), (1194, 700), (1080, 600)):
+                    b.fenster(w, h)
+                    daten_setzen(b, srv.basis)
+                    b.oeffnen(srv.basis + '/index.html')
+                    if regel:
+                        b.js("const s = document.createElement('style'); s.textContent = '@media (min-width: 1000px) { .score-spalte { top: calc(var(--wl-hoehe) + 12px) !important; max-height: calc(100vh - var(--wl-hoehe) - 24px); overflow-y: auto; } }'; document.head.appendChild(s);")
+                    b.js("gameData.global.spiel_id = ''; zeigeBereit();")   # Hinweis „Spielnummer fehlt“ kommt dazu
+                    b.js('new Promise((r) => setTimeout(r, 150))')
+                    ergebnisse.append(letzte_zeile(w, h, 'mit Hinweis', regel))
+                    if not regel:
+                        stehen(w, h, '.score-spalte', 12)
+                        b.js("gameData.global.spiel_id = '90003'; zeigeBereit();")   # Hinweis fällt weg
+                        ergebnisse.append(letzte_zeile(w, h, 'ohne Hinweis'))
+                        b.js("gameData.global.spiel_id = ''; zeigeBereit();")
+                        ergebnisse.append(letzte_zeile(w, h, 'Hinweis wieder da'))
+                return ergebnisse
+
+            niedrig()
+            # Gegenprobe mit der alten Regel (fester Abstand, eigene Bildlaufleiste): muss anschlagen
+            vorher = len(fehler)
+            alte = niedrig('alte Regel: ')
+            del fehler[vorher:]
+            pruefe(not all(alte), 'Gegenprobe: alte Regel fällt im Test nicht auf')
 
             b.fenster(1194, 834)
             daten_setzen(b, srv.basis)

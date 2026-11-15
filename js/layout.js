@@ -128,10 +128,11 @@ function mehrFokusWeg(e) {
   if (e.relatedTarget && !menu.contains(e.relatedTarget) && e.relatedTarget.id !== 'btnMehr') toggleMehr(false);
 }
 
-// Menüeintrag: Menü schliessen, dann Aktion (im selben Klick, damit z. B. die Dateiauswahl erlaubt ist)
+// Menüeintrag: zuerst die Aktion, direkt im Klick (Dateiauswahl öffnet sich nur so, besonders in Safari),
+// danach das Menü schliessen
 function mehrAktion(aktion) {
-  toggleMehr(false);
   aktion();
+  toggleMehr(false);
 }
 
 // Kader-Datei wählen (Menü „Mehr“ und Knopf beim Schiedsrichter-Feld, solange kein Kader geladen ist)
@@ -182,6 +183,24 @@ function messeHoehen() {
   const karte = document.querySelector('.score-karte');
   const kompakt = window.matchMedia('(max-width: 999px)').matches;
   wurzel.setProperty('--scoreleiste-hoehe', karte && kompakt ? Math.ceil(karte.getBoundingClientRect().height) + 'px' : '0px');
+  messeSpalte();
+}
+
+// Rechte Spalte (zwei Spalten ab 1000 px): Passt sie ins Fenster, steht sie 12 px unter der Werkzeugleiste.
+// Ist sie höher, scrollt sie mit, bis ihr unteres Ende 12 px über dem Fensterrand steht, und bleibt dann stehen
+// (oberer Abstand = Fensterhöhe − Spaltenhöhe − 12, höchstens der normale Abstand; auch negativ).
+function messeSpalte() {
+  const wurzel = document.documentElement.style;
+  const spalte = document.querySelector('.score-spalte');
+  const leiste = document.querySelector('.werkzeugleiste');
+  if (!spalte || !leiste || !window.matchMedia('screen and (min-width: 1000px)').matches) {
+    wurzel.removeProperty('--spalte-oben');
+    return;
+  }
+  const normal = Math.ceil(leiste.getBoundingClientRect().height) + 12;
+  const hoehe = spalte.getBoundingClientRect().height;
+  if (!hoehe) return;   // Ansicht ausgeblendet: bisherigen Wert behalten
+  wurzel.setProperty('--spalte-oben', Math.floor(Math.min(normal, window.innerHeight - hoehe - 12)) + 'px');
 }
 
 // ---------- Hinweis für zu alte Geräte (App bleibt bedienbar) ----------
@@ -224,6 +243,7 @@ function initLayout() {
     // ganzer Rahmen (border-box): auch Höhenänderungen durch Innenabstand oder Zeilenumbruch zählen
     ro.observe(document.querySelector('.werkzeugleiste'), { box: 'border-box' });
     ro.observe(document.querySelector('.score-karte'), { box: 'border-box' });
+    ro.observe(document.querySelector('.score-spalte'), { box: 'border-box' });   // Hinweise kommen dazu oder fallen weg
   }
   window.addEventListener('resize', messeHoehen);
   messeHoehen();
