@@ -57,12 +57,12 @@ Sprachen und Verein (seit 2.1b):
 - Gespeicherte Werte (Coaching-Texte, R1/R2, Liga, Rollen, Partner) bleiben in jeder Sprache deutsch, damit Dateien austauschbar sind. Die CSV ist ein Bericht: Spaltentitel in der gewählten Sprache.
 - Verein zentral in `js/club.js` (Name, Kürzel, Logo, Beispiel-Halle, Wert für `club` im Export), ohne Knopf in der App. Kein „EVZ“ / „EV Zug“ fest im Code.
 
-Tests nach jedem Teilschritt: `python3 tests/tools/alle-tests.py` (Daten DE/EN, Texte, Verein, Service Worker), bei sichtbaren Änderungen zusätzlich `bilder.py --gegen main`.
+Tests nach jedem Teilschritt: `python3 tests/tools/alle-tests.py` (Daten DE/EN, Texte, Verein, Service Worker), bei sichtbaren Änderungen zusätzlich `bilder.py --gegen` (Referenz: Tag `stand-etappe-1`).
 
 **Fertig, wenn:** Alle Funktionen von vorher gehen; auf iPad hoch/quer und MacBook gut bedienbar; Dark Mode sauber; Drucken nicht schlechter als vorher; alle Texte über `t()` auf DE und EN.
 
 ### Stand (Branch `etappe-2`, noch nicht auf `main`)
-Fertig und getestet (`alle-tests.py` grün, Bilder gegen `main` angesehen):
+Fertig und getestet (`alle-tests.py` grün, Bilder gegen den alten Stand angesehen):
 
 | Teilschritt | Commit |
 |---|---|
@@ -90,7 +90,8 @@ Fertig und getestet (`alle-tests.py` grün, Bilder gegen `main` angesehen):
 | Französischer Reiter „Équipe“ | `e789c53` |
 | Wechsel-Test: `main` → neuer Stand ohne Datenverlust, Rückweg, ohne Erhöhung blockiert | `a02c701` |
 | Korrektur nach Test auf dem Mac: rechte Spalte scrollt bis zum unteren Ende mit; Dateiauswahl in Safari (Dateiwahl-Test) | `dea17a9` |
-| Neue Spiele mit 2-Mann (`standardSystem` in `js/club.js`); gespeicherte Spiele behalten ihr System, ohne Angabe 4-Mann (System-Test) | *(dieser Commit)* |
+| Neue Spiele mit 2-Mann (`standardSystem` in `js/club.js`); gespeicherte Spiele behalten ihr System, ohne Angabe 4-Mann (System-Test) | `a03ae27` |
+| Tag `stand-etappe-1` auf `5e59592` (gepusht); alle Vergleichstests gegen den Tag statt gegen `main`; Gegenproben nur noch in temporären Kopien (`gegenprobe.py`); Notfall-Ablauf geprobt | `6d2c67b` |
 
 Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`, `3407e00`, `ab11ea5`. Der Branch wird nach jedem Teilschritt auf GitHub gepusht (Sicherung).
 
@@ -108,13 +109,33 @@ Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`, `3407e00
 **Wechsel auf `main` (Checkliste):**
 1. ~~Wechsel-Test als eigener Commit~~ (erledigt, `a02c701`, läuft in `alle-tests.py`).
 2. **Vor dem Merge: Test auf dem iPad über den lokalen Server** (Mac und iPad im selben WLAN, `python3 -m http.server`, Adresse des Macs im Safari): Bedienung und Layout hoch und quer, Szene mit Zifferntastatur, „Spiel bearbeiten“, Druck über „Teilen“. Probleme sollen vor dem Merge auffallen.
+   **Dateiknöpfe:** alle drei („Kader importieren“ im Menü „Mehr“, „Kader importieren“ beim Schiedsrichter-Feld – erscheint nur ohne Kader –, „Dateien wählen“ in der Statistik) mit Dateien aus der App **Dateien** testen (erfundene Beispieldateien aus `tests/fixtures/`, z. B. per AirDrop aufs iPad).
 3. **VoiceOver kurz auf dem iPad:** Reiter, eine Knopfreihe, Score-Leiste, Karten.
 4. **Handtest Bewertung über Nacht:** Am Vorabend in der App eine Bewertung offen lassen (nicht exportieren), nach dem Merge öffnen und prüfen, dass alles da ist. Wichtig: Auf dem iPad haben die Home-Bildschirm-App und Safari **getrennte Speicher** – den Test in der App machen, die in der Halle wirklich benutzt wird.
 5. Nur unter der Woche, nicht vor einem Einsatz in der Halle.
-6. Alten Stand markieren: Tag `stand-etappe-1` auf `5e59592`, Tag pushen.
+6. ~~Alten Stand markieren: Tag `stand-etappe-1` auf `5e59592`, Tag pushen.~~ (erledigt; alle Vergleichstests nutzen den Tag)
 7. `main` per Fast-Forward auf `etappe-2` – nur nach Livios Go – und pushen.
-8. Danach `alle-tests.py` komplett und `bilder.py --gegen stand-etappe-1`, auf GitHub Pages prüfen (Update-Badge, offline).
-9. Zurück, falls nötig: `git revert` auf `main` und `?v=` erhöhen (nie zurück auf eine alte Nummer). Der Wechsel-Test prüft, dass die alte Oberfläche die Daten der neuen liest.
+8. Danach `alle-tests.py` komplett und `bilder.py --gegen`, auf GitHub Pages prüfen (Update-Badge, offline).
+9. Zurück, falls nötig: **Notfall-Ablauf** (unten).
+
+**Notfall-Ablauf: zurück auf den alten Stand** (nur nach dem Fast-Forward-Merge; `main` muss linear auf `stand-etappe-1` aufbauen)
+
+```sh
+git switch main && git pull --ff-only
+ALT=$(grep -oE '\?v=[0-9]+' index.html | head -1 | cut -d= -f2); NEU=$((ALT + 1)); echo "?v=$ALT -> ?v=$NEU"
+git revert --no-commit stand-etappe-1..HEAD      # alter Stand wiederhergestellt, Verlauf bleibt erhalten
+sed -i '' -E "s/\?v=[0-9]+\"/?v=$NEU\"/g" index.html   # Nummer über den aktuellen Wert (nie zurück auf ?v=7)
+git add index.html
+git diff --cached --stat stand-etappe-1          # Kontrolle: nur index.html (?v=) weicht vom alten Stand ab
+git commit -m "Notfall: zurück auf stand-etappe-1 (?v=$NEU)"   # Hook prüft die Nummer
+git push origin main
+```
+
+- Der Revert stellt den Code des alten Stands wieder her (neue Dateien von Etappe 2 fallen weg), ohne Verlauf zu löschen oder etwas zu überschreiben; kein `reset`, kein Force-Push.
+- Die Nummer muss höher sein als die aktuelle, sonst lehnt der Hook ab und der Service Worker würde die alte Version nicht laden.
+- Die gespeicherten Bewertungen bleiben: Der Wechsel-Test prüft den Rückweg (alte Oberfläche liest die Daten der neuen, auch „Auto“ und „fr“) – mit genau diesem Stand (`--rueck`).
+- **Geprobt am 15.11.2026** in einer Wegwerf-Kopie (lokales Repo als „GitHub“, Merge simuliert): `?v=29 → 30`, Hook lehnt mit `?v=7` ab und akzeptiert `?v=30`, Push geht, Ergebnis weicht vom Tag nur in `?v=` ab und ist dateigleich mit dem Rückweg des Wechsel-Tests; Wechsel-Test mit diesem Ergebnis als Rückweg: 0 Fehler.
+- Später wieder vorwärts: `git revert` des Notfall-Commits und `?v=` nochmals erhöhen.
 
 **Hinweis Datensicherung:** Safari kann gespeicherte Daten einer Website löschen, wenn sie etwa 7 Tage nicht geöffnet wurde. Das Export-JSON bleibt die eigentliche Sicherung – jede Bewertung nach dem Spiel sichern.
 

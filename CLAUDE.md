@@ -54,7 +54,8 @@ Genutzt auf MacBook und iPad (hoch und quer), selten auf dem Handy.
 
 ## Testen
 - Lokal mit VS Code „Live Server“ (Go Live) oder `python3 -m http.server`.
-- Automatische Tests: `python3 tests/tools/alle-tests.py` (Daten DE/EN gegen `main`, Texte, Verein, Service Worker); Bilder mit `python3 tests/tools/bilder.py --gegen main`. Anleitung in `tests/tools/README.md`.
+- Automatische Tests: `python3 tests/tools/alle-tests.py` (Daten DE/EN gegen den alten Stand, Texte, Verein, Service Worker u. a.); Bilder mit `python3 tests/tools/bilder.py --gegen`. Vergleiche laufen gegen den Tag `stand-etappe-1` (Stand vor Etappe 2), nicht gegen `main`. Anleitung in `tests/tools/README.md`.
+- **Gegenproben nie im Arbeitsordner, immer in einer temporären Kopie** (`python3 tests/tools/gegenprobe.py`). Keine Datei im Repo für eine Gegenprobe ändern, auch nicht mit Sicherungskopie. Neue Gegenproben im Katalog in `gegenprobe.py` eintragen.
 - Nach Änderungen prüfen: Kader-Import, Bewertung ausfüllen, Export JSON und CSV, Gespann-Übersicht, Saison-Statistik mit Beispieldateien, Drucken, Dark Mode, iPad-Breite (834 px) und quer (1194 px).
 - Testdaten nur mit erfundenen Namen, nie echte Bewertungen ins Repo legen.
 
