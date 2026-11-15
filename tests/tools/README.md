@@ -13,7 +13,7 @@ python3 tests/tools/alle-tests.py            # alle Tests (ca. 5 Min.)
 python3 tests/tools/alle-tests.py --ohne-sw  # ohne Service-Worker-Test (ca. 1 Min.)
 ```
 
-Führt Daten-Test (Deutsch und Englisch), Texte-, Vereins-, Fenster-, Knopfreihen-, Layout-, Score-, Spiel-, Szene-, Übersicht- und Service-Worker-Test aus und zeigt eine
+Führt Daten-Test (Deutsch und Englisch), Texte-, Vereins-, Fenster-, Knopfreihen-, Layout-, Score-, Spiel-, Szene-, Übersicht-, Druck- und Service-Worker-Test aus und zeigt eine
 Zusammenfassung. Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
 
 ## Daten-Test – „gleiche Eingaben, gleiche Daten“
@@ -145,6 +145,18 @@ Durchschnitt mit denselben Schwellen wie die Bewertung, Tipp öffnet den Reiter,
 Druck. Statistik: Zahlen mit den Beispieldateien und **Zelle für Zelle gleich wie auf `main`** (gleiche Dateien in den
 alten Stand geladen), negative Entwicklung mit echtem „−“ und Pfeil, Abzeichen-Kontrast hell/dunkel, Tabelle passt ab
 768 px, leerer Zustand („.json wählen“), Sprachwechsel, DE/EN.
+
+## Druck-Test – Druck vollständig
+
+```sh
+python3 tests/tools/druck-test.py
+```
+
+Druckansicht A4: Jedes mehrzeilige Feld (Notizen, Stärken, Schwerpunkte, Rapport, Gespann-Notiz) erscheint mit langem
+Text vollständig (Druckfassung, nichts abgeschnitten), leere Felder fallen weg; die Druckfassung ist am Bildschirm
+ausgeblendet und `aria-hidden`; auch nach Reiterwechsel und Neuladen aktuell. Supervisor in der Titelzeile nur im Druck.
+Statistik: Saison aus den Spieldaten (eine, mehrere, keine; ab August neue Saison), Druckdatum, Kennzahlen in einer Zeile,
+Spaltentitel auf jeder Seite, keine geteilten Zeilen, „Bewertungen laden“ ausgeblendet, Fusszeile „Vertraulich“, DE/EN.
 
 ## Service-Worker-Test – Updates, offline, langsames Netz
 

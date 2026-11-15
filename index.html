@@ -12,9 +12,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="css/app.css?v=20">
-<script src="js/club.js?v=20"></script>
-<script src="js/theme.js?v=20"></script>
+<link rel="stylesheet" href="css/app.css?v=21">
+<script src="js/club.js?v=21"></script>
+<script src="js/theme.js?v=21"></script>
 </head>
 <body>
 
@@ -283,17 +283,17 @@
       <!-- 5. ABSCHLUSS & FEEDBACK MIT AUTOMATISCHEM ORT/DATUM -->
       <div class="section-title"><span class="num">5</span> <span data-i18n="sec5_title">Abschluss-Rapport & Action Plan</span></div>
       <div class="grid-2" style="margin-bottom: 12px;">
-        <div>
+        <div data-druck-ganz>
           <label for="top_strengths" data-i18n="lbl_strengths">Top 2–3 Stärken (Keep Doing)</label>
           <textarea id="top_strengths" oninput="saveCurrentRefData()" style="min-height: 85px;" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
         </div>
-        <div>
+        <div data-druck-ganz>
           <label for="top_workon" data-i18n="lbl_workon">Top 2–3 Entwicklungsschwerpunkte (Work On)</label>
           <textarea id="top_workon" oninput="saveCurrentRefData()" style="min-height: 85px;" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
         </div>
       </div>
 
-      <div style="margin-bottom: 14px;">
+      <div style="margin-bottom: 14px;" data-druck-ganz>
         <label for="general_report" data-i18n="lbl_report">Ausführlicher Rapport / Besondere Vorkommnisse</label>
         <textarea id="general_report" oninput="saveCurrentRefData()" style="min-height: 110px;" placeholder="Szenenanalysen, Coaching-Notizen..."></textarea>
       </div>
@@ -337,7 +337,7 @@
       </div>
       <p class="leer-hinweis" id="crewLeer" hidden></p>
       <div class="gespann-karten" id="summaryCardsContainer"></div>
-      <section class="karte gespann-notiz">
+      <section class="karte gespann-notiz" data-druck-ganz>
         <h2 class="karten-titel"><label for="crew_notes" data-i18n="sec_crew_obs">Gemeinsame Gespann-Beobachtungen</label></h2>
         <textarea id="crew_notes" data-i18n-placeholder="ph_crew_notes" placeholder=""></textarea>
       </section>
@@ -346,6 +346,7 @@
     <!-- ANSICHT 3: SAISON-STATISTIK -->
     <div id="seasonStatsView" class="statistik" style="display: none;">
       <h2 class="ansicht-titel" data-i18n="stats_title">Schiedsrichter-Supervision — Gesamtstatistik</h2>
+      <p class="stat-info" id="statInfo"><span id="statSaison"></span><span class="nur-druck" id="statGedruckt"></span></p>
       <section class="karte stat-laden">
         <div>
           <strong data-i18n="stats_load_title">Bewertungen laden</strong>
@@ -357,6 +358,7 @@
       <div id="seasonStatsContent">
         <p class="leer-hinweis" data-i18n="stats_empty">Noch keine Bewertungen geladen.</p>
       </div>
+      <p class="druck-fuss nur-druck" data-i18n="stats_print_footer">Vertraulich – nur für den internen Gebrauch</p>
     </div>
   </div>
   </div>
@@ -479,18 +481,19 @@
   </div>
 </dialog>
 
-<script src="js/i18n.js?v=20"></script>
-<script src="js/dialog.js?v=20"></script>
-<script src="js/segment.js?v=20"></script>
-<script src="js/layout.js?v=20"></script>
-<script src="js/spiel.js?v=20"></script>
-<script src="js/szene.js?v=20"></script>
-<script src="js/config.js?v=20"></script>
-<script src="js/scoring.js?v=20"></script>
-<script src="js/storage.js?v=20"></script>
-<script src="js/ui.js?v=20"></script>
-<script src="js/export.js?v=20"></script>
-<script src="js/stats.js?v=20"></script>
-<script src="js/app.js?v=20"></script>
+<script src="js/i18n.js?v=21"></script>
+<script src="js/dialog.js?v=21"></script>
+<script src="js/segment.js?v=21"></script>
+<script src="js/layout.js?v=21"></script>
+<script src="js/spiel.js?v=21"></script>
+<script src="js/szene.js?v=21"></script>
+<script src="js/druck.js?v=21"></script>
+<script src="js/config.js?v=21"></script>
+<script src="js/scoring.js?v=21"></script>
+<script src="js/storage.js?v=21"></script>
+<script src="js/ui.js?v=21"></script>
+<script src="js/export.js?v=21"></script>
+<script src="js/stats.js?v=21"></script>
+<script src="js/app.js?v=21"></script>
 </body>
 </html>

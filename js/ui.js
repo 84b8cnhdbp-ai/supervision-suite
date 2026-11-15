@@ -30,6 +30,7 @@ function initApp() {
   }
   initSpiel();
   initSzenen();
+  initDruck();
   initStatistik();
   document.getElementById('crew_notes').addEventListener('input', saveGlobalState);   // Gespann-Notiz
 }
@@ -303,6 +304,7 @@ function loadRefereeForm(index) {
   document.getElementById('visum_name').value = data.visum_name || document.getElementById('supervisor_name').value || "";
 
   updatePartnerField();
+  if (typeof aktualisiereDruckTexte === 'function') aktualisiereDruckTexte();   // erst wenn alle Felder gefüllt sind
   calcScores(false);
 }
 
@@ -527,6 +529,7 @@ function renderSummaryView() {
 
   const crewRadar = avgScores7.map((sum, i) => radarCounts[i] ? sum / radarCounts[i] : null);
   drawRadar('crewRadarChart', crewRadar);
+  if (typeof aktualisiereDruckTexte === 'function') aktualisiereDruckTexte();
 }
 
 // Netzdiagramm als SVG. scores: Werte 0–3 (Note / 33.33) oder null (N/A = hohler grauer Punkt).

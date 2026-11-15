@@ -56,6 +56,13 @@ def fotografieren(wurzel, ziel):
             b.oeffnen(srv.basis + '/index.html')
             b.js('selectSummaryTab()')
             b.bild(os.path.join(ziel, 'druck_gespann.png'))
+            # Druck der Saison-Statistik
+            b.fenster(794, 1123, 'light', druck=True)
+            daten_setzen(b, srv.basis, spiel=True)
+            b.oeffnen(srv.basis + '/index.html')
+            b.js(dict(ANSICHTEN)['statistik'])
+            b.js('new Promise((r) => setTimeout(r, 300))')
+            b.bild(os.path.join(ziel, 'druck_statistik.png'))
             b.fenster(794, 1123, 'light', druck=True)
             daten_setzen(b, srv.basis, spiel=True)
             b.oeffnen(srv.basis + '/index.html')
@@ -73,10 +80,11 @@ def uebersicht(ordner, staende):
               'figcaption{font-weight:600;margin-bottom:6px}img{max-width:560px;border:1px solid #ccc;display:block}</style>',
               '<h1>Bildschirmfotos</h1><p>Druck-PDF: ' +
               ' · '.join(f'<a href="{s}/druck_head-referee.pdf">{html.escape(s)}</a>' for s in staende) + '</p>']
-    zeilen.append('<h2>Druckansicht Gespann-Übersicht</h2><div class="reihe">')
-    for s in staende:
-        zeilen.append(f'<figure><figcaption>{html.escape(s)}</figcaption><a href="{s}/druck_gespann.png"><img src="{s}/druck_gespann.png" loading="lazy"></a></figure>')
-    zeilen.append('</div>')
+    for name, titel in (('druck_gespann', 'Gespann-Übersicht'), ('druck_statistik', 'Saison-Statistik')):
+        zeilen.append(f'<h2>Druckansicht {titel}</h2><div class="reihe">')
+        for s in staende:
+            zeilen.append(f'<figure><figcaption>{html.escape(s)}</figcaption><a href="{s}/{name}.png"><img src="{s}/{name}.png" loading="lazy"></a></figure>')
+        zeilen.append('</div>')
     for schema in SCHEMEN:
         datei = f'druck_a4_{schema}.png'
         zeilen.append(f'<h2>Druckansicht A4 · Darstellung {"dunkel" if schema == "dark" else "hell"}</h2><div class="reihe">')

@@ -99,6 +99,7 @@ function loadFullState() {
         document.getElementById('supervisor_name').value = gameData.global.supervisor_name || "";
         if (document.getElementById('crew_notes')) {
           document.getElementById('crew_notes').value = gameData.global.crew_notes || "";
+          if (typeof aktualisiereDruckTexte === 'function') aktualisiereDruckTexte();
         }
       }
     } catch(e) {

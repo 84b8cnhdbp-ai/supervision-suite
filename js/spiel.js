@@ -20,7 +20,15 @@ function aktualisiereSpielTitel() {
   const g = (gameData && gameData.global) || {};
   const info = [g.spiel_liga, datumZeitText(g.spiel_datum), g.spiel_ort, systemKurz(currentSystem),
     g.spiel_id ? t('game_nr', { nr: g.spiel_id }) : ''].filter(Boolean).join(' · ');
-  document.getElementById('spielTitelInfo').textContent = info;
+  const zeile = document.getElementById('spielTitelInfo');
+  zeile.textContent = info;
+  if (g.supervisor_name) {   // Supervisor nur im Druck
+    const sup = document.createElement('span');
+    sup.className = 'nur-druck';
+    sup.id = 'spielTitelSupervisor';
+    sup.textContent = ' · ' + t('print_supervisor', { name: g.supervisor_name });
+    zeile.appendChild(sup);
+  }
   document.getElementById('spielTitelName').textContent = g.spiel_paarung || t('nav_no_game');
   document.getElementById('spielKopf').hidden = activeTabType === 'stats';
 }

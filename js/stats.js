@@ -98,6 +98,15 @@ function renderSeasonStatsDashboard(stats) {
       </tr>`;
   });
 
+  // Saison(s) aus den Spieldaten der geladenen Dateien; ohne lesbares Datum weglassen
+  const daten = [];
+  Object.values(stats).forEach((s) => ['R1', 'R2'].forEach((r) => { if (s && s[r]) daten.push(s[r].datum); }));
+  const saison = saisonsText(daten);
+  document.getElementById('statSaison').textContent = saison ? t('stats_season', { saison }) : '';
+  const heute = new Date();
+  document.getElementById('statGedruckt').textContent = (saison ? ' · ' : '') +
+    t('stats_printed', { datum: `${String(heute.getDate()).padStart(2, '0')}.${String(heute.getMonth() + 1).padStart(2, '0')}.${heute.getFullYear()}` });
+
   const avgTeamR1 = countR1 > 0 ? (totalR1 / countR1).toFixed(1) + "%" : "–";
   const avgTeamR2 = countR2 > 0 ? (totalR2 / countR2).toFixed(1) + "%" : "–";
 

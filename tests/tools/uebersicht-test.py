@@ -88,7 +88,8 @@ def main():
             # Druck der Gespann-Übersicht: Karten, Profil und Notiz sichtbar, nicht schlechter als bisher
             b.fenster(794, 1123, druck=True)
             b.js('selectSummaryTab()')
-            sichtbar = b.js("['#summaryCardsContainer', '#crewRadarChart', '#crew_notes', '#crewScoreVal'].map((s) => { const e = document.querySelector(s); const r = e.getBoundingClientRect(); return getComputedStyle(e).display !== 'none' && r.width > 20 && r.height > 10; })")
+            # Gespann-Notiz erscheint im Druck als vollständige Druckfassung (seit 2.9a) statt als Textfeld
+            sichtbar = b.js("[document.querySelector('#summaryCardsContainer'), document.querySelector('#crewRadarChart'), document.getElementById('crew_notes').nextElementSibling, document.querySelector('#crewScoreVal')].map((e) => { const r = e.getBoundingClientRect(); return getComputedStyle(e).display !== 'none' && r.width > 20 && r.height > 10; })")
             pruefe(all(sichtbar), f'Druck Gespann: nicht alles sichtbar {sichtbar}')
             pruefe(b.js("document.querySelectorAll('#summaryCardsContainer .gespann-karte').length") == 4, 'Druck Gespann: nicht 4 Karten')
 

@@ -111,6 +111,7 @@ function zeigeSzenen(k) {
   });
   const frei = document.getElementById(`note_frei_${k}`);
   if (document.activeElement !== frei) frei.value = freierText(notiz);
+  if (typeof aktualisiereDruckText === 'function') aktualisiereDruckText(frei);
   frei.setAttribute('aria-label', t('scene_free_label', { kriterium: t('radar_labels')[k - 1] }));
 }
 

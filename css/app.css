@@ -648,6 +648,11 @@ dialog.spiel-fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
 .stat-minus { color: var(--t-bad); font-weight: 700; }
 .stat-gleich { color: var(--secondary); font-weight: 700; }
 
+/* ---------- Druck (Etappe 2.9a) ---------- */
+.nur-druck, .druck-text { display: none; }   /* nur im Druck; Druckfassung zusätzlich aria-hidden */
+.stat-info { margin: -8px 0 14px; font-size: 14px; color: var(--secondary); }
+.stat-info:has(> #statSaison:empty) { display: none; }
+
 /* ---------- Eigene Fenster (js/dialog.js) ---------- */
 dialog.fenster {
   width: min(420px, calc(100vw - 32px));
@@ -867,6 +872,26 @@ dialog.fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
   .gespann-karte { box-shadow: none !important; border: 1pt solid #C7C7CC !important; padding: 6pt 8pt; break-inside: avoid; }
   .gespann-notiz textarea { min-height: 0 !important; }
   .leer-hinweis { border: 1pt dashed #999; }
+  /* Druckfassung statt Textfeld: voller Text, nichts abgeschnitten; leere Felder fallen weg */
+  .nur-druck { display: inline !important; }
+  p.nur-druck, div.nur-druck { display: block !important; }
+  textarea.notiz-frei, #top_strengths, #top_workon, #general_report, #crew_notes { display: none !important; }
+  .druck-text { display: block !important; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 10pt; line-height: 1.4;
+    padding: 3pt 5pt; border: 0.75pt solid #C7C7CC; border-radius: 3pt; margin: 2pt 0 4pt; }
+  .druck-text.leer, .druck-leer { display: none !important; }
+  /* Statistik druckfertig */
+  .stat-laden { display: none !important; }
+  .stat-info { display: block !important; margin: 0 0 8pt; color: #000; font-size: 10pt; }
+  .stat-kacheln { grid-template-columns: repeat(3, 1fr); gap: 6pt; margin-bottom: 8pt; }
+  .stat-kachel { box-shadow: none !important; border: 0.75pt solid #C7C7CC !important; padding: 6pt !important; }
+  .stat-kachel strong { font-size: 15pt; }
+  .stat-tabelle-box { overflow: visible !important; }
+  .stat-tabelle { font-size: 9.5pt !important; }
+  .stat-tabelle th[scope="row"] { background: #FFF !important; color: #000 !important; }
+  .stat-tabelle thead { display: table-header-group; }   /* Spaltentitel auf jeder Seite */
+  .stat-tabelle tr { break-inside: avoid; page-break-inside: avoid; }
+  .stat-abzeichen, .stat-plus, .stat-minus { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .druck-fuss { margin-top: 12pt; padding-top: 4pt; border-top: 0.75pt solid #999; font-size: 9pt; color: #333; text-align: center; }
   .druck-kopf { display: flex !important; align-items: center; gap: 10pt; padding: 0 0 8pt; margin-bottom: 8pt; border-bottom: 1.5pt solid #000; }
   .druck-kopf img { height: 36pt; width: auto; }
   .druck-kopf strong { display: block; font-size: 15pt; }
