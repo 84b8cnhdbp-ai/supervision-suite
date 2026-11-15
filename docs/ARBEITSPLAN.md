@@ -79,10 +79,11 @@ Fertig und getestet (`alle-tests.py` grün, Bilder gegen `main` angesehen):
 | Auswahltext „Name wählen …“ | `1cf66d5` |
 | 2.7 Szene-Fenster mit Chips | `544aa3d` |
 | 2.7 Korrektur: alte Zeitangaben bleiben beim Ändern erhalten (tolerantes Lesen, Angabe bleibt ohne Wahl von Drittel/Zeit) | `d44da1c` |
+| 2.8 Gespann-Übersicht und Saison-Statistik im neuen Stil (Zahlen gleich wie `main`) | `ec41896` |
 
-Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`. Der Branch wird nach jedem Teilschritt auf GitHub gepusht (Sicherung).
+Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`. Der Branch wird nach jedem Teilschritt auf GitHub gepusht (Sicherung).
 
-**Als Nächstes:** 2.8 Gespann-Übersicht und Saison-Statistik im neuen Stil, danach 2.9 Druck und Feinschliff.
+**Als Nächstes:** 2.9 in zwei Schritten – 2.9a Druck und Inhalt, 2.9b Feinschliff –, danach Wechsel von `etappe-2` auf `main` (mit Checkliste).
 
 **Für 2.9 vorgemerkt:**
 - `manifest.json`-Farben (`theme_color`, `background_color`) ans neue Design anpassen, hell und dunkel.
