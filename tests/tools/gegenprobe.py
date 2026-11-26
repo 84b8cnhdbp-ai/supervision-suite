@@ -50,6 +50,9 @@ GEGENPROBEN = {
     'wechsel-speicherschluessel': ('wechsel-test.py', [
         ('js/storage.js', "'referee_multi_supervision_data'", "'referee_daten_neu'"),
     ], 'Bewertung', 'neuer Stand liest unter anderem Speicherschlüssel'),
+    'wechsel-ohne-erhoehung': ('wechsel-test.py', [
+        ('js/app.js', '// Start der App und Service Worker', '// Start der App und Service Worker (Gegenprobe: geändert ohne erhöhte ?v=)'),
+    ], 'Update würde blockiert', 'neuer Code mit derselben ?v= wie stand-etappe-2'),
     'score-spalte-alte-regel': ('score-test.py', [
         ('js/layout.js', "  wurzel.setProperty('--spalte-oben', Math.floor(Math.min(normal, window.innerHeight - hoehe - 12)) + 'px');",
          "  wurzel.setProperty('--spalte-oben', normal + 'px');"),
@@ -109,7 +112,8 @@ def gegenprobe(name):
         if r.returncode != 1:
             return False, f'schlägt NICHT an (Abbruchcode {r.returncode}): {letzte[:90]}'
         if erwartet not in r.stdout:
-            return False, f'rot, aber ohne die erwartete Meldung „{erwartet}“: {letzte[:90]}'
+            stderr = (r.stderr.strip().splitlines() or [''])[-1]   # z. B. abgebrochene Verbindung zum Test-Chrome
+            return False, f'rot, aber ohne die erwartete Meldung „{erwartet}“: {letzte[:90]}' + (f' [stderr: {stderr[:120]}]' if stderr else '')
         anzahl = sum(1 for z in r.stdout.splitlines() if z.startswith('FEHLER'))
         return True, f'schlägt an ({anzahl} Fehler, u. a. „{erwartet}“)'
     finally:

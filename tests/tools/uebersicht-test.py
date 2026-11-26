@@ -147,7 +147,7 @@ def main():
                 pruefe(box[0] <= box[1] + 1 and box[2] <= w, f'{w}px {schema}: Tabelle passt nicht ({box})')
                 klein = b.js("[...document.querySelectorAll('#seasonStatsView button')].filter((e) => e.getBoundingClientRect().height < 43.5).length")
                 pruefe(klein == 0, f'{w}px: zu kleiner Knopf in der Statistik')
-            # Zahlen genau wie im alten Stand (Tag stand-etappe-1): gleiche Dateien in den alten Stand laden und Zelle für Zelle vergleichen
+            # Zahlen genau wie im alten Stand (REFERENZ, Tag stand-etappe-2): gleiche Dateien in den alten Stand laden und Zelle für Zelle vergleichen
             def zahlen(zeilen):   # nur Zahlen (Pfeile, Minuszeichen-Form, Status-Text egal)
                 zahl = lambda c: (lambda x: '' if x == '-' else x)(re.sub(r'[^0-9.+\u2212-]', '', c).replace('\u2212', '-'))   # „-“/„–“ = kein Wert
                 return {z[0]: [zahl(c) for c in z[2:]] for z in zeilen}
@@ -164,7 +164,10 @@ def main():
                 b.js("window.alert = () => {};")
                 b.js(LADEN + f"({EXTRA!r})".replace('None', 'null'))
                 alt_zahlen = zahlen(b.js("[...document.querySelectorAll('#seasonStatsContent tbody tr')].map((r) => [...r.children].map((c) => c.textContent.replace(/\\s+/g, ' ').trim()))"))
-                alt_kacheln = b.js("[...document.querySelectorAll('#seasonStatsContent > div:first-child > div > div:last-child')].map((d) => d.textContent.trim())")
+                # Kennzahlen: ab Etappe 2 mit IDs, in Etappe 1 nur über den Aufbau erreichbar
+                alt_kacheln = b.js("""document.getElementById('statFertig')
+                  ? ['statFertig', 'statR1', 'statR2'].map((id) => document.getElementById(id).textContent)
+                  : [...document.querySelectorAll('#seasonStatsContent > div:first-child > div > div:last-child')].map((d) => d.textContent.trim())""")
             finally:
                 alt_srv.shutdown()
                 shutil.rmtree(alt_dir, ignore_errors=True)
@@ -174,7 +177,7 @@ def main():
             b.oeffnen(srv.basis + '/index.html')
             b.js(LADEN + f"({EXTRA!r})".replace('None', 'null'))
             neu_kacheln = b.js("['statFertig', 'statR1', 'statR2'].map((id) => document.getElementById(id).textContent)")
-            pruefe([k.replace('–', '-') for k in neu_kacheln] == alt_kacheln, f'Kennzahlen anders als {REFERENZ}: {neu_kacheln} / {alt_kacheln}')
+            pruefe([k.replace('–', '-') for k in neu_kacheln] == [k.replace('–', '-') for k in alt_kacheln] and len(alt_kacheln) == 3, f'Kennzahlen anders als {REFERENZ}: {neu_kacheln} / {alt_kacheln}')
             fehler += [f'JS-Fehler: {f}' for f in b.fehler if 'Update nicht möglich' not in f]
     finally:
         srv.shutdown()

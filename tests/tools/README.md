@@ -7,8 +7,10 @@ steht in `.gitignore` und kommt **nie** ins Repo.
 Alle Befehle im Projektordner ausführen.
 
 **Referenz:** Alle Vergleiche mit dem alten Stand (Daten-, Übersicht-, Wechsel-Test, `bilder.py --gegen`) laufen
-standardmässig gegen den Tag `stand-etappe-1` (Stand vor Etappe 2, `5e59592`), nicht gegen `main` – so bleiben sie
-gültig, auch wenn `main` weiterläuft. Ein anderer Stand geht mit `--gegen …` bzw. `--von …`.
+standardmässig gegen den Tag `stand-etappe-2` (Stand nach Etappe 2, `f5c1070`, ausgeliefert seit 26.11.2026), nicht
+gegen `main` – so bleiben sie gültig, auch wenn `main` weiterläuft. Ein anderer Stand geht mit `--gegen …` bzw. `--von …`.
+Der Wechsel-Test prüft immer **beide** Wege auf den neuen Stand: ab `stand-etappe-2` und ab `stand-etappe-1` (Stand vor
+Etappe 2, `5e59592`) – Geräte können noch auf dem älteren Stand sein und direkt springen.
 
 **Gegenproben** nie im Arbeitsordner, immer in einer temporären Kopie: `python3 tests/tools/gegenprobe.py` (siehe unten).
 
@@ -30,7 +32,7 @@ Die Bilder (`bilder.py`) kommen zusätzlich, wenn sich das Aussehen ändert.
 ## Daten-Test – „gleiche Eingaben, gleiche Daten“
 
 ```sh
-python3 tests/tools/daten-test.py                  # aktueller Stand gegen stand-etappe-1, Deutsch
+python3 tests/tools/daten-test.py                  # aktueller Stand gegen stand-etappe-2, Deutsch
 python3 tests/tools/daten-test.py --sprache en     # beide Stände auf Englisch
 python3 tests/tools/daten-test.py --gegen main     # anderer Referenzstand
 python3 tests/tools/daten-test.py --gegen 7c48820
@@ -253,19 +255,26 @@ Hochzählen (Druckansicht und `beforeprint`): Zahl und Ring sofort fertig. Mit �
 ## Wechsel-Test – vom alten auf den neuen Stand, ohne Datenverlust
 
 ```sh
-python3 tests/tools/wechsel-test.py                 # stand-etappe-1 → aktueller Stand
-python3 tests/tools/wechsel-test.py --rueck ORDNER  # Rückweg aus einem Ordner (Ergebnis des Notfall-Ablaufs)
+python3 tests/tools/wechsel-test.py                 # beide Wege: stand-etappe-2 → neu und stand-etappe-1 → neu
+python3 tests/tools/wechsel-test.py --von stand-etappe-1            # nur ein Weg
+python3 tests/tools/wechsel-test.py --von stand-etappe-2 --rueck ORDNER  # Rückweg aus einem Ordner (Notfall-Ablauf)
 python3 tests/tools/wechsel-test.py --gegenprobe    # prüft den Test selbst: muss rot werden
 ```
 
-Ein Browser-Profil, eine Adresse – wie auf dem iPad: Im alten Stand (`stand-etappe-1` = `main` vor dem Merge) wird über die alte Oberfläche eine Bewertung
-ausgefüllt (Kader per echter Dateiwahl, Spieldaten, zwei Schiedsrichter, Notizen mit alten Zeitangaben, Englisch,
-dunkel), **nicht** exportiert. Dann liefert dieselbe Adresse den neuen Stand: neue Version vollständig (keine
+Je Weg ein Browser-Profil, eine Adresse – wie auf dem iPad: Im alten Stand wird über **dessen** Oberfläche eine Bewertung
+ausgefüllt (Kader per echter Dateiwahl, Spieldaten, zwei Schiedsrichter, Szenen – ab Etappe 1 mit alten Zeitangaben im
+Notizfeld, ab Etappe 2 über das Szene-Fenster –, Englisch, dunkel), **nicht** exportiert. Etappe 1 mit 4-Mann (damaliger
+Standard), Etappe 2 mit 2-Mann über „Spiel bearbeiten“. Dann liefert dieselbe Adresse den neuen Stand: neue Version vollständig (keine
 gemischten Versionen), Speicher beim Start unverändert, jedes Feld mit dem alten Wert, Scores sowie Export-JSON und CSV
 gleich wie in der alten Oberfläche (gewollte Abweichungen wie im Daten-Test), Einstellungen bleiben, offline aus dem
 Cache. Rückweg (alter Code mit höherer `?v=`, wie `git revert`): nach Bearbeiten und Darstellung „Auto“ startet die
 alte Oberfläche ohne JS-Fehler und zeigt die Bewertung, auch mit gespeicherten Werten „auto“ und „fr“.
-Neuer Code mit gleicher Nummer: alte Version bleibt aktiv, Badge „Update blockiert“.
+Neuer Code mit gleicher Nummer: alte Version bleibt aktiv, Badge „Update blockiert“ – nur wenn sich CSS/JS gegenüber dem
+alten Stand unterscheiden (eine geänderte `index.html` allein darf der Service Worker übernehmen).
+Welcher Stand aktiv ist, erkennt der Test an einer Markierung, die er nur in seinen Kopien in `index.html` einfügt.
+Ist der Arbeitsstand noch codegleich mit dem alten Stand (z. B. direkt nach dem Anlegen von `etappe-3`), erhöht der Test
+`?v=` nur in seiner Kopie und meldet das als Hinweis; anderer Code mit gleicher oder kleinerer `?v=` ist ein Fehler
+(Gegenprobe `wechsel-ohne-erhoehung`).
 
 ## Gegenproben – fällt ein Test auf, wenn die App kaputt ist?
 

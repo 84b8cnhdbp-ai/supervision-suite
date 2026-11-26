@@ -10,7 +10,7 @@ Genutzt auf MacBook und iPad (hoch und quer), selten auf dem Handy.
 - **Zuerst Fragen beantworten und Vorschläge machen. Erst nach Livios ausdrücklichem „Go“ Code ändern.**
 - Pro Etappe aus `docs/ARBEITSPLAN.md` arbeiten, kleine Commits mit klarer Nachricht.
 - Vor jedem Commit zeigen, was geändert wurde, und kurz sagen, wie man es testet.
-- Nach jedem fertigen Teilschritt (getestet und committet) den Arbeits-Branch auf GitHub pushen (`git push origin etappe-2`) – als Sicherung. **`main` nie pushen**, ausser Livio sagt es ausdrücklich.
+- Nach jedem fertigen Teilschritt (getestet und committet) den Arbeits-Branch auf GitHub pushen (`git push origin etappe-3`) – als Sicherung. **`main` nie pushen**, ausser Livio sagt es ausdrücklich.
 - **Keine Git-Befehle, die Dateien wegräumen oder überschreiben** (`git stash`, `git reset --hard`, `git checkout -- …`, `git restore`, `git clean` u. ä.), ausser Livio verlangt es ausdrücklich.
 - Sprache in Code-Kommentaren, deutschen Texten der App und Antworten: Schweizer Hochdeutsch (kein ß, „ss“ verwenden).
 
@@ -54,7 +54,7 @@ Genutzt auf MacBook und iPad (hoch und quer), selten auf dem Handy.
 
 ## Testen
 - Lokal mit VS Code „Live Server“ (Go Live) oder `python3 -m http.server`.
-- Automatische Tests: `python3 tests/tools/alle-tests.py` (Daten DE/EN gegen den alten Stand, Texte, Verein, Service Worker u. a.); Bilder mit `python3 tests/tools/bilder.py --gegen`. Vergleiche laufen gegen den Tag `stand-etappe-1` (Stand vor Etappe 2), nicht gegen `main`. Anleitung in `tests/tools/README.md`.
+- Automatische Tests: `python3 tests/tools/alle-tests.py` (Daten DE/EN gegen den alten Stand, Texte, Verein, Service Worker u. a.); Bilder mit `python3 tests/tools/bilder.py --gegen`. Vergleiche laufen gegen den Tag `stand-etappe-2` (Stand nach Etappe 2, ausgeliefert), nicht gegen `main`. Der Wechsel-Test prüft beide Wege auf den neuen Stand: ab `stand-etappe-2` und ab `stand-etappe-1` (Geräte können noch auf dem Stand vor Etappe 2 sein). Anleitung in `tests/tools/README.md`.
 - **Gegenproben nie im Arbeitsordner, immer in einer temporären Kopie** (`python3 tests/tools/gegenprobe.py`). Keine Datei im Repo für eine Gegenprobe ändern, auch nicht mit Sicherungskopie. Neue Gegenproben im Katalog in `gegenprobe.py` eintragen.
 - Nach Änderungen prüfen: Kader-Import, Bewertung ausfüllen, Export JSON und CSV, Gespann-Übersicht, Saison-Statistik mit Beispieldateien, Drucken, Dark Mode, iPad-Breite (834 px) und quer (1194 px).
 - Testdaten nur mit erfundenen Namen, nie echte Bewertungen ins Repo legen.

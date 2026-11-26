@@ -20,9 +20,10 @@ import time
 import urllib.request
 
 HIER = os.path.dirname(os.path.abspath(__file__))
-# Standard-Referenz für alle Vergleiche mit dem alten Stand (Daten-, Übersicht-, Wechsel-Test, bilder.py):
-# Tag auf dem Stand vor Etappe 2 (5e59592). Bleibt gültig, auch wenn main später weiterläuft.
-REFERENZ = 'stand-etappe-1'
+# Standard-Referenz für alle Vergleiche mit dem alten Stand (Daten-, Übersicht-Test, bilder.py; Rückweg im Wechsel-Test):
+# Tag auf dem Stand nach Etappe 2 (f5c1070, ausgeliefert seit 26.11.2026). Bleibt gültig, auch wenn main weiterläuft.
+# Der Wechsel-Test prüft zusätzlich den Weg ab stand-etappe-1 (Stand vor Etappe 2, 5e59592): Geräte können noch dort sein.
+REFERENZ = 'stand-etappe-2'
 REPO = os.path.abspath(os.path.join(HIER, '..', '..'))
 FIXTURES = os.path.join(REPO, 'tests', 'fixtures')
 ERGEBNISSE = os.path.join(HIER, 'ergebnisse')   # steht in .gitignore

@@ -1,7 +1,7 @@
 """Bilder: Bildschirmfotos aller Ansichten (iPad hochkant, iPad quer, MacBook; hell und dunkel) und Druck-PDF.
 
 Aufruf:   python3 tests/tools/bilder.py                 (nur aktueller Stand)
-          python3 tests/tools/bilder.py --gegen         (zusätzlich alter Stand, Tag stand-etappe-1, nebeneinander)
+          python3 tests/tools/bilder.py --gegen         (zusätzlich alter Stand, Tag stand-etappe-2, nebeneinander)
           python3 tests/tools/bilder.py --gegen main    (anderer Referenzstand)
           python3 tests/tools/bilder.py --gegen HEAD --pixel   (dazu Pixelvergleich: listet jedes Bild, das sich
                                                          auch nur in einem Pixel unterscheidet; Abbruchcode 1)

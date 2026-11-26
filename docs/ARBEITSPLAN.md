@@ -124,30 +124,31 @@ Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`, `3407e00
 6. ~~Alten Stand markieren: Tag `stand-etappe-1` auf `5e59592`, Tag pushen.~~ (erledigt; alle Vergleichstests nutzen den Tag)
 7. ~~`main` per Fast-Forward auf `etappe-2` – nur nach Livios Go – und pushen.~~ (erledigt am 26.11.2026 nach Livios Go: `5e59592..c254cc8`; vorher geprüft: `etappe-2` sauber und gleich wie `origin/etappe-2`, `main` und Tag auf `5e59592`, `alle-tests.py` 20/20)
 8. ~~Danach `alle-tests.py` komplett und `bilder.py --gegen`, auf GitHub Pages prüfen (Update-Badge, offline).~~ (erledigt am 26.11.2026: `alle-tests.py` 20/20; GitHub Pages nach ca. 20 s mit `?v=33`, `index.html` und `sw.js` bytegleich mit `main`, alle 25 eingebundenen bzw. offline gespeicherten Dateien und das Vereinslogo erreichbar; auf dem MacBook Stand 33 und offline geprüft, siehe Punkt 4. `bilder.py --gegen` nach dem Merge nicht nochmals: Code identisch mit dem vorher geprüften Stand.)
-9. Zurück, falls nötig: **Notfall-Ablauf** (unten) – gilt weiter, solange `main` linear auf `stand-etappe-1` aufbaut; nur auf Livios ausdrückliches Wort.
+9. Zurück, falls nötig: **Notfall-Ablauf** (unten) – seit Etappe 3 mit Ziel `stand-etappe-2`; nur auf Livios ausdrückliches Wort.
 
-**Notfall-Ablauf: zurück auf den alten Stand** (nur nach dem Fast-Forward-Merge; `main` muss linear auf `stand-etappe-1` aufbauen)
+**Notfall-Ablauf: zurück auf den alten Stand** – Ziel ist der zuletzt ausgelieferte Stand, seit 26.11.2026 der Tag `stand-etappe-2` (`f5c1070`). Nur nach dem Fast-Forward-Merge einer neuen Etappe; `main` muss linear auf `stand-etappe-2` aufbauen. Nur auf Livios ausdrückliches Wort.
 
 ```sh
 git switch main && git pull --ff-only
 ALT=$(grep -oE '\?v=[0-9]+' index.html | head -1 | cut -d= -f2); NEU=$((ALT + 1)); echo "?v=$ALT -> ?v=$NEU"
-git revert --no-commit stand-etappe-1..HEAD      # alter Stand wiederhergestellt, Verlauf bleibt erhalten
-sed -i '' -E "s/\?v=[0-9]+\"/?v=$NEU\"/g" index.html   # Nummer über den aktuellen Wert (nie zurück auf ?v=7)
+git revert --no-commit stand-etappe-2..HEAD      # alter Stand wiederhergestellt, Verlauf bleibt erhalten
+sed -i '' -E "s/\?v=[0-9]+\"/?v=$NEU\"/g" index.html   # Nummer über den aktuellen Wert (nie zurück auf ?v=33)
 git add index.html
-git diff --cached --stat stand-etappe-1          # Kontrolle: nur index.html (?v=) weicht vom alten Stand ab
-git commit -m "Notfall: zurück auf stand-etappe-1 (?v=$NEU)"   # Hook prüft die Nummer
+git diff --cached --stat stand-etappe-2          # Kontrolle: nur index.html (?v=) weicht vom alten Stand ab
+git commit -m "Notfall: zurück auf stand-etappe-2 (?v=$NEU)"   # Hook prüft die Nummer
 git push origin main
 ```
 
-- Der Revert stellt den Code des alten Stands wieder her (neue Dateien von Etappe 2 fallen weg), ohne Verlauf zu löschen oder etwas zu überschreiben; kein `reset`, kein Force-Push.
+- Der Revert stellt den Code des alten Stands wieder her (neue Dateien der neuen Etappe fallen weg), ohne Verlauf zu löschen oder etwas zu überschreiben; kein `reset`, kein Force-Push.
 - Die Nummer muss höher sein als die aktuelle, sonst lehnt der Hook ab und der Service Worker würde die alte Version nicht laden.
-- Die gespeicherten Bewertungen bleiben: Der Wechsel-Test prüft den Rückweg (alte Oberfläche liest die Daten der neuen, auch „Auto“ und „fr“) – mit genau diesem Stand (`--rueck`).
-- **Geprobt am 15.11.2026** in einer Wegwerf-Kopie (lokales Repo als „GitHub“, Merge simuliert): `?v=29 → 30`, Hook lehnt mit `?v=7` ab und akzeptiert `?v=30`, Push geht, Ergebnis weicht vom Tag nur in `?v=` ab und ist dateigleich mit dem Rückweg des Wechsel-Tests; Wechsel-Test mit diesem Ergebnis als Rückweg: 0 Fehler.
+- Die gespeicherten Bewertungen bleiben: Der Wechsel-Test prüft den Rückweg (alte Oberfläche liest die Daten der neuen, auch „Auto“ und „fr“) – mit genau diesem Stand: `wechsel-test.py --von stand-etappe-2 --rueck ORDNER`. Wichtig für Etappe 3: Ein neues Datenmodell muss für diesen Rückweg lesbar bleiben (siehe Etappe 3).
+- **Mit Ziel `stand-etappe-2` noch nicht geprobt** – vor dem Merge von Etappe 3 in einer Wegwerf-Kopie proben (wie am 15.11.2026).
+- **Geprobt am 15.11.2026 (Ziel damals `stand-etappe-1`)** in einer Wegwerf-Kopie (lokales Repo als „GitHub“, Merge simuliert): `?v=29 → 30`, Hook lehnt mit `?v=7` ab und akzeptiert `?v=30`, Push geht, Ergebnis weicht vom Tag nur in `?v=` ab und ist dateigleich mit dem Rückweg des Wechsel-Tests; Wechsel-Test mit diesem Ergebnis als Rückweg: 0 Fehler.
 - Später wieder vorwärts: `git revert` des Notfall-Commits und `?v=` nochmals erhöhen.
 
 **Hinweis Datensicherung:** Safari kann gespeicherte Daten einer Website löschen, wenn sie etwa 7 Tage nicht geöffnet wurde. Das Export-JSON bleibt die eigentliche Sicherung – jede Bewertung nach dem Spiel sichern.
 
-**Offener Entscheid:** Kriterien ohne Vorbelegung starten (siehe „Offene Entscheide“) – nur nach Livios Go.
+**Offener Entscheid:** Kriterien ohne Vorbelegung starten (siehe „Offene Entscheide“) – Livio entscheidet nach der Rückmeldung seines Vorgesetzten.
 
 ---
 
@@ -249,7 +250,7 @@ Jedes Spiel bekommt beim ersten Import eine interne ID. Beim nächsten Import, i
 ---
 
 ## Offene Entscheide
-- **Kriterien ohne Vorbelegung starten**, fehlende in „Bereit zum Sichern?“ anzeigen – ändert eine fachliche Regel (heute „+“ vorbelegt), nur nach Livios Go.
+- **Kriterien ohne Vorbelegung starten**, fehlende in „Bereit zum Sichern?“ anzeigen – ändert eine fachliche Regel (heute „+“ vorbelegt). **Livio entscheidet erst nach der Rückmeldung seines Vorgesetzten** (Stand 26.11.2026); bis dahin nichts umsetzen.
 
 ---
 

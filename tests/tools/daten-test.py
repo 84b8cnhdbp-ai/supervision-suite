@@ -1,10 +1,11 @@
 """Daten-Test: Die App muss mit denselben Eingaben dieselben Daten erzeugen wie ein Referenzstand.
 
 Vergleicht Export-JSON (pro Reiter), CSV, Saison-Statistik, Kader-Import, Systemwechsel und
-localStorage zwischen dem aktuellen Arbeitsstand und einem Git-Stand (Standard: Tag stand-etappe-1).
+localStorage zwischen dem aktuellen Arbeitsstand und einem Git-Stand (Standard: Tag stand-etappe-2).
 Das Aussehen darf sich ändern – die Daten nicht.
 
-Aufruf:   python3 tests/tools/daten-test.py                  (gegen stand-etappe-1, Deutsch)
+Aufruf:   python3 tests/tools/daten-test.py                  (gegen stand-etappe-2, Deutsch)
+          python3 tests/tools/daten-test.py --gegen stand-etappe-1   (gegen den Stand vor Etappe 2)
           python3 tests/tools/daten-test.py --sprache en     (beide Stände auf Englisch)
           python3 tests/tools/daten-test.py --gegen 7c48820
 Ergebnis: tests/tools/ergebnisse/daten-<stand>.json (nicht im Repo), Abbruchcode 1 bei Unterschieden.
@@ -79,7 +80,8 @@ TEST_JS = r"""
 """
 
 
-# Gewollte Abweichungen gegenüber dem Referenzstand:
+# Gewollte Abweichungen gegenüber stand-etappe-1 (Stand vor Etappe 2; gegen stand-etappe-2 treten sie nicht auf, die
+# Regeln bleiben für --gegen stand-etappe-1 und für den Wechsel-Test ab stand-etappe-1):
 # - Etappe 2.1b: gespeicherte Rollen und Partner-Texte sind neu in jeder Sprache deutsch.
 # - Startsystem: Ein NEUES Spiel (leerer Start, „Spiel zurücksetzen“) beginnt neu mit dem System aus der
 #   Vereins-Einstellung (js/club.js, standardSystem), bisher immer 4-Mann. Gespeicherte Spiele behalten ihr System,
