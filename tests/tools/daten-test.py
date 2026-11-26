@@ -85,6 +85,10 @@ TEST_JS = r"""
 #   Vereins-Einstellung (js/club.js, standardSystem), bisher immer 4-Mann. Gespeicherte Spiele behalten ihr System,
 #   Spiele ohne Angabe gelten weiter als 4-Mann – das prüfen die übrigen Teile dieses Tests (Beispielspiel) und der
 #   System- und der Wechsel-Test.
+# - Startliga: Ein NEUES Spiel beginnt neu ohne Liga („Liga wählen …“, Hinweis in „Bereit zum Sichern?“), bisher mit
+#   „National League“ – damit die Liga bewusst gewählt wird. Gespeicherte Spiele ohne Angabe zur Liga zeigen weiter
+#   „National League“ (Datenregel LIGA_OHNE_ANGABE in js/config.js) – das vergleicht der Teil „ohneLiga“ unten ohne
+#   Abweichung; Hinweis, Sprung und Export mit leerer Liga prüft der Liga-Test.
 # Alles andere muss gleich bleiben.
 EN_ZU_DE = {'Solo Referee': 'Einzel-Schiedsrichter'}
 STANDARD_SYSTEM = re.search(r"standardSystem:\s*'([^']+)'", open(os.path.join(REPO, 'js', 'club.js'), encoding='utf-8').read()).group(1)
@@ -93,6 +97,8 @@ STANDARD_SYSTEM = re.search(r"standardSystem:\s*'([^']+)'", open(os.path.join(RE
 def gewollt(pfad, alt, neu):
     if pfad == '.leerStart.system':
         return alt == '4-Man' and neu == STANDARD_SYSTEM
+    if pfad == '.leerStart.liga':
+        return alt == 'National League' and neu == ''
     if pfad == '.leerStart.reiter':
         return neu == {'1-Man': 1, '2-Man': 2, '3-Man': 3, '4-Man': 4}[STANDARD_SYSTEM]
     if not isinstance(alt, str) or not (pfad.endswith('.role') or pfad.endswith('.partner') or pfad == '.rolle1Mann'):
@@ -114,7 +120,16 @@ def lauf(wurzel, sprache):
             # Leerer Start (neues Spiel ohne gespeicherte Daten): Startsystem und Anzahl Reiter
             daten_setzen(b, srv.basis, spiel=False, sprache=sprache)
             b.oeffnen(srv.basis + '/index.html')
-            r['leerStart'] = b.js("({ system: currentSystem, reiter: SYSTEM_CONFIGS[currentSystem].length })")
+            r['leerStart'] = b.js("({ system: currentSystem, reiter: SYSTEM_CONFIGS[currentSystem].length, "
+                                  "liga: document.getElementById('spiel_liga').value })")
+            # Ältere Daten ohne Angabe zur Liga (ohne spiel_liga, ohne global): angezeigte Liga muss gleich bleiben
+            r['ohneLiga'] = {}
+            for art, entfernen in (('ohneSpielLiga', 'delete d.global.spiel_liga;'), ('ohneGlobal', 'delete d.global;')):
+                daten_setzen(b, srv.basis, spiel=True, sprache=sprache)
+                b.js("(() => { const d = JSON.parse(localStorage.getItem('referee_multi_supervision_data')); %s "
+                     "localStorage.setItem('referee_multi_supervision_data', JSON.stringify(d)); })()" % entfernen)
+                b.oeffnen(srv.basis + '/index.html')
+                r['ohneLiga'][art] = b.js("document.getElementById('spiel_liga').value")
             r['jsFehler'] = [f for f in b.fehler if 'Update nicht möglich' not in f]
             # gespeicherte Spielstände als Objekte vergleichen (genauere Fundstellen)
             for k in ('nachReitern', 'ende'):

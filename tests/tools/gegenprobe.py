@@ -54,6 +54,9 @@ GEGENPROBEN = {
         ('js/layout.js', "  wurzel.setProperty('--spalte-oben', Math.floor(Math.min(normal, window.innerHeight - hoehe - 12)) + 'px');",
          "  wurzel.setProperty('--spalte-oben', normal + 'px');"),
     ], 'nicht richtig', 'rechte Spalte bleibt immer oben stehen (unteres Ende unerreichbar)'),
+    'liga-startwert': ('liga-test.py', [
+        ('js/storage.js', "  if (!raw) gameData.global.spiel_liga = '';\n", ''),
+    ], 'neues Spiel Liga', 'neues Spiel wieder mit „National League“ statt ohne Liga'),
     'dateiwahl-display-none': ('dateiwahl-test.py', [
         ('index.html', 'id="kaderDatei" class="datei-feld"', 'id="kaderDatei" class="datei-feld" hidden'),
     ], 'display: none', 'Dateifeld wieder display: none'),

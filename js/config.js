@@ -8,6 +8,15 @@ const APP_VERSION = "2.0";
 // Nicht ändern – sonst verschwinden deren Bewertungen. Der Standard für NEUE Spiele steht in js/club.js (standardSystem).
 const SYSTEM_OHNE_ANGABE = "4-Man";
 
+// Datenregel: Gespeicherte Spiele ohne Angabe zur Liga (ältere Stände) zeigen „National League“ (früherer Startwert).
+// Nicht ändern – sonst ändert sich die Anzeige alter Spiele. Ein NEUES Spiel startet ohne Liga (spiel_liga: "", bewusst wählen).
+const LIGA_OHNE_ANGABE = "National League";
+
+// Liga eines Spiels für die Anzeige: gespeicherter Wert (auch leer = noch nicht gewählt), ohne Angabe die Datenregel
+function ligaAusDaten(g) {
+  return g && g.spiel_liga != null ? g.spiel_liga : LIGA_OHNE_ANGABE;
+}
+
 // System für ein neues Spiel: Vereins-Einstellung, falls gültig
 function startSystem() {
   return CLUB.standardSystem && SYSTEM_CONFIGS[CLUB.standardSystem] ? CLUB.standardSystem : SYSTEM_OHNE_ANGABE;

@@ -37,7 +37,10 @@ function aktualisiereSpielTitel() {
 
 function spielHinweise() {
   const nr = (gameData.global && gameData.global.spiel_id || '').trim();
-  return [{ schluessel: 'spielnr', text: t('hint_game_nr'), ok: !!nr, aktion: () => oeffneSpielDialog('spiel_id') }];
+  return [
+    { schluessel: 'spielnr', text: t('hint_game_nr'), ok: !!nr, aktion: () => oeffneSpielDialog('spiel_id') },
+    { schluessel: 'liga', text: t('hint_league'), ok: !!ligaAusDaten(gameData.global), aktion: () => oeffneSpielDialog('spiel_liga') }
+  ];
 }
 
 // ---------- Fenster füllen ----------
@@ -45,7 +48,7 @@ function spielHinweise() {
 function fuelleSpielDialog() {
   const g = (gameData && gameData.global) || {};
   document.getElementById('spiel_id').value = g.spiel_id || '';
-  document.getElementById('spiel_liga').value = g.spiel_liga || 'National League';
+  document.getElementById('spiel_liga').value = ligaAusDaten(g);
   document.getElementById('spiel_datum').value = g.spiel_datum || '';
   document.getElementById('spiel_ort').value = g.spiel_ort || '';
   document.getElementById('supervisor_name').value = g.supervisor_name || '';

@@ -94,6 +94,8 @@ function loadFullState() {
   // Systemangabe gespeichert wird). Gespeichertes Spiel: sein System; fehlt die Angabe (ältere Stände): 4-Mann.
   currentSystem = raw ? SYSTEM_OHNE_ANGABE : startSystem();
   if (!raw) gameData.global = { ...(gameData.global || {}), system_typ: currentSystem };
+  // Neues Spiel: ohne Liga („Liga wählen …“); leer vermerkt, damit es nicht als älterer Stand ohne Angabe gilt
+  if (!raw) gameData.global.spiel_liga = '';
   if (raw) {
     try {
       gameData = JSON.parse(raw);
@@ -102,7 +104,6 @@ function loadFullState() {
           currentSystem = gameData.global.system_typ;
         }
         setzeSeg('system_typ', currentSystem);
-        document.getElementById('spiel_liga').value = gameData.global.spiel_liga || "National League";
         document.getElementById('spiel_paarung').value = gameData.global.spiel_paarung || "";
         document.getElementById('spiel_id').value = gameData.global.spiel_id || "";
         document.getElementById('spiel_datum').value = gameData.global.spiel_datum || "";
@@ -117,4 +118,5 @@ function loadFullState() {
       console.error(e);
     }
   }
+  document.getElementById('spiel_liga').value = ligaAusDaten(gameData.global);   // ohne Angabe: Datenregel (js/config.js)
 }

@@ -42,7 +42,9 @@ CSV je Schiedsrichter-System, Kader-Import (JSON und TXT) und den `localStorage`
 Das Aussehen darf sich unterscheiden, die Daten nicht. Ergebnis „0 Unterschiede“ = bestanden.
 Gewollte Abweichungen sind im Test ausdrücklich aufgeführt und werden als „gewollt“ angezeigt
 (seit 2.1b: gespeicherte Rolle/Partner immer deutsch, z. B. „Einzel-Schiedsrichter“ statt „Solo Referee“;
-neues Spiel startet mit `standardSystem` aus `js/club.js` statt immer 4-Mann – geprüft im Teil „leerer Start“).
+neues Spiel startet mit `standardSystem` aus `js/club.js` statt immer 4-Mann – geprüft im Teil „leerer Start“;
+neues Spiel startet ohne Liga statt mit „National League“ – ebenfalls „leerer Start“). Der Teil „ohneLiga“ vergleicht
+ohne Abweichung: ältere Daten ohne Angabe zur Liga zeigen in beiden Ständen „National League“.
 
 **Test-Schnittstelle** – diese globalen Namen ruft der Test auf; sie bleiben bestehen (oder der Test wird mitgeändert):
 `selectRefTab(i)`, `selectSummaryTab()`, `selectStatsTab()`, `switchSystem(s)`, `exportSingleReviewJSON()`,
@@ -155,6 +157,19 @@ Neues Spiel und „Spiel zurücksetzen“ (echte Klicks) starten mit `standardSy
 das Startsystem steht sofort in den Spieldaten (eine Bewertung vor jeder Spielangabe bleibt nach dem Neuladen erhalten);
 ein gespeichertes 4-Mann-Spiel bleibt 4-Mann; ältere Daten ohne Angabe zum System gelten als 4-Mann; mit
 `standardSystem: '4-Man'` startet die App mit 4-Mann, ein ungültiger Wert fällt auf 4-Mann zurück.
+
+## Liga-Test – neue Spiele ohne Liga
+
+```sh
+python3 tests/tools/liga-test.py
+```
+
+Neues Spiel und „Spiel zurücksetzen“ (echte Klicks) starten ohne Liga („Liga wählen …“ / „Choose league …“), die leere
+Liga steht sofort in den Spieldaten; in „Bereit zum Sichern?“ unter „Hinweise“ „Liga fehlt – Sichern trotzdem möglich“
+(kein Pflichtpunkt), der Tipp darauf öffnet „Spiel bearbeiten“ mit Fokus auf der Liga; nach Wahl und „Fertig“ ist der
+Hinweis weg und die Liga gespeichert. Ältere Daten ohne Angabe zur Liga (ohne `spiel_liga`, ohne `global`) zeigen
+„National League“ (Datenregel `LIGA_OHNE_ANGABE` in `js/config.js`). Export JSON und CSV mit leerer Liga gehen, die
+exportierte Datei läuft durch die Saison-Statistik. Gegenprobe: `liga-startwert`.
 
 ## Dateiwahl-Test – Knöpfe mit Dateiauswahl
 
