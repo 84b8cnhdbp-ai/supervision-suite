@@ -99,7 +99,7 @@ Fertig und getestet (`alle-tests.py` grün, Bilder gegen den alten Stand angeseh
 
 Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`, `3407e00`, `ab11ea5`. Der Branch wird nach jedem Teilschritt auf GitHub gepusht (Sicherung).
 
-**Als Nächstes:** Livios Test auf dem iPad (siehe Checkliste, Punkte 2–4), danach – nur nach Livios Go – Wechsel von `etappe-2` auf `main`.
+**Als Nächstes:** Test auf dem iPad bestanden (26.11.2026, Checkliste Punkte 2 und 3). Offen: Handtest Bewertung über Nacht (Punkt 4), danach – nur nach Livios Go, geplant in der Woche ab 30.11.2026 – Wechsel von `etappe-2` auf `main`.
 
 **2.9b Feinschliff (erledigt):**
 - `manifest.json`-Farben (`theme_color`, `background_color`) ans neue Design anpassen, hell und dunkel.
@@ -112,9 +112,10 @@ Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`, `3407e00
 
 **Wechsel auf `main` (Checkliste):**
 1. ~~Wechsel-Test als eigener Commit~~ (erledigt, `a02c701`, läuft in `alle-tests.py`).
-2. **Vor dem Merge: Test auf dem iPad über den lokalen Server** (Mac und iPad im selben WLAN, `python3 -m http.server`, Adresse des Macs im Safari): Bedienung und Layout hoch und quer, Szene mit Zifferntastatur, „Spiel bearbeiten“, Druck über „Teilen“. Probleme sollen vor dem Merge auffallen.
-   **Dateiknöpfe:** alle drei („Kader importieren“ im Menü „Mehr“, „Kader importieren“ beim Schiedsrichter-Feld – erscheint nur ohne Kader –, „Dateien wählen“ in der Statistik) mit Dateien aus der App **Dateien** testen (erfundene Beispieldateien aus `tests/fixtures/`, z. B. per AirDrop aufs iPad).
-3. **VoiceOver kurz auf dem iPad:** Reiter, eine Knopfreihe, Score-Leiste, Karten.
+2. ~~**Vor dem Merge: Test auf dem iPad über den lokalen Server** (Mac und iPad im selben WLAN, `python3 -m http.server`, Adresse des Macs im Safari): Bedienung und Layout hoch und quer, Szene mit Zifferntastatur, „Spiel bearbeiten“, Druck über „Teilen“. Probleme sollen vor dem Merge auffallen.~~
+   ~~**Dateiknöpfe:** alle drei („Kader importieren“ im Menü „Mehr“, „Kader importieren“ beim Schiedsrichter-Feld – erscheint nur ohne Kader –, „Dateien wählen“ in der Statistik) mit Dateien aus der App **Dateien** testen (erfundene Beispieldateien aus `tests/fixtures/`, z. B. per AirDrop aufs iPad).~~
+   (erledigt am 26.11.2026 mit Stand `1669d38`: hoch und quer, hell und dunkel, neues Spiel mit 2-Mann und „Liga wählen …“, Platzhalter, Szene mit Zifferntastatur, die drei Dateiknöpfe mit der App „Dateien“, Sichern und CSV, Druck über „Teilen“ – keine Auffälligkeiten)
+3. ~~**VoiceOver kurz auf dem iPad:** Reiter, eine Knopfreihe, Score-Leiste, Karten.~~ (erledigt am 26.11.2026, keine Auffälligkeiten)
 4. **Handtest Bewertung über Nacht:** Am Vorabend in der App eine Bewertung offen lassen (nicht exportieren), nach dem Merge öffnen und prüfen, dass alles da ist. Wichtig: Auf dem iPad haben die Home-Bildschirm-App und Safari **getrennte Speicher** – den Test in der App machen, die in der Halle wirklich benutzt wird.
 5. Nur unter der Woche, nicht vor einem Einsatz in der Halle.
 6. ~~Alten Stand markieren: Tag `stand-etappe-1` auf `5e59592`, Tag pushen.~~ (erledigt; alle Vergleichstests nutzen den Tag)
