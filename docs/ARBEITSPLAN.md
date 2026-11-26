@@ -17,7 +17,9 @@ Nach dem Vorschlag gibst du das Go. Erst wenn die Etappe getestet und committet 
 
 ---
 
-## Etappe 2 – Neues Design (Apple-Look)
+## Etappe 2 – Neues Design (Apple-Look) – abgeschlossen
+**Abgeschlossen am 26.11.2026:** `main` per Fast-Forward auf `c254cc8` (von `5e59592`, 44 Commits), gepusht; GitHub Pages liefert den neuen Stand aus. Details unten in der Checkliste.
+
 **Ziel:** Professionelle, ruhige Oberfläche für MacBook und iPad.
 
 Aufbau:
@@ -61,7 +63,7 @@ Tests nach jedem Teilschritt: `python3 tests/tools/alle-tests.py` (Daten DE/EN, 
 
 **Fertig, wenn:** Alle Funktionen von vorher gehen; auf iPad hoch/quer und MacBook gut bedienbar; Dark Mode sauber; Drucken nicht schlechter als vorher; alle Texte über `t()` auf DE und EN.
 
-### Stand (Branch `etappe-2`, noch nicht auf `main`)
+### Stand (seit 26.11.2026 auf `main`, `c254cc8`)
 Fertig und getestet (`alle-tests.py` grün, Bilder gegen den alten Stand angesehen):
 
 | Teilschritt | Commit |
@@ -99,7 +101,7 @@ Fertig und getestet (`alle-tests.py` grün, Bilder gegen den alten Stand angeseh
 
 Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`, `3407e00`, `ab11ea5`. Der Branch wird nach jedem Teilschritt auf GitHub gepusht (Sicherung).
 
-**Als Nächstes:** Test auf dem iPad bestanden (26.11.2026, Checkliste Punkte 2 und 3). Offen: Handtest Bewertung über Nacht (Punkt 4), danach – nur nach Livios Go, geplant in der Woche ab 30.11.2026 – Wechsel von `etappe-2` auf `main`.
+**Erledigt:** Test auf dem iPad bestanden (26.11.2026), Wechsel auf `main` am 26.11.2026 (`c254cc8`), Prüfung danach bestanden. Etappe 2 ist abgeschlossen; als Nächstes Etappe 3 – nur nach Livios Go.
 
 **2.9b Feinschliff (erledigt):**
 - `manifest.json`-Farben (`theme_color`, `background_color`) ans neue Design anpassen, hell und dunkel.
@@ -116,12 +118,13 @@ Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`, `3407e00
    ~~**Dateiknöpfe:** alle drei („Kader importieren“ im Menü „Mehr“, „Kader importieren“ beim Schiedsrichter-Feld – erscheint nur ohne Kader –, „Dateien wählen“ in der Statistik) mit Dateien aus der App **Dateien** testen (erfundene Beispieldateien aus `tests/fixtures/`, z. B. per AirDrop aufs iPad).~~
    (erledigt am 26.11.2026 mit Stand `1669d38`: hoch und quer, hell und dunkel, neues Spiel mit 2-Mann und „Liga wählen …“, Platzhalter, Szene mit Zifferntastatur, die drei Dateiknöpfe mit der App „Dateien“, Sichern und CSV, Druck über „Teilen“ – keine Auffälligkeiten)
 3. ~~**VoiceOver kurz auf dem iPad:** Reiter, eine Knopfreihe, Score-Leiste, Karten.~~ (erledigt am 26.11.2026, keine Auffälligkeiten)
-4. **Handtest Bewertung über Nacht:** Am Vorabend in der App eine Bewertung offen lassen (nicht exportieren), nach dem Merge öffnen und prüfen, dass alles da ist. Wichtig: Auf dem iPad haben die Home-Bildschirm-App und Safari **getrennte Speicher** – den Test in der App machen, die in der Halle wirklich benutzt wird.
-5. Nur unter der Woche, nicht vor einem Einsatz in der Halle.
+4. ~~**Handtest Bewertung über Nacht:** Am Vorabend in der App eine Bewertung offen lassen (nicht exportieren), nach dem Merge öffnen und prüfen, dass alles da ist. Wichtig: Auf dem iPad haben die Home-Bildschirm-App und Safari **getrennte Speicher** – den Test in der App machen, die in der Halle wirklich benutzt wird.~~
+   (ersetzt durch den Test auf dem MacBook direkt nach dem Merge, 26.11.2026: Stand 33, gespeicherte Bewertung unverändert da, Export vollständig, App startet offline. Bewertungen vorher auf dem MacBook gesichert.)
+5. ~~Nur unter der Woche, nicht vor einem Einsatz in der Halle.~~ (Donnerstag, 26.11.2026)
 6. ~~Alten Stand markieren: Tag `stand-etappe-1` auf `5e59592`, Tag pushen.~~ (erledigt; alle Vergleichstests nutzen den Tag)
-7. `main` per Fast-Forward auf `etappe-2` – nur nach Livios Go – und pushen.
-8. Danach `alle-tests.py` komplett und `bilder.py --gegen`, auf GitHub Pages prüfen (Update-Badge, offline).
-9. Zurück, falls nötig: **Notfall-Ablauf** (unten).
+7. ~~`main` per Fast-Forward auf `etappe-2` – nur nach Livios Go – und pushen.~~ (erledigt am 26.11.2026 nach Livios Go: `5e59592..c254cc8`; vorher geprüft: `etappe-2` sauber und gleich wie `origin/etappe-2`, `main` und Tag auf `5e59592`, `alle-tests.py` 20/20)
+8. ~~Danach `alle-tests.py` komplett und `bilder.py --gegen`, auf GitHub Pages prüfen (Update-Badge, offline).~~ (erledigt am 26.11.2026: `alle-tests.py` 20/20; GitHub Pages nach ca. 20 s mit `?v=33`, `index.html` und `sw.js` bytegleich mit `main`, alle 25 eingebundenen bzw. offline gespeicherten Dateien und das Vereinslogo erreichbar; auf dem MacBook Stand 33 und offline geprüft, siehe Punkt 4. `bilder.py --gegen` nach dem Merge nicht nochmals: Code identisch mit dem vorher geprüften Stand.)
+9. Zurück, falls nötig: **Notfall-Ablauf** (unten) – gilt weiter, solange `main` linear auf `stand-etappe-1` aufbaut; nur auf Livios ausdrückliches Wort.
 
 **Notfall-Ablauf: zurück auf den alten Stand** (nur nach dem Fast-Forward-Merge; `main` muss linear auf `stand-etappe-1` aufbauen)
 
