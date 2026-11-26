@@ -12,9 +12,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="css/app.css?v=31">
-<script src="js/club.js?v=31"></script>
-<script src="js/theme.js?v=31"></script>
+<link rel="stylesheet" href="css/app.css?v=32">
+<script src="js/club.js?v=32"></script>
+<script src="js/theme.js?v=32"></script>
 </head>
 <body>
 
@@ -382,6 +382,7 @@
     <section class="sf-gruppe">
       <h3 class="sf-titel" data-i18n="sec_game">Spiel</h3>
       <div class="sf-karte">
+        <div class="sf-zeile-gruppe">
         <label class="sf-zeile" for="spiel_liga"><span class="sf-label" data-i18n="lbl_league">Liga / Stufe</span>
               <select id="spiel_liga">
                 <option value="" disabled data-i18n="league_choose">Liga wählen …</option>
@@ -432,6 +433,8 @@
                 </optgroup>
               </select>
         </label>
+        <p class="sf-hinweis sf-hinweis-feld" id="sfLigaHinweis" data-i18n="hint_league">Liga fehlt – Sichern trotzdem möglich</p>
+        </div>
         <label class="sf-zeile" for="spiel_gegner"><span class="sf-label" data-i18n="lbl_opponent">Gegner</span>
           <span class="sf-gegner"><span class="sf-praefix" id="sfPraefix"></span><input type="text" id="spiel_gegner" autocomplete="off" data-i18n-placeholder="ph_opponent" placeholder=""></span></label>
         <label class="sf-zeile" for="spiel_datum"><span class="sf-label" data-i18n="lbl_datetime">Datum &amp; Zeit</span>
@@ -439,7 +442,6 @@
         <label class="sf-zeile" for="spiel_ort"><span class="sf-label" data-i18n="lbl_arena">Spielort / Arena</span>
           <input type="text" id="spiel_ort" data-i18n-placeholder="ph_arena" placeholder=""></label>
       </div>
-      <p class="sf-hinweis" id="sfLigaHinweis" data-i18n="hint_league">Liga fehlt – Sichern trotzdem möglich</p>
       <p class="sf-hinweis sf-hinweis-info" id="sfAltHinweis" hidden></p>
       <input type="hidden" id="spiel_paarung">
     </section>
@@ -481,20 +483,20 @@
   </div>
 </dialog>
 
-<script src="js/i18n.js?v=31"></script>
-<script src="js/dialog.js?v=31"></script>
-<script src="js/segment.js?v=31"></script>
-<script src="js/layout.js?v=31"></script>
-<script src="js/spiel.js?v=31"></script>
-<script src="js/szene.js?v=31"></script>
-<script src="js/druck.js?v=31"></script>
-<script src="js/bewegung.js?v=31"></script>
-<script src="js/config.js?v=31"></script>
-<script src="js/scoring.js?v=31"></script>
-<script src="js/storage.js?v=31"></script>
-<script src="js/ui.js?v=31"></script>
-<script src="js/export.js?v=31"></script>
-<script src="js/stats.js?v=31"></script>
-<script src="js/app.js?v=31"></script>
+<script src="js/i18n.js?v=32"></script>
+<script src="js/dialog.js?v=32"></script>
+<script src="js/segment.js?v=32"></script>
+<script src="js/layout.js?v=32"></script>
+<script src="js/spiel.js?v=32"></script>
+<script src="js/szene.js?v=32"></script>
+<script src="js/druck.js?v=32"></script>
+<script src="js/bewegung.js?v=32"></script>
+<script src="js/config.js?v=32"></script>
+<script src="js/scoring.js?v=32"></script>
+<script src="js/storage.js?v=32"></script>
+<script src="js/ui.js?v=32"></script>
+<script src="js/export.js?v=32"></script>
+<script src="js/stats.js?v=32"></script>
+<script src="js/app.js?v=32"></script>
 </body>
 </html>

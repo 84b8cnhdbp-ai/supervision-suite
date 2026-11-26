@@ -63,6 +63,15 @@ GEGENPROBEN = {
     'liga-fenster-hinweis': ('liga-test.py', [
         ('js/spiel.js', "  document.getElementById('sfLigaHinweis').hidden = !!document.getElementById('spiel_liga').value;\n", ''),
     ], 'Hinweis im Fenster bleibt', 'Hinweis im Fenster verschwindet nach der Wahl nicht'),
+    'liga-grau': ('liga-test.py', [
+        ('js/spiel.js', "  document.getElementById('spiel_liga').classList.toggle('sf-leer', !document.getElementById('spiel_liga').value);   // „Liga wählen …“ grau\n", ''),
+    ], 'nicht grau wie die Platzhalter', '„Liga wählen …“ nicht grau'),
+    'liga-hinweis-unter-karte': ('liga-test.py', [
+        ('index.html', '        <p class="sf-hinweis sf-hinweis-feld" id="sfLigaHinweis" data-i18n="hint_league">Liga fehlt – Sichern trotzdem möglich</p>\n', ''),
+        ('index.html', '      <p class="sf-hinweis sf-hinweis-info" id="sfAltHinweis" hidden></p>',
+         '      <p class="sf-hinweis" id="sfLigaHinweis" data-i18n="hint_league">Liga fehlt – Sichern trotzdem möglich</p>\n'
+         '      <p class="sf-hinweis sf-hinweis-info" id="sfAltHinweis" hidden></p>'),
+    ], 'nicht direkt unter dem Feld Liga', 'Hinweis wieder unter der ganzen Karte statt unter dem Feld'),
     'dateiwahl-display-none': ('dateiwahl-test.py', [
         ('index.html', 'id="kaderDatei" class="datei-feld"', 'id="kaderDatei" class="datei-feld" hidden'),
     ], 'display: none', 'Dateifeld wieder display: none'),

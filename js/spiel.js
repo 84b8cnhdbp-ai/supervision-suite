@@ -75,6 +75,7 @@ function fuelleSpielDialog() {
 function aktualisiereSfHinweise() {
   document.getElementById('sfNrHinweis').hidden = !!document.getElementById('spiel_id').value.trim();
   document.getElementById('sfLigaHinweis').hidden = !!document.getElementById('spiel_liga').value;
+  document.getElementById('spiel_liga').classList.toggle('sf-leer', !document.getElementById('spiel_liga').value);   // „Liga wählen …“ grau
   const gegner = document.getElementById('spiel_gegner').value;
   const alt = sfAltePaarung !== null && gegner === sfAltePaarung;
   document.getElementById('sfPraefix').hidden = alt;

@@ -4,7 +4,10 @@ Prüft (echte Klicks, wo die App bedient wird):
 - leerer Start: „Liga wählen …“ (DE) / „Choose league …“ (EN) gewählt, Liga leer sofort in den Spieldaten vermerkt
 - „Bereit zum Sichern?“: unter „Hinweise“ „Liga fehlt – Sichern trotzdem möglich“ (kein Pflichtpunkt); Tipp darauf
   öffnet „Spiel bearbeiten“ mit Fokus auf der Liga; Liga wählen + „Fertig“ -> Hinweis weg, gespeichert, nach Neuladen da
-- Fenster „Spiel bearbeiten“: unter der Karte „Spiel“ derselbe Hinweis (DE/EN), weg sobald eine Liga gewählt ist
+- Fenster „Spiel bearbeiten“: derselbe Hinweis (DE/EN) direkt unter dem Feld Liga, innerhalb der Karte „Spiel“, vor
+  dem Gegner (iPad quer, iPad hochkant, Handy); weg sobald eine Liga gewählt ist
+- „Liga wählen …“ grau wie die Platzhalter der Textfelder (gleiche Farbe), Kontrast mind. 4.5:1 hell und dunkel;
+  nach der Wahl normale Schriftfarbe
 - „Liga wählen …“ gesperrt: steht da, solange keine Liga gewählt ist, ist aber nicht wählbar (einziger leerer Eintrag,
   disabled). Pfeiltasten verändern eine geschlossene Auswahl im Test-Chrome nicht – darum Prüfung über die Einträge
 - „Spiel zurücksetzen“ (Menü „Mehr“, roter Knopf) bei einem Spiel mit Liga: danach ohne Liga
@@ -27,6 +30,21 @@ HINWEISE = "[...document.querySelectorAll('#bereitListe .bereit-hinweis')].map((
 FENSTER_HINWEIS = "(() => { const h = document.getElementById('sfLigaHinweis'); return h && !h.hidden && h.offsetParent !== null ? h.textContent : null; })()"
 # alle Einträge mit leerem Wert: [gesperrt?, Text] – erwartet genau einer, gesperrt
 LEERE_EINTRAEGE = "[...document.getElementById('spiel_liga').options].filter((o) => o.value === '').map((o) => [o.disabled, o.textContent])"
+# Lage des Hinweises im Fenster: in der Karte „Spiel“, unter dem Feld Liga, über dem Gegner
+ORT = """(() => { const h = document.getElementById('sfLigaHinweis'), s = document.getElementById('spiel_liga');
+  const zeile = document.querySelector('label[for=spiel_liga]'), gegner = document.querySelector('label[for=spiel_gegner]');
+  const r = (e) => e.getBoundingClientRect();
+  return { inKarte: !!h.closest('.sf-karte') && h.closest('.sf-karte') === s.closest('.sf-karte'),
+           abstand: Math.round(r(h).top - r(zeile).bottom), unterSelect: r(h).top >= r(s).bottom - 1,
+           vorGegner: r(h).bottom <= r(gegner).top, links: Math.round(r(h).left - r(s).left) }; })()"""
+# Farben: Auswahl, Platzhalter Gegner, Schriftfarbe, Kartengrund; Kontrast der Auswahl zum Kartengrund
+FARBEN = """(() => { const rgb = (c) => c.match(/[\\d.]+/g).slice(0, 3).map(Number);
+  const lum = (c) => { const [r, g, b] = rgb(c).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+  const s = document.getElementById('spiel_liga'), karte = getComputedStyle(s.closest('.sf-karte')).backgroundColor;
+  const wahl = getComputedStyle(s).color, platz = getComputedStyle(document.getElementById('spiel_gegner'), '::placeholder').color;
+  const text = getComputedStyle(document.querySelector('label[for=spiel_liga] .sf-label')).color;
+  const [a, b] = [lum(wahl), lum(karte)].sort((x, y) => y - x);
+  return { wahl, platz, text, kontrast: Math.round((a + 0.05) / (b + 0.05) * 100) / 100 }; })()"""
 PFLICHT = "[...document.querySelectorAll('#bereitListe .bereit-fehlt')].map((x) => x.dataset.punkt)"
 
 
@@ -57,6 +75,12 @@ def main():
                 pruefe(b.js(WAHL) == {'wert': '', 'text': wahl}, f'{sprache}: neues Spiel Liga {b.js(WAHL)}, erwartet leer mit „{wahl}“')
                 pruefe(b.js(LEERE_EINTRAEGE) == [[True, wahl]], f'{sprache}: „{wahl}“ nicht gesperrt: {b.js(LEERE_EINTRAEGE)}')
                 pruefe(b.js(FENSTER_HINWEIS) == hinweis, f'{sprache}: Hinweis im Fenster {b.js(FENSTER_HINWEIS)!r}, erwartet „{hinweis}“')
+                for w, h in ((1194, 834), (834, 1194), (390, 844)):
+                    b.fenster(w, h)
+                    o = b.js(ORT)
+                    pruefe(o['inKarte'] and o['unterSelect'] and o['vorGegner'] and -12 <= o['abstand'] <= 4 and 0 <= o['links'] <= 12,
+                           f'{sprache} {w}px: Hinweis nicht direkt unter dem Feld Liga: {o}')
+                b.fenster(1194, 834)
                 b.taste('Escape')
                 pruefe(b.js("gameData.global.spiel_liga") == '', f'{sprache}: leere Liga nicht in den Spieldaten vermerkt: {b.js("gameData.global.spiel_liga")!r}')
                 pruefe(hinweis_liga() and hinweis_liga()[0][1].endswith(hinweis), f'{sprache}: Hinweis Liga fehlt: {b.js(HINWEISE)}')
@@ -64,6 +88,20 @@ def main():
                 pruefe(b.js("[...document.querySelectorAll('#bereitListe li')].findIndex((li) => li.classList.contains('bereit-gruppe'))")
                        < b.js("[...document.querySelectorAll('#bereitListe li')].findIndex((li) => li.querySelector('[data-punkt=liga]'))"),
                        f'{sprache}: Liga-Hinweis nicht unter „Hinweise“')
+
+            # 1b. Grau ohne Wahl wie die Platzhalter, hell und dunkel mit genug Kontrast; nach der Wahl normale Farbe
+            for schema in ('light', 'dark'):
+                b.fenster(1194, 834, farbschema=schema)
+                daten_setzen(b, srv.basis, spiel=False)
+                b.oeffnen(srv.basis + '/index.html')
+                f = b.js(FARBEN)
+                pruefe(f['wahl'] == f['platz'] != f['text'] and f['kontrast'] >= 4.5,
+                       f'{schema}: „Liga wählen …“ nicht grau wie die Platzhalter oder zu wenig Kontrast: {f}')
+                b.js("(() => { const s = document.getElementById('spiel_liga'); s.value = 'U14-Elit'; s.dispatchEvent(new Event('change')); })()")
+                f = b.js(FARBEN)
+                pruefe(f['wahl'] == f['text'], f'{schema}: gewählte Liga bleibt grau: {f}')
+                b.taste('Escape')
+            b.fenster(1194, 834)
 
             # 2. Sprung zum Feld, Liga wählen, Fertig, Neuladen
             daten_setzen(b, srv.basis, spiel=False)
@@ -102,6 +140,8 @@ def main():
                 b.klick('#spielTitel')
                 pruefe(b.js(WAHL)['wert'] == 'National League', f'Ältere Daten {art}: Fenster zeigt Liga {b.js(WAHL)}')
                 pruefe(b.js(FENSTER_HINWEIS) is None, f'Ältere Daten {art}: Hinweis im Fenster angezeigt')
+                f = b.js(FARBEN)
+                pruefe(f['wahl'] == f['text'], f'Ältere Daten {art}: „National League“ grau dargestellt: {f}')
                 b.klick('#sfFertig')
                 pruefe(gespeichert().get('spiel_liga') == 'National League', f'Ältere Daten {art}: „Fertig“ speichert {gespeichert().get("spiel_liga")!r}')
 
@@ -138,7 +178,7 @@ def main():
 
     for f in fehler:
         print('FEHLER: ', f)
-    print(f'Liga-Test: {len(fehler)} Fehler (neues Spiel ohne Liga DE/EN, Hinweis und Sprung, Hinweis im Fenster, Sperre, Zurücksetzen, '
+    print(f'Liga-Test: {len(fehler)} Fehler (neues Spiel ohne Liga DE/EN, Hinweis und Sprung, Hinweis unter dem Feld, Sperre, grau ohne Wahl, Zurücksetzen, '
           f'ältere Daten „National League“, Export und Statistik mit leerer Liga)')
     sys.exit(1 if fehler else 0)
 

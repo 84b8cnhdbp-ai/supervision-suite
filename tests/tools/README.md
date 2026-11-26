@@ -167,10 +167,12 @@ python3 tests/tools/liga-test.py
 Neues Spiel und „Spiel zurücksetzen“ (echte Klicks) starten ohne Liga („Liga wählen …“ / „Choose league …“), die leere
 Liga steht sofort in den Spieldaten; in „Bereit zum Sichern?“ unter „Hinweise“ „Liga fehlt – Sichern trotzdem möglich“
 (kein Pflichtpunkt), der Tipp darauf öffnet „Spiel bearbeiten“ mit Fokus auf der Liga; im Fenster steht derselbe Hinweis
-unter der Karte „Spiel“ und verschwindet mit der Wahl; „Liga wählen …“ ist gesperrt (steht da, ist aber nicht wählbar);
+direkt unter dem Feld Liga in der Karte „Spiel“ (iPad quer/hochkant, Handy) und verschwindet mit der Wahl; „Liga wählen …“
+ist gesperrt (steht da, ist aber nicht wählbar) und grau wie die Platzhalter der Textfelder (Kontrast mind. 4.5:1 hell
+und dunkel), nach der Wahl in normaler Schriftfarbe;
 nach Wahl und „Fertig“ ist der Hinweis weg und die Liga gespeichert. Ältere Daten ohne Angabe zur Liga (ohne `spiel_liga`, ohne `global`) zeigen
 „National League“ (Datenregel `LIGA_OHNE_ANGABE` in `js/config.js`). Export JSON und CSV mit leerer Liga gehen, die
-exportierte Datei läuft durch die Saison-Statistik. Gegenproben: `liga-startwert`, `liga-sperre`, `liga-fenster-hinweis`.
+exportierte Datei läuft durch die Saison-Statistik. Gegenproben: `liga-startwert`, `liga-sperre`, `liga-fenster-hinweis`, `liga-grau`, `liga-hinweis-unter-karte`.
 
 ## Dateiwahl-Test – Knöpfe mit Dateiauswahl
 
