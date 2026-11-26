@@ -92,6 +92,7 @@ Fertig und getestet (`alle-tests.py` grün, Bilder gegen den alten Stand angeseh
 | Korrektur nach Test auf dem Mac: rechte Spalte scrollt bis zum unteren Ende mit; Dateiauswahl in Safari (Dateiwahl-Test) | `dea17a9` |
 | Neue Spiele mit 2-Mann (`standardSystem` in `js/club.js`); gespeicherte Spiele behalten ihr System, ohne Angabe 4-Mann (System-Test) | `a03ae27` |
 | Tag `stand-etappe-1` auf `5e59592` (gepusht); alle Vergleichstests gegen den Tag statt gegen `main`; Gegenproben nur noch in temporären Kopien (`gegenprobe.py`); Notfall-Ablauf geprobt | `6d2c67b` |
+| Neue Spiele ohne Liga („Liga wählen …“, Hinweis „Liga fehlt“ mit Sprung zur Liga); ältere Daten ohne Angabe zeigen „National League“ (Datenregel `LIGA_OHNE_ANGABE` in `js/config.js`); Liga-Test, Gegenprobe `liga-startwert` | `fca21f5` |
 
 Doku dazwischen: `b0355ac`, `32e57fc`, `651499c`, `caa3cbd`, `59bb44a`, `3407e00`, `ab11ea5`. Der Branch wird nach jedem Teilschritt auf GitHub gepusht (Sicherung).
 
