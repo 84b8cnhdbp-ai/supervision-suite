@@ -196,6 +196,8 @@ input, select, textarea {
   background-color: var(--input);
   color: var(--text);
 }
+/* Platzhalter überall gleich (auch „Liga wählen …“ ohne Wahl): --secondary, hell und dunkel mind. 4.5:1 (Bereiche-Test) */
+::placeholder { color: var(--secondary); opacity: 1; }
 input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--accent);
@@ -478,8 +480,7 @@ dialog.spiel-fenster::backdrop { background: rgba(0, 0, 0, 0.32); }
 .sf-zeile-gruppe { border-bottom: 1px solid var(--sep); }
 .sf-zeile-gruppe .sf-zeile { border-bottom: 0; }
 .sf-hinweis-feld { margin: -4px 0 0 156px; padding-bottom: 10px; }   /* beginnt an der Unterkante der Tippfläche (44 px) */
-/* Platzhalter im Fenster und „Liga wählen …“ ohne Wahl: gleiche Farbe, hell und dunkel mit genug Kontrast */
-.sf-zeile input::placeholder { color: var(--secondary); opacity: 1; }
+/* „Liga wählen …“ ohne Wahl: gleiche Farbe wie die Platzhalter (::placeholder oben) */
 .sf-zeile select.sf-leer { color: var(--secondary); }
 .sf-zeile select.sf-leer option { color: var(--text); }
 .sf-rollen { display: flex; flex-direction: column; }

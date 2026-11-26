@@ -72,6 +72,9 @@ GEGENPROBEN = {
          '      <p class="sf-hinweis" id="sfLigaHinweis" data-i18n="hint_league">Liga fehlt – Sichern trotzdem möglich</p>\n'
          '      <p class="sf-hinweis sf-hinweis-info" id="sfAltHinweis" hidden></p>'),
     ], 'nicht direkt unter dem Feld Liga', 'Hinweis wieder unter der ganzen Karte statt unter dem Feld'),
+    'platzhalter-kontrast': ('bereiche-test.py', [
+        ('css/app.css', '::placeholder { color: var(--secondary); opacity: 1; }\n', ''),
+    ], 'Platzhalter unter 4.5:1', 'Platzhalter wieder in der Standardfarbe des Browsers'),
     'dateiwahl-display-none': ('dateiwahl-test.py', [
         ('index.html', 'id="kaderDatei" class="datei-feld"', 'id="kaderDatei" class="datei-feld" hidden'),
     ], 'display: none', 'Dateifeld wieder display: none'),

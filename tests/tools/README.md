@@ -236,6 +236,10 @@ Score (mit Rolle), Profil, Bereit zum Sichern?, Gespann-Durchschnitt, Profil des
 Bewertungen laden –, auch hochkant mit aufgelöster rechter Spalte; nur Bereiche der sichtbaren Ansicht; 834/1080/1194 px,
 DE/EN. VoiceOver in Safari kann abweichen: auf dem iPad von Hand gegenprüfen.
 
+Dazu Kontrast der Platzhalter: jedes Feld mit Platzhalter (Bewertung, Gespann, Szene-Fenster, „Spiel bearbeiten“, auch
+die Felder „anderer Name“) hell und dunkel mind. 4.5:1 gegen seinen tatsächlichen Hintergrund, alle in derselben Farbe
+(`--secondary`, wie „Liga wählen …“); kein Platzhalter bleibt ungeprüft. Gegenprobe: `platzhalter-kontrast`.
+
 ## Animations-Test – Übergänge
 
 ```sh
