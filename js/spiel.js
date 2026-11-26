@@ -74,6 +74,7 @@ function fuelleSpielDialog() {
 
 function aktualisiereSfHinweise() {
   document.getElementById('sfNrHinweis').hidden = !!document.getElementById('spiel_id').value.trim();
+  document.getElementById('sfLigaHinweis').hidden = !!document.getElementById('spiel_liga').value;
   const gegner = document.getElementById('spiel_gegner').value;
   const alt = sfAltePaarung !== null && gegner === sfAltePaarung;
   document.getElementById('sfPraefix').hidden = alt;
@@ -209,6 +210,7 @@ function initSpiel() {
   dlg.addEventListener('cancel', (e) => { e.preventDefault(); spielAbbrechen(); });   // Esc = Abbrechen
   document.getElementById('spielTitel').addEventListener('click', () => oeffneSpielDialog());
   document.getElementById('spiel_id').addEventListener('input', aktualisiereSfHinweise);
+  document.getElementById('spiel_liga').addEventListener('change', aktualisiereSfHinweise);
   document.getElementById('spiel_gegner').addEventListener('input', aktualisiereSfHinweise);
   aktualisiereSpielTitel();
   // Noch kein Spiel erfasst (kein Gegner und kein Datum): Fenster automatisch öffnen

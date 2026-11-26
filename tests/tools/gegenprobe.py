@@ -57,6 +57,12 @@ GEGENPROBEN = {
     'liga-startwert': ('liga-test.py', [
         ('js/storage.js', "  if (!raw) gameData.global.spiel_liga = '';\n", ''),
     ], 'neues Spiel Liga', 'neues Spiel wieder mit „National League“ statt ohne Liga'),
+    'liga-sperre': ('liga-test.py', [
+        ('index.html', '<option value="" disabled data-i18n="league_choose">', '<option value="" data-i18n="league_choose">'),
+    ], 'nicht gesperrt', '„Liga wählen …“ wieder wählbar'),
+    'liga-fenster-hinweis': ('liga-test.py', [
+        ('js/spiel.js', "  document.getElementById('sfLigaHinweis').hidden = !!document.getElementById('spiel_liga').value;\n", ''),
+    ], 'Hinweis im Fenster bleibt', 'Hinweis im Fenster verschwindet nach der Wahl nicht'),
     'dateiwahl-display-none': ('dateiwahl-test.py', [
         ('index.html', 'id="kaderDatei" class="datei-feld"', 'id="kaderDatei" class="datei-feld" hidden'),
     ], 'display: none', 'Dateifeld wieder display: none'),

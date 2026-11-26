@@ -4,6 +4,9 @@ Prüft (echte Klicks, wo die App bedient wird):
 - leerer Start: „Liga wählen …“ (DE) / „Choose league …“ (EN) gewählt, Liga leer sofort in den Spieldaten vermerkt
 - „Bereit zum Sichern?“: unter „Hinweise“ „Liga fehlt – Sichern trotzdem möglich“ (kein Pflichtpunkt); Tipp darauf
   öffnet „Spiel bearbeiten“ mit Fokus auf der Liga; Liga wählen + „Fertig“ -> Hinweis weg, gespeichert, nach Neuladen da
+- Fenster „Spiel bearbeiten“: unter der Karte „Spiel“ derselbe Hinweis (DE/EN), weg sobald eine Liga gewählt ist
+- „Liga wählen …“ gesperrt: steht da, solange keine Liga gewählt ist, ist aber nicht wählbar (einziger leerer Eintrag,
+  disabled). Pfeiltasten verändern eine geschlossene Auswahl im Test-Chrome nicht – darum Prüfung über die Einträge
 - „Spiel zurücksetzen“ (Menü „Mehr“, roter Knopf) bei einem Spiel mit Liga: danach ohne Liga
 - ältere Daten ohne Angabe zur Liga (ohne spiel_liga, ohne global): „National League“, kein Hinweis; „Fertig“ speichert sie
 - Export mit leerer Liga: JSON (spiel_liga "") und CSV (Zeile Liga leer) gehen; die exportierte Datei läuft durch die
@@ -21,6 +24,9 @@ SPEICHER = "JSON.parse(localStorage.getItem('referee_multi_supervision_data') ||
 OFFEN = "document.getElementById('spielDialog').open"
 WAHL = "(() => { const s = document.getElementById('spiel_liga'); return { wert: s.value, text: s.options[s.selectedIndex] && s.options[s.selectedIndex].textContent }; })()"
 HINWEISE = "[...document.querySelectorAll('#bereitListe .bereit-hinweis')].map((x) => [x.dataset.punkt, x.textContent])"
+FENSTER_HINWEIS = "(() => { const h = document.getElementById('sfLigaHinweis'); return h && !h.hidden && h.offsetParent !== null ? h.textContent : null; })()"
+# alle Einträge mit leerem Wert: [gesperrt?, Text] – erwartet genau einer, gesperrt
+LEERE_EINTRAEGE = "[...document.getElementById('spiel_liga').options].filter((o) => o.value === '').map((o) => [o.disabled, o.textContent])"
 PFLICHT = "[...document.querySelectorAll('#bereitListe .bereit-fehlt')].map((x) => x.dataset.punkt)"
 
 
@@ -49,6 +55,8 @@ def main():
                 b.oeffnen(srv.basis + '/index.html')
                 pruefe(b.js(OFFEN), f'{sprache}: „Spiel bearbeiten“ öffnet sich bei neuem Spiel nicht')
                 pruefe(b.js(WAHL) == {'wert': '', 'text': wahl}, f'{sprache}: neues Spiel Liga {b.js(WAHL)}, erwartet leer mit „{wahl}“')
+                pruefe(b.js(LEERE_EINTRAEGE) == [[True, wahl]], f'{sprache}: „{wahl}“ nicht gesperrt: {b.js(LEERE_EINTRAEGE)}')
+                pruefe(b.js(FENSTER_HINWEIS) == hinweis, f'{sprache}: Hinweis im Fenster {b.js(FENSTER_HINWEIS)!r}, erwartet „{hinweis}“')
                 b.taste('Escape')
                 pruefe(b.js("gameData.global.spiel_liga") == '', f'{sprache}: leere Liga nicht in den Spieldaten vermerkt: {b.js("gameData.global.spiel_liga")!r}')
                 pruefe(hinweis_liga() and hinweis_liga()[0][1].endswith(hinweis), f'{sprache}: Hinweis Liga fehlt: {b.js(HINWEISE)}')
@@ -65,6 +73,8 @@ def main():
                 b.klick('#bereitListe [data-punkt=liga]')
             pruefe(b.js(OFFEN) and b.js('document.activeElement.id') == 'spiel_liga', 'Tipp auf „Liga fehlt“ öffnet nicht die Liga im Fenster')
             b.js("(() => { const s = document.getElementById('spiel_liga'); s.value = 'U14-Elit'; s.dispatchEvent(new Event('change')); })()")
+            pruefe(b.js(FENSTER_HINWEIS) is None, 'Hinweis im Fenster bleibt nach der Wahl')
+            pruefe(b.js(LEERE_EINTRAEGE) == [[True, 'Liga wählen …']], f'Nach der Wahl „Liga wählen …“ wieder wählbar: {b.js(LEERE_EINTRAEGE)}')
             b.klick('#sfFertig')
             pruefe(not hinweis_liga(), 'Hinweis Liga bleibt nach der Wahl')
             pruefe(gespeichert().get('spiel_liga') == 'U14-Elit', f'Gewählte Liga nicht gespeichert: {gespeichert()}')
@@ -91,6 +101,7 @@ def main():
                 pruefe(not hinweis_liga(), f'Ältere Daten {art}: Hinweis Liga fehlt angezeigt')
                 b.klick('#spielTitel')
                 pruefe(b.js(WAHL)['wert'] == 'National League', f'Ältere Daten {art}: Fenster zeigt Liga {b.js(WAHL)}')
+                pruefe(b.js(FENSTER_HINWEIS) is None, f'Ältere Daten {art}: Hinweis im Fenster angezeigt')
                 b.klick('#sfFertig')
                 pruefe(gespeichert().get('spiel_liga') == 'National League', f'Ältere Daten {art}: „Fertig“ speichert {gespeichert().get("spiel_liga")!r}')
 
@@ -127,7 +138,7 @@ def main():
 
     for f in fehler:
         print('FEHLER: ', f)
-    print(f'Liga-Test: {len(fehler)} Fehler (neues Spiel ohne Liga DE/EN, Hinweis und Sprung, Zurücksetzen, '
+    print(f'Liga-Test: {len(fehler)} Fehler (neues Spiel ohne Liga DE/EN, Hinweis und Sprung, Hinweis im Fenster, Sperre, Zurücksetzen, '
           f'ältere Daten „National League“, Export und Statistik mit leerer Liga)')
     sys.exit(1 if fehler else 0)
 
