@@ -158,7 +158,37 @@ git push origin main
 - Datenmodell in `localStorage` mit Versionsnummer; bestehende Daten beim ersten Start automatisch übernehmen.
 - „Zurücksetzen“ betrifft nur noch das aktuelle Spiel und fragt mit eigenem Fenster nach.
 
-**Fertig, wenn:** Zwei Spiele parallel bearbeitbar; alte Exportdateien öffnen sich korrekt; nach dem Update ist das laufende Spiel noch da.
+Arbeits-Branch `etappe-3` (von `main` = `stand-etappe-2`), Referenz für Vergleiche: Tag `stand-etappe-2`. Vorbereitung erledigt (`a35b4e1`): Referenz umgestellt, Wechsel-Test prüft beide Wege (ab `stand-etappe-2` und ab `stand-etappe-1`).
+
+### Entscheide (Livio, 26.11.2026)
+- **Rückweg:** Ein alter Stand (Etappe 1 oder 2) zeigt nach einem Rückweg nur das zuletzt aktive Spiel – genügt. Die übrigen Spiele bleiben im neuen Speicher und sind nach dem nächsten Wechsel nach vorne wieder da.
+- **„Erledigt“** = alle besetzten Rollen exportiert. Wird danach etwas geändert, zeigt die Liste „geändert seit Export“. Dafür speichert die App je Schiedsrichter den Zeitpunkt des Exports (nur im Speicher, nicht im Export-JSON).
+- **Bewertung öffnen bei vorhandenem Spiel:** Rückfrage mit „Überschreiben“, „Als Kopie“, „Abbrechen“; „Abbrechen“ vorgewählt.
+- **Aufbewahrung:** Spiele unbegrenzt behalten; erledigte Spiele archivierbar (ausgeblendet, wiederherstellbar). Löschen nur mit Rückfrage.
+
+### Grundsätze für die Daten (gelten für alle Teilschritte)
+- **Alter Schlüssel bleibt:** Etappe 1 und 2 lesen nur `referee_multi_supervision_data` (ein Spiel). Dieser Schlüssel wird nie gelöscht; die neue Version spiegelt das aktive Spiel dorthin, damit ein Rückweg das zuletzt bearbeitete Spiel zeigt.
+- **Neuer Speicher** für mehrere Spiele unter eigenem Schlüssel, mit Versionsnummer des Datenmodells.
+- **Sicherungskopie:** Vor der ersten Übernahme legt die App einmalig eine unveränderte Kopie der alten Daten unter eigenem Schlüssel an (wird nie überschrieben).
+- **Übernahme nicht zerstörend und wiederholbar:** Kaputte oder unbekannte Daten bleiben unangetastet, mit klarer Meldung; ein zweiter Start ändert nichts mehr.
+- **Zuordnung nach einem Rückweg über den Inhalt, nicht über eine ID:** Die alten Versionen bauen `gameData.global` beim Speichern aus festen Feldern neu auf – eine ID im alten Schlüssel ginge verloren. Zuordnung darum über einen Vergleich mit dem zuletzt gespiegelten Stand bzw. über Begegnung, Datum und Spielnummer. Ein in der alten Version neu begonnenes Spiel wird als **neues** Spiel erkannt und überschreibt kein bestehendes.
+- **Speicherplatz:** Die App überwacht den belegten Platz und warnt rechtzeitig. Speichern darf nie stillschweigend scheitern; ein Fehler beim Speichern wird klar gemeldet (Fenster, nicht nur Konsole).
+- Export-Format bleibt `1.1`; Dateien 1.0 und 1.1 bleiben importierbar. Gespeicherte Werte bleiben deutsch.
+
+### Teilschritte
+| | Inhalt | sichtbar? |
+|---|---|---|
+| 3.0 | **Testwerkzeuge robuster:** Bei abgerissener Verbindung zu Chrome neu verbinden und den Schritt einmal wiederholen; als Hinweis gekennzeichnet („wiederholt nach Verbindungsabbruch“), ohne echte Fehler zu verdecken (ein Fehler im wiederholten Schritt bleibt ein Fehler; zweiter Abbruch = Fehler). Gegenprobe dafür (künstlicher Verbindungsabbruch). | nein |
+| 3.1 | **Übernahme alter Daten (Etappe 1 und 2):** neues Datenmodell mit Version; einmalige Sicherungskopie; Übernahme auch ohne System, ohne Liga, ohne `global`, bei kaputtem JSON; Spiegel des aktiven Spiels auf den alten Schlüssel; Erkennen von Änderungen nach einem Rückweg (Zuordnung über den Inhalt, siehe oben); Speicherplatz überwachen, Speicherfehler melden. Tests: eigener Übernahme-Test mit Beispielständen (nur erfundene Daten); Wechsel-Test beide Wege mit neuem Speicher, Sicherungskopie, Rückweg auf Etappe 2 und 1, **in der alten Version ändern bzw. neues Spiel anfangen, wieder vorwärts** (Änderung übernommen, neues Spiel als neues Spiel, nichts überschrieben); Speicher voll (simuliert) mit Meldung. Gegenproben. | nein (Bilder pixelgleich) |
+| 3.2 | **Spielliste** in der Seitenleiste (Heute / Geplant / Erledigt nach Datum, „geändert seit Export“), Spiel wechseln, „Neues Spiel“ (Standard-System, ohne Liga) | ja |
+| 3.3 | **Spiel duplizieren, archivieren** (ausgeblendet, wiederherstellbar), **löschen** nur mit Rückfrage | ja |
+| 3.4 | **„Spiel zurücksetzen“** betrifft nur das aktuelle Spiel (eigenes Fenster, „Abbrechen“ vorgewählt) | ja |
+| 3.5 | **Bewertung öffnen:** Exportdateien 1.0 und 1.1 ins Formular laden, passendem Spiel zuordnen oder neu anlegen; bei vorhandener Bewertung Rückfrage „Überschreiben“ / „Als Kopie“ / „Abbrechen“ („Abbrechen“ vorgewählt) | ja |
+| 3.6 | **Abschluss:** alle Texte DE/EN (FR/IT), Notfall-Ablauf mit Ziel `stand-etappe-2` in einer Wegwerf-Kopie proben, iPad-Test (Home-Bildschirm-App), Merge-Checkliste wie bei Etappe 2 (Sicherung der Bewertungen vorher, Test nach dem Merge auf MacBook und iPad) | – |
+
+Nach jedem Teilschritt: `alle-tests.py` komplett, betroffene Gegenproben, Commit, `git push origin etappe-3`. Mit 3.0 erst nach Livios Go beginnen; jeder weitere Teilschritt nach Livios Go.
+
+**Fertig, wenn:** Zwei Spiele parallel bearbeitbar; alte Exportdateien öffnen sich korrekt; nach dem Update ist das laufende Spiel noch da – von Etappe 2 **und** von Etappe 1 aus; Rückweg auf Etappe 2 und 1 zeigt das zuletzt aktive Spiel, und Änderungen dort gehen beim nächsten Wechsel nach vorne nicht verloren.
 
 ---
 
