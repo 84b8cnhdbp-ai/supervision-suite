@@ -188,6 +188,14 @@ Arbeits-Branch `etappe-3` (von `main` = `stand-etappe-2`), Referenz für Verglei
 
 Nach jedem Teilschritt: `alle-tests.py` komplett, betroffene Gegenproben, Commit, `git push origin etappe-3`. Mit 3.0 erst nach Livios Go beginnen; jeder weitere Teilschritt nach Livios Go.
 
+**Stand Etappe 3:**
+| Teilschritt | Commit |
+|---|---|
+| Vorbereitung: Referenz `stand-etappe-2`, Wechsel-Test mit beiden Wegen | `a35b4e1` |
+| 3.0 Testwerkzeuge: nach Verbindungsabbruch einmal von vorne (nur ohne vorherige Fehler, als Hinweis gezählt); sw-test: Szenario ohne Antwort ist jetzt ein Fehler (vorher grün mit „TIMEOUT“); 4 Gegenproben; `alle-tests.py` 20/20, Katalog 20/20 | `890f822` |
+
+**Als Nächstes:** 3.1 Übernahme alter Daten – nur nach Livios Go.
+
 **Fertig, wenn:** Zwei Spiele parallel bearbeitbar; alte Exportdateien öffnen sich korrekt; nach dem Update ist das laufende Spiel noch da – von Etappe 2 **und** von Etappe 1 aus; Rückweg auf Etappe 2 und 1 zeigt das zuletzt aktive Spiel, und Änderungen dort gehen beim nächsten Wechsel nach vorne nicht verloren.
 
 ---
