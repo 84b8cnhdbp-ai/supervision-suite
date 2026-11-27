@@ -14,13 +14,13 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, Browser, server, daten_setzen, LEER  # noqa: E402
+from werkzeug import REPO, Browser, server, daten_setzen, LEER, fuehre_aus, pruefliste  # noqa: E402
 
 FENSTER = "document.querySelector('dialog.fenster[open]')"
 
 
 def main():
-    fehler = []
+    fehler = pruefliste()
 
     def pruefe(bedingung, text):
         if not bedingung:
@@ -138,4 +138,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    fuehre_aus(main)   # nach Verbindungsabbruch zu Chrome einmal von vorne (werkzeug.py)

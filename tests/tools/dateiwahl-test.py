@@ -16,7 +16,7 @@ import sys
 import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, FIXTURES, Browser, server, daten_setzen, LEER  # noqa: E402
+from werkzeug import REPO, FIXTURES, Browser, server, daten_setzen, LEER, fuehre_aus, pruefliste  # noqa: E402
 
 # Merkt sich für jedes programmatische click() auf ein Dateifeld, in welchem Ereignis es geschah
 BEOBACHTEN = """(() => { window.__dateiKlicks = [];
@@ -39,7 +39,7 @@ KNOEPFE = [
 
 
 def main():
-    fehler = []
+    fehler = pruefliste()
 
     def pruefe(ok, text):
         if not ok:
@@ -103,4 +103,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    fuehre_aus(main)   # nach Verbindungsabbruch zu Chrome einmal von vorne (werkzeug.py)

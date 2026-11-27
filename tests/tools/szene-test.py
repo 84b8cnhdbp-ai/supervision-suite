@@ -17,7 +17,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, Browser, server, daten_setzen, LEER  # noqa: E402
+from werkzeug import REPO, Browser, server, daten_setzen, LEER, fuehre_aus, pruefliste  # noqa: E402
 
 GESPEICHERT = "JSON.parse(localStorage.getItem('referee_multi_supervision_data')).referees['4-Man_h1']"
 OFFEN = "document.getElementById('szeneDialog').open"
@@ -26,7 +26,7 @@ GEMISCHT = ('[P1 05:12] Erfundene Szene\\nfreier Text dazwischen\\n[2. Drittel 8
 
 
 def main():
-    fehler = []
+    fehler = pruefliste()
 
     def pruefe(ok, text):
         if not ok:
@@ -214,4 +214,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    fuehre_aus(main)   # nach Verbindungsabbruch zu Chrome einmal von vorne (werkzeug.py)

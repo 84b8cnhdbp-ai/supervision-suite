@@ -15,7 +15,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, Browser, server, daten_setzen, LEER  # noqa: E402
+from werkzeug import REPO, Browser, server, daten_setzen, LEER, fuehre_aus, pruefliste  # noqa: E402
 
 BREITEN = [(834, 1194, 'iPad hochkant'), (1080, 810, 'iPad quer 1080'), (1194, 834, 'iPad quer')]
 # Ansicht -> erwartete Bereiche (i18n-Schlüssel des Titels)
@@ -82,7 +82,7 @@ def platzhalter(b, basis, fehler):
 
 
 def main():
-    fehler = []
+    fehler = pruefliste()
     anzahl = 0
     srv = server(REPO, {'/__leer': LEER})
     try:
@@ -120,4 +120,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    fuehre_aus(main)   # nach Verbindungsabbruch zu Chrome einmal von vorne (werkzeug.py)

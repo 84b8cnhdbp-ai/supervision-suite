@@ -15,7 +15,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import shutil
-from werkzeug import REPO, REFERENZ, Browser, server, daten_setzen, LEER, git_stand  # noqa: E402
+from werkzeug import REPO, REFERENZ, Browser, server, daten_setzen, LEER, git_stand, fuehre_aus, pruefliste  # noqa: E402
 
 LADEN = """(async (extra) => { selectStatsTab();
   const n = ['beispiel-v1.0.json','beispiel-v1.0-ohne-evaluation.json','beispiel-v1.1.json','beispiel-v1.1-mit-na.json','beispiel-spiel.json'];
@@ -41,7 +41,7 @@ def kontrast(a, b):
 
 
 def main():
-    fehler = []
+    fehler = pruefliste()
 
     def pruefe(ok, text):
         if not ok:
@@ -188,4 +188,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    fuehre_aus(main)   # nach Verbindungsabbruch zu Chrome einmal von vorne (werkzeug.py)

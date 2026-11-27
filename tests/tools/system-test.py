@@ -17,7 +17,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, Browser, server, daten_setzen, LEER  # noqa: E402
+from werkzeug import REPO, Browser, server, daten_setzen, LEER, fuehre_aus, pruefliste  # noqa: E402
 
 SPEICHER = "JSON.parse(localStorage.getItem('referee_multi_supervision_data') || 'null')"
 ZUSTAND = """({ system: currentSystem, seg: segWert('system_typ'), reiter: [...document.querySelectorAll('#tabsContainer [data-reiter]')].filter((e) => SYSTEM_CONFIGS[currentSystem].some((r) => r.id === e.dataset.reiter)).length,   // ohne „Gespann“
@@ -37,7 +37,7 @@ def kopie_mit_verein(wert):
 
 
 def main():
-    fehler = []
+    fehler = pruefliste()
 
     def pruefe(ok, text):
         if not ok:
@@ -129,4 +129,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    fuehre_aus(main)   # nach Verbindungsabbruch zu Chrome einmal von vorne (werkzeug.py)

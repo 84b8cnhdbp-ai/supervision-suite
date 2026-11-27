@@ -47,7 +47,7 @@ import threading
 import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, FIXTURES, REFERENZ, Browser, git_stand  # noqa: E402
+from werkzeug import REPO, FIXTURES, REFERENZ, Browser, git_stand, fuehre_aus, pruefliste, VerbindungAbgebrochen  # noqa: E402
 
 _spec = importlib.util.spec_from_file_location('daten_test', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'daten-test.py'))
 _daten = importlib.util.module_from_spec(_spec)
@@ -277,7 +277,7 @@ AUSFUELLEN = {'etappe1': ausfuellen_etappe1, 'etappe2': ausfuellen_etappe2}
 # ---------------------------------------------------------------- ein Weg: alter Stand -> neu
 
 def lauf(von, fehler_gesamt, rueck_ordner=None, gegenprobe=False):
-    fehler = []
+    fehler = pruefliste()
 
     def pruefe(ok, text):
         if not ok:
@@ -486,6 +486,8 @@ def lauf(von, fehler_gesamt, rueck_ordner=None, gegenprobe=False):
             pruefe('blockiert' in badge, f'Ohne Erhöhung: Badge zeigt „{badge}“ statt „Update blockiert“')
       except _Fertig:
         pass
+      except VerbindungAbgebrochen:   # Chrome weg: fuehre_aus() entscheidet (einmal von vorne oder rot)
+        raise
       except (AbbruchFehler, RuntimeError, ConnectionError) as e:   # als Fehler melden, nicht abstürzen
         fehler.append(f'Abbruch: {str(e).splitlines()[0][:200]}')
     finally:
@@ -509,7 +511,7 @@ def main():
     rueck_ordner = sys.argv[sys.argv.index('--rueck') + 1] if '--rueck' in sys.argv else None
     if rueck_ordner and len(wege) != 1:
         wege = [REFERENZ]   # Rückweg aus dem Notfall-Ablauf gehört zum aktuellen Referenzstand
-    fehler, hinweise = [], []
+    fehler, hinweise = pruefliste(), []
     for von in wege:
         h = lauf(von, fehler, rueck_ordner, gegenprobe)
         if h:
@@ -524,4 +526,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    fuehre_aus(main)   # nach Verbindungsabbruch zu Chrome einmal von vorne (werkzeug.py)

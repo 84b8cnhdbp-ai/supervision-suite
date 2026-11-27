@@ -19,7 +19,7 @@ import shutil
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, ERGEBNISSE, REFERENZ, Browser, server, git_stand, daten_setzen, LEER  # noqa: E402
+from werkzeug import REPO, ERGEBNISSE, REFERENZ, Browser, server, git_stand, daten_setzen, LEER, fuehre_aus, pruefliste  # noqa: E402
 
 TEST_JS = r"""
 (async () => {
@@ -186,4 +186,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    fuehre_aus(main)   # nach Verbindungsabbruch zu Chrome einmal von vorne (werkzeug.py)

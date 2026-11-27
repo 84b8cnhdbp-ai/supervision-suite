@@ -14,6 +14,18 @@ Etappe 2, `5e59592`) – Geräte können noch auf dem älteren Stand sein und di
 
 **Gegenproben** nie im Arbeitsordner, immer in einer temporären Kopie: `python3 tests/tools/gegenprobe.py` (siehe unten).
 
+**Verbindungsabbruch zu Chrome** (Etappe 3.0): Stirbt der Test-Chrome (z. B. unter hoher Last), wiederholt der Test
+**einmal von vorne** (neues Chrome, neuer Server, neue Daten; `werkzeug.fuehre_aus`). Ein einzelner Befehl wird nie
+wiederholt, weil mit Chrome auch Seite und Speicher weg sind. Wiederholt wird nur, wenn bis zum Abbruch **keine Prüfung
+fehlgeschlagen** ist und kein JS-Fehler auftrat – sonst ist der Test rot und zeigt die bisherigen Fehler. Ein zweiter
+Abbruch ist ebenfalls rot. Die Wiederholung steht als Hinweis in der letzten Zeile („Hinweis: 1 Wiederholung nach
+Verbindungsabbruch“); `alle-tests.py` zeigt sie bei der Schlussmeldung und am Ende die Summe. Dafür meldet jeder Test
+seine Fehlerliste an (`fehler = pruefliste()`) und startet mit `fuehre_aus(main)`. Im Service-Worker-Test (ohne
+Debug-Verbindung) gilt dasselbe je Szenario: keine Antwort von Chrome → Szenario einmal von vorne; ein Szenario mit
+Ergebnis wird nie wiederholt; keine Antwort auch beim zweiten Mal oder ein leeres Ergebnis ist ein Fehler.
+Gegenproben: `verbindungsabbruch-wiederholt`, `sw-keine-antwort-einmal` (grün mit Hinweis), `verbindungsabbruch-mit-fehler`,
+`sw-keine-antwort-immer` (rot).
+
 **Bewegung:** Alle Tests laufen mit „Bewegung reduzieren“ (`prefers-reduced-motion`), damit Bilder und Messungen nie
 mitten in einer Animation entstehen. Nur der Animations-Test schaltet die Übergänge ein (`b.bewegung = True`).
 

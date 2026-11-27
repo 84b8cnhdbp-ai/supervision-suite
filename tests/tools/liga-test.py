@@ -21,7 +21,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, Browser, server, daten_setzen, LEER  # noqa: E402
+from werkzeug import REPO, Browser, server, daten_setzen, LEER, fuehre_aus, pruefliste  # noqa: E402
 
 SPEICHER = "JSON.parse(localStorage.getItem('referee_multi_supervision_data') || 'null')"
 OFFEN = "document.getElementById('spielDialog').open"
@@ -49,7 +49,7 @@ PFLICHT = "[...document.querySelectorAll('#bereitListe .bereit-fehlt')].map((x) 
 
 
 def main():
-    fehler = []
+    fehler = pruefliste()
 
     def pruefe(ok, text):
         if not ok:
@@ -184,4 +184,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    fuehre_aus(main)   # nach Verbindungsabbruch zu Chrome einmal von vorne (werkzeug.py)

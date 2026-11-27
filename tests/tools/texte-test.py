@@ -16,7 +16,7 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, Browser, server, daten_setzen, LEER  # noqa: E402
+from werkzeug import REPO, Browser, server, daten_setzen, LEER, fuehre_aus, pruefliste  # noqa: E402
 
 STRENG = '--streng' in sys.argv
 
@@ -46,7 +46,7 @@ def verwendete_schluessel():
 
 
 def main():
-    fehler, hinweise = [], []
+    fehler, hinweise = pruefliste(), []
     srv = server(REPO, {'/__leer': LEER})
     try:
         with Browser() as b:
@@ -140,4 +140,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    fuehre_aus(main)   # nach Verbindungsabbruch zu Chrome einmal von vorne (werkzeug.py)

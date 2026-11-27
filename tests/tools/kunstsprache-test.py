@@ -14,7 +14,7 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, Browser, server, daten_setzen, LEER  # noqa: E402
+from werkzeug import REPO, Browser, server, daten_setzen, LEER, fuehre_aus, pruefliste  # noqa: E402
 
 # Kunstsprache anlegen und einschalten, ohne die Sprachwahl zu speichern
 EIN = r"""(() => {
@@ -81,7 +81,7 @@ def offen(text, daten):
 
 
 def main():
-    fehler = []
+    fehler = pruefliste()
     srv = server(REPO, {'/__leer': LEER})
     try:
         with Browser() as b:
@@ -141,4 +141,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    fuehre_aus(main)   # nach Verbindungsabbruch zu Chrome einmal von vorne (werkzeug.py)

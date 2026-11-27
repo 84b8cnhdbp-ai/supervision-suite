@@ -20,7 +20,16 @@ import tempfile
 HIER = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HIER, '..', '..'))
 
-# name: (Test, [(Datei, alter Text, neuer Text)], erwartete Meldung, Beschreibung)
+# name: (Test, [(Datei, alter Text, neuer Text)], erwartete Meldung, Beschreibung[, erwarteter Abbruchcode])
+# Abbruchcode Standard 1 (Test muss rot werden). 0 nur für Gegenproben, die zeigen, dass ein Verbindungsabbruch allein
+# einmal wiederholt wird (grün MIT Hinweis – die erwartete Meldung ist dann der Hinweis).
+ABBRUCH_LIGA = ('tests/tools/liga-test.py',
+                '            # 1b. Grau ohne Wahl wie die Platzhalter',
+                "            if not getattr(sys, '_gegenprobe_abbruch', False):   # Gegenprobe: Chrome einmal hart beenden\n"
+                "                sys._gegenprobe_abbruch = True\n"
+                "                b.proc.kill(); b.proc.wait()\n"
+                '            # 1b. Grau ohne Wahl wie die Platzhalter')
+ANTWORT_SW = "    ok = M['done'].wait(240); p.kill()"
 GEGENPROBEN = {
     'kunstsprache-feste-texte': ('kunstsprache-test.py', [
         ('index.html', '<p class="sf-hinweis sf-hinweis-info" id="sfAltHinweis" hidden></p>',
@@ -78,6 +87,19 @@ GEGENPROBEN = {
     'platzhalter-kontrast': ('bereiche-test.py', [
         ('css/app.css', '::placeholder { color: var(--secondary); opacity: 1; }\n', ''),
     ], 'Platzhalter unter 4.5:1', 'Platzhalter wieder in der Standardfarbe des Browsers'),
+    'verbindungsabbruch-wiederholt': ('liga-test.py', [ABBRUCH_LIGA],
+        'Hinweis: 1 Wiederholung nach Verbindungsabbruch', 'Chrome bricht einmal ab: Test wiederholt, grün mit Hinweis', 0),
+    'verbindungsabbruch-mit-fehler': ('liga-test.py', [ABBRUCH_LIGA,
+        ('js/storage.js', "  if (!raw) gameData.global.spiel_liga = '';\n", '')],
+        'nicht wiederholt', 'echter Fehler, danach Abbruch: rot, keine Wiederholung'),
+    'sw-keine-antwort-einmal': ('sw-test.py', [
+        ('tests/tools/sw-test.py', ANTWORT_SW,
+         "    ok = (M['done'].wait(240) if getattr(sys, '_gp', False) else setattr(sys, '_gp', True)); p.kill()")],
+        'Hinweis: 1 Wiederholung nach Verbindungsabbruch', 'Szenario antwortet einmal nicht: wiederholt, grün mit Hinweis', 0),
+    'sw-keine-antwort-immer': ('sw-test.py', [
+        ('tests/tools/sw-test.py', ANTWORT_SW,
+         "    ok = M['done'].wait(240) if sc != 'offline' else False; p.kill()")],
+        'auch bei der Wiederholung', 'Szenario antwortet nie: rot (vorher grün mit „TIMEOUT“)'),
     'dateiwahl-display-none': ('dateiwahl-test.py', [
         ('index.html', 'id="kaderDatei" class="datei-feld"', 'id="kaderDatei" class="datei-feld" hidden'),
     ], 'display: none', 'Dateifeld wieder display: none'),
@@ -97,7 +119,8 @@ def fingerabdruck(ordner):
 
 
 def gegenprobe(name):
-    test, aenderungen, erwartet, _ = GEGENPROBEN[name]
+    test, aenderungen, erwartet, _, *rest = GEGENPROBEN[name]
+    soll_code = rest[0] if rest else 1
     kopie = tempfile.mkdtemp(prefix='gegenprobe-')
     try:
         shutil.copytree(REPO, kopie, dirs_exist_ok=True, ignore=shutil.ignore_patterns('ergebnisse', '__pycache__'))
@@ -109,8 +132,12 @@ def gegenprobe(name):
             open(p, 'w', encoding='utf-8').write(s.replace(alt, neu))
         r = subprocess.run([sys.executable, os.path.join(kopie, 'tests', 'tools', test)], capture_output=True, text=True, cwd=kopie)
         letzte = (r.stdout.strip().splitlines() or [''])[-1]
-        if r.returncode != 1:
-            return False, f'schlägt NICHT an (Abbruchcode {r.returncode}): {letzte[:90]}'
+        if r.returncode != soll_code:
+            return False, (f'schlägt NICHT an (Abbruchcode {r.returncode}): {letzte[:90]}' if soll_code == 1 else
+                           f'Abbruchcode {r.returncode} statt {soll_code}: {letzte[:90]}')
+        if soll_code == 0:
+            return (erwartet in r.stdout,
+                    f'grün mit Hinweis („{erwartet}“)' if erwartet in r.stdout else f'grün, aber ohne den Hinweis „{erwartet}“')
         if erwartet not in r.stdout:
             stderr = (r.stderr.strip().splitlines() or [''])[-1]   # z. B. abgebrochene Verbindung zum Test-Chrome
             return False, f'rot, aber ohne die erwartete Meldung „{erwartet}“: {letzte[:90]}' + (f' [stderr: {stderr[:120]}]' if stderr else '')
@@ -122,7 +149,7 @@ def gegenprobe(name):
 
 def main():
     if '--liste' in sys.argv:
-        for n, (t, _, _, beschr) in GEGENPROBEN.items():
+        for n, (t, _, _, beschr, *_) in GEGENPROBEN.items():
             print(f'{n:<28} {t:<20} {beschr}')
         return
     namen = [a for a in sys.argv[1:] if not a.startswith('--')] or list(GEGENPROBEN)

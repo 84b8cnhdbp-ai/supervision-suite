@@ -12,7 +12,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, Browser, server, daten_setzen, LEER  # noqa: E402
+from werkzeug import REPO, Browser, server, daten_setzen, LEER, fuehre_aus, pruefliste  # noqa: E402
 
 TESTVEREIN = {'name': 'HC Musterdorf', 'kurz': 'HCM', 'logo': 'logo-test.svg',
               'halle': 'Musterhalle', 'exportName': 'HC Musterdorf'}
@@ -58,7 +58,7 @@ def testkopie():
 
 
 def main():
-    fehler = []
+    fehler = pruefliste()
     wurzel = testkopie()
     srv = server(wurzel, {'/__leer': LEER})
     try:
@@ -135,4 +135,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    fuehre_aus(main)   # nach Verbindungsabbruch zu Chrome einmal von vorne (werkzeug.py)

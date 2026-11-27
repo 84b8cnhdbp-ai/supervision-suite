@@ -4,6 +4,7 @@
 - Browser: Headless Chrome mit eigener, leerer Profil-Ablage, gesteuert über das
   Chrome DevTools Protocol (CDP) – Fenstergrösse, Dark Mode, Druck, JavaScript, Bilder.
 - git_stand(): einen Commit/Branch (z. B. main) in einen temporären Ordner auspacken.
+- fuehre_aus(): startet main() eines Tests; nach einem Verbindungsabbruch zu Chrome einmal neu (siehe unten).
 """
 import base64
 import http.server
@@ -90,6 +91,66 @@ def git_stand(ref):
 
 # ---------------------------------------------------------------- Browser (CDP)
 
+# ---------------------------------------------------------------- Verbindungsabbruch (Etappe 3.0)
+#
+# Stirbt Chrome (z. B. unter hoher Last), sind Seite, Speicher und Zwischenstand weg – ein einzelner Befehl lässt sich
+# nicht sinnvoll wiederholen. Wiederholt wird darum der ganze Testlauf (neues Chrome, neuer Server, neue Daten), und zwar
+# höchstens einmal und nur, wenn bis zum Abbruch keine Prüfung fehlgeschlagen ist und kein JS-Fehler auftrat.
+# Sonst: rot, mit den bisherigen Fehlern. Ein zweiter Abbruch ist ebenfalls rot. Eine Wiederholung steht als Hinweis
+# in der letzten Zeile („Hinweis: 1 Wiederholung nach Verbindungsabbruch“); alle-tests.py zählt sie.
+
+class VerbindungAbgebrochen(ConnectionError):
+    """Verbindung zu Chrome abgebrochen (Chrome beendet, Socket geschlossen oder keine Antwort). Nie ein Prüffehler."""
+
+
+WIEDERHOLUNG_HINWEIS = 'Wiederholung nach Verbindungsabbruch'
+_LAUF = {'listen': [], 'browser': []}
+
+
+def pruefliste():
+    """Neue Fehlerliste eines Tests. Angemeldet, damit fuehre_aus() bei einem Abbruch sieht, ob schon etwas fehlschlug."""
+    liste = []
+    _LAUF['listen'].append(liste)
+    return liste
+
+
+def _js_fehler(b):
+    return [f for f in b.fehler if 'Update nicht möglich' not in f]
+
+
+def fuehre_aus(main):
+    """Führt main() aus. Bei VerbindungAbgebrochen: einmal neu, wenn bis dahin nichts fehlschlug; sonst rot."""
+    wiederholt = 0
+    while True:
+        _LAUF['listen'].clear()
+        _LAUF['browser'].clear()
+        try:
+            main()
+        except VerbindungAbgebrochen as e:
+            bisher = [f for liste in _LAUF['listen'] for f in liste]
+            js = [f for b in _LAUF['browser'] for f in _js_fehler(b)]
+            if bisher or js or wiederholt:
+                for f in bisher:
+                    print('FEHLER: ', f)
+                for f in js:
+                    print('FEHLER:  JS-Fehler vor dem Abbruch:', f)
+                grund = ('auch bei der Wiederholung' if wiederholt else
+                         'nicht wiederholt, weil vorher schon Prüfungen fehlschlugen oder JS-Fehler auftraten')
+                print(f'FEHLER:  Verbindung zu Chrome abgebrochen ({e}) – {grund}')
+                print(f'Abbruch: Verbindung zu Chrome abgebrochen – {grund}')
+                sys.exit(1)
+            wiederholt += 1
+            print(f'Hinweis: Verbindung zu Chrome abgebrochen ({e}) – Test wird einmal von vorne wiederholt')
+            continue
+        except SystemExit:
+            if wiederholt:
+                print(f'Hinweis: {wiederholt} {WIEDERHOLUNG_HINWEIS}')
+            raise
+        if wiederholt:
+            print(f'Hinweis: {wiederholt} {WIEDERHOLUNG_HINWEIS}')
+        return
+
+
 class _WebSocket:
     """Minimaler WebSocket-Client (nur Text, ausreichend für CDP)."""
 
@@ -153,6 +214,7 @@ class Browser:
 
     def __enter__(self):
         self.fehler = []
+        _LAUF['browser'].append(self)
         self.dateiwahl = []   # Page.fileChooserOpened-Ereignisse
         self.profil = tempfile.mkdtemp(prefix='chrome-')
         s = socket.socket(); s.bind(('127.0.0.1', 0)); port = s.getsockname()[1]; s.close()
@@ -200,6 +262,14 @@ class Browser:
         shutil.rmtree(self.profil, ignore_errors=True)
 
     def befehl(self, methode, **params):
+        try:
+            return self._befehl(methode, **params)
+        except VerbindungAbgebrochen:
+            raise
+        except (ConnectionError, socket.timeout, OSError) as e:   # Socket zu, keine Antwort (120 s): kein Prüffehler
+            raise VerbindungAbgebrochen(f'{methode}: {type(e).__name__}: {e}') from e
+
+    def _befehl(self, methode, **params):
         self.nr += 1
         nr = self.nr
         self.ws.senden(json.dumps({'id': nr, 'method': methode, 'params': params}))

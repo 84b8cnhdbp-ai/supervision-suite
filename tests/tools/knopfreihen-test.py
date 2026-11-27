@@ -14,7 +14,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, Browser, server, daten_setzen, LEER  # noqa: E402
+from werkzeug import REPO, Browser, server, daten_setzen, LEER, fuehre_aus, pruefliste  # noqa: E402
 
 GROESSEN = [(768, 1024), (834, 1194), (1080, 810), (1194, 834), (1440, 900)]
 
@@ -83,7 +83,7 @@ MENU = "'#mehrMenu fieldset.seg'"
 
 
 def main():
-    fehler = []
+    fehler = pruefliste()
     srv = server(REPO, {'/__leer': LEER})
     try:
         with Browser() as b:
@@ -199,4 +199,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    fuehre_aus(main)   # nach Verbindungsabbruch zu Chrome einmal von vorne (werkzeug.py)

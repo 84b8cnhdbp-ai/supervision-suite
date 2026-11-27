@@ -16,7 +16,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from werkzeug import REPO, Browser, server, daten_setzen, LEER  # noqa: E402
+from werkzeug import REPO, Browser, server, daten_setzen, LEER, fuehre_aus, pruefliste  # noqa: E402
 
 FELDER = ['note_frei_1', 'note_frei_4', 'note_frei_7', 'top_strengths', 'top_workon', 'general_report']
 LANG = ('Anfang ' + 'Ein sehr langer Satz mit vielen Wörtern für den Druck. ' * 10).strip() + '\nZweite Zeile\nDritte Zeile Ende'
@@ -28,7 +28,7 @@ LADEN = """(async (extra) => { selectStatsTab();
 
 
 def main():
-    fehler = []
+    fehler = pruefliste()
 
     def pruefe(ok, text):
         if not ok:
@@ -143,4 +143,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    fuehre_aus(main)   # nach Verbindungsabbruch zu Chrome einmal von vorne (werkzeug.py)
